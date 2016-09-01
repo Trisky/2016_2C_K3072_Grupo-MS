@@ -8,6 +8,8 @@
 
 Proyecto para realizar el trabajo práctico cuatrimestral de [Técnicas de Gráficos por Computadora](http://tgc-utn.github.io/)
 
+GrupoMS
+
 ## Características
 * [Lenguaje C#](https://msdn.microsoft.com/es-ar/library/kx37x362.aspx)
 * [Managed DirectX 9](https://en.wikipedia.org/wiki/Managed_DirectX)
