@@ -8,6 +8,7 @@ using TGC.Core.Shaders;
 using TGC.Core.Sound;
 using TGC.Core.Textures;
 using TGC.Group.Model;
+using TGC.GroupoMs;
 
 namespace TGC.Group.Form
 {

@@ -8,6 +8,7 @@ using TGC.Core.Input;
 using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
 using TGC.Core.Utils;
+using TGC.GroupoMs;
 
 namespace TGC.Group.Model
 {
