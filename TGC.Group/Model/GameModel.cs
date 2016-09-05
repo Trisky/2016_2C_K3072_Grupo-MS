@@ -9,6 +9,7 @@ using TGC.Core.SceneLoader;
 using TGC.Core.Textures;
 using TGC.Core.Utils;
 using TGC.GroupoMs;
+using TGC.GroupoMs.Model;
 
 namespace TGC.Group.Model
 {
@@ -20,6 +21,7 @@ namespace TGC.Group.Model
     /// </summary>
     public class GameModel : TgcExample
     {
+        private TgcScene scene;
         /// <summary>
         ///     Constructor del juego.
         /// </summary>
@@ -77,13 +79,24 @@ namespace TGC.Group.Model
             //Lo que en realidad necesitamos gráficamente es una matriz de View.
             //El framework maneja una cámara estática, pero debe ser inicializada.
             //Posición de la camara.
-            var cameraPosition = new Vector3(0, 0, 125);
+            var cameraPosition = new Vector3(23, 39, 113);
             //Quiero que la camara mire hacia el origen (0,0,0).
             var lookAt = Vector3.Empty;
-            //Configuro donde esta la posicion de la camara y hacia donde mira.
+            Camara = new TgcFpsCamera(cameraPosition, Input);
             Camara.SetCamera(cameraPosition, lookAt);
+            //Camara.
+            //Configuro donde esta la posicion de la camara y hacia donde mira.
+            //Camara.SetCamera(cameraPosition, lookAt);
             //Internamente el framework construye la matriz de view con estos dos vectores.
             //Luego en nuestro juego tendremos que crear una cámara que cambie la matriz de view con variables como movimientos o animaciones de escenas.
+
+
+            //seteo el terreno
+            
+
+            //
+            TgcSceneLoader loader = new TgcSceneLoader();
+            this.scene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
         }
 
         /// <summary>
@@ -107,13 +120,7 @@ namespace TGC.Group.Model
                 //Como ejemplo podemos hacer un movimiento simple de la cámara.
                 //En este caso le sumamos un valor en Y
                 Camara.SetCamera(Camara.Position + new Vector3(0, 10f, 0), Camara.LookAt);
-                //Ver ejemplos de cámara para otras operaciones posibles.
-
-                //Si superamos cierto Y volvemos a la posición original.
-                if (Camara.Position.Y > 300f)
-                {
-                    Camara.SetCamera(new Vector3(Camara.Position.X, 0f, Camara.Position.Z), Camara.LookAt);
-                }
+            
             }
         }
 
@@ -154,6 +161,8 @@ namespace TGC.Group.Model
                 Box.BoundingBox.render();
                 Mesh.BoundingBox.render();
             }
+
+            this.scene.renderAll();
 
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();

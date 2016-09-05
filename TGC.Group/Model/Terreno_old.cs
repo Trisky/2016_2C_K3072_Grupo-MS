@@ -3,26 +3,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using TGC.Core;
 using TGC.Core.Direct3D;
 using TGC.Core.Geometry;
+using TGC.Core.Terrain;
 using TGC.Core.Textures;
 using static TGC.Core.Geometry.TgcPlane;
 
-namespace TGC.GroupoMs.Model
+namespace TGC.GrupoMs.Model
 {
-    class Terreno
+    class Terreno 
     {
         private TgcPlane plane;
-        public Terreno()
-        {
+        public Terreno() {
 
             //asigno textura
 
-            //TODO= hacer bien lo del path
+            //TODO hacer bien lo del path
             var text = "C:\\Users\\Trisky\\github\\tgc-viewer\\TGC.Viewer\\bin\\Debug\\Media\\Texturas\\tierra.jpg";
             var currentTexture = TgcTexture.createTexture(D3DDevice.Instance.Device, text);
-
+            
             //creo plano
             this.plane = new TgcPlane();
             this.plane.setTexture(currentTexture);
@@ -33,7 +32,7 @@ namespace TGC.GroupoMs.Model
             this.plane.VTile = 1;
             this.plane.AutoAdjustUv = true;
 
-
+            
 
         }
         public void Render()

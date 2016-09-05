@@ -87,6 +87,8 @@
     <Compile Include="Model\Arma.cs" />
     <Compile Include="Model\Auto.cs" />
     <Compile Include="Model\GameModel.cs" />
+    <Compile Include="Model\Terreno.cs" />
+    <Compile Include="Model\TgcFpsCamera.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form\GameForm.resx">
