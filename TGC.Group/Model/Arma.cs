@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace TGC.GroupoMs.Model
 {
-    class Arma
+    public class Arma : MovingObject
     {
-        public string nombre { get; set; }
+        
         public int danio { get; set; }
         public int ammo { get; set; } //ammo ilimitado: -1
 
@@ -20,6 +20,13 @@ namespace TGC.GroupoMs.Model
             victima.recibirDanio(this.danio);
             return 0;
         
+        }
+
+        public Arma(string nombre,int danio,int ammo)
+        {
+            this.nombre = nombre;
+            this.danio = danio;
+            this.ammo = ammo;
         }
         
     }

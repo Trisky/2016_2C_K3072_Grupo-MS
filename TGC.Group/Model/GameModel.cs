@@ -1,5 +1,6 @@
 using Microsoft.DirectX;
 using Microsoft.DirectX.DirectInput;
+using System.Collections.Generic;
 using System.Drawing;
 using TGC.Core.Direct3D;
 using TGC.Core.Example;
@@ -21,7 +22,13 @@ namespace TGC.Group.Model
     /// </summary>
     public class GameModel : TgcExample
     {
-        private TgcScene scene;
+        private List<TgcScene> scenesLst;
+        public TgcMesh PlayerMesh { get; set; }
+        public bool GodModeOn { get; set; }
+
+        public List<Auto> Autos { get; set; } //aca esta el auto del jugador y los autos de la AI
+        public Auto AutoJugador { get; set; }
+        public TgcScene MapScene { get; set; }
         /// <summary>
         ///     Constructor del juego.
         /// </summary>
@@ -79,11 +86,7 @@ namespace TGC.Group.Model
             //Lo que en realidad necesitamos gráficamente es una matriz de View.
             //El framework maneja una cámara estática, pero debe ser inicializada.
             //Posición de la camara.
-            var cameraPosition = new Vector3(23, 39, 113);
-            //Quiero que la camara mire hacia el origen (0,0,0).
-            var lookAt = Vector3.Empty;
-            Camara = new TgcFpsCamera(cameraPosition, Input);
-            Camara.SetCamera(cameraPosition, lookAt);
+
             //Camara.
             //Configuro donde esta la posicion de la camara y hacia donde mira.
             //Camara.SetCamera(cameraPosition, lookAt);
@@ -92,11 +95,52 @@ namespace TGC.Group.Model
 
 
             //seteo el terreno
-            
+            GodModeOn = false; //TODO-> esto deberia estar en true cuando tengamos el auto, para que aparezcamos en él.
+            this.ToggleGodCamera();
+
 
             //
+            this.CargarScenes();
+            Autos = new List<Auto>();
+            AutoJugador = new Auto("hummer", 100, 100, 50, 10, 7, new List<Arma>(), PlayerMesh);
+            this.Autos.Add(this.AutoJugador);
+
+        }
+
+        public void CargarScenes() {
             TgcSceneLoader loader = new TgcSceneLoader();
-            this.scene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
+            this.scenesLst = new List<TgcScene>();
+            this.MapScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
+            
+
+            //cargar hummer
+            TgcScene hummerScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Meshes\\Vehiculos\\Hummer\\Hummer-TgcScene.xml");
+            TgcMesh hummerMesh =  hummerScene.Meshes[0];
+            this.PlayerMesh = hummerMesh;
+            PlayerMesh.move(10, 0, 5);
+            //this.scenesLst.Add();
+
+        }
+
+        /// <summary>
+        /// Activa/desactiva la camara de modo dios, cuando la activo el juego sigue funcionando.
+        /// </summary>
+        /// <param name="ubicacion"></param>
+        /// <param name="lookAt"></param>
+        public void ToggleGodCamera() {
+            if (GodModeOn)
+            {
+                Camara = this.AutoJugador.camaraSeguirEsteAuto();
+                // apagar godmode y  volver al auto
+            }
+            else {
+                var cameraPosition = new Vector3(23, 39, 113);
+                Camara = new TgcFpsCamera(cameraPosition, Input);
+                Camara.SetCamera(cameraPosition, Vector3.Empty);
+                DrawText.drawText("GodMode = ON", 0, 40, Color.OrangeRed);
+            }
+            //this.Render();
+            
         }
 
         /// <summary>
@@ -107,6 +151,10 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
+
+
+            //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
+            //this.AutoJugador.Update(Input);
 
             //Capturar Input teclado
             if (Input.keyPressed(Key.F))
@@ -119,9 +167,16 @@ namespace TGC.Group.Model
             {
                 //Como ejemplo podemos hacer un movimiento simple de la cámara.
                 //En este caso le sumamos un valor en Y
-                Camara.SetCamera(Camara.Position + new Vector3(0, 10f, 0), Camara.LookAt);
-            
+                //Camara.SetCamera(Camara.Position + new Vector3(0, 10f, 0), Camara.LookAt);
+                Camara.SetCamera(Camara.Position , Camara.LookAt); // si comento esto, no veo nada (?)
+
             }
+
+            if (Input.keyPressed(Key.O))
+            {
+                this.ToggleGodCamera();
+            }
+            
         }
 
         /// <summary>
@@ -137,7 +192,7 @@ namespace TGC.Group.Model
             //Dibuja un texto por pantalla
             DrawText.drawText("Con la tecla F se dibuja el bounding box.", 0, 20, Color.OrangeRed);
             DrawText.drawText(
-                "Con clic izquierdo subimos la camara [Actual]: " + TgcParserUtils.printVector3(Camara.Position), 0, 30,
+                "posicion camara: " + TgcParserUtils.printVector3(Camara.Position), 0, 30,
                 Color.OrangeRed);
 
             //Siempre antes de renderizar el modelo necesitamos actualizar la matriz de transformacion.
@@ -162,7 +217,14 @@ namespace TGC.Group.Model
                 Mesh.BoundingBox.render();
             }
 
-            this.scene.renderAll();
+
+            //rendereo el mapa.
+            MapScene.renderAll();
+
+            //rendereo el hummer
+            this.PlayerMesh.render();
+
+            
 
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();

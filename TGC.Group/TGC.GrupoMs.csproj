@@ -87,10 +87,12 @@
     <Compile Include="Model\Arma.cs" />
     <Compile Include="Model\Auto.cs" />
     <Compile Include="Model\GameModel.cs" />
-    <Compile Include="Model\Terreno.cs" />
+    <Compile Include="Model\MovingObject.cs" />
     <Compile Include="Model\TgcFpsCamera.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="utils\ConstructorInicial.cs" />
+    <Compile Include="utils\MeshList.cs" />
     <EmbeddedResource Include="Form\GameForm.resx">
       <DependentUpon>GameForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -104,6 +106,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="ClassDiagram1.cd" />
     <None Include="Game.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Game.Designer.cs</LastGenOutput>
@@ -144,7 +147,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="App.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <BootstrapperPackage Include=".NETFramework,Version=v4.5.2">
@@ -158,8 +163,12 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="utils\" />
+    <ProjectReference Include="..\..\tgc-viewer\TGC.Examples\TGC.Examples.csproj">
+      <Project>{0a4e6948-ab74-48a5-99e1-6bd1c3949006}</Project>
+      <Name>TGC.Examples</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
