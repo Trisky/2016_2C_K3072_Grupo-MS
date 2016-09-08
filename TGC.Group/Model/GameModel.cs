@@ -11,6 +11,8 @@ using TGC.Core.Textures;
 using TGC.Core.Utils;
 using TGC.GroupoMs;
 using TGC.GroupoMs.Model;
+using System;
+using TGC.Core.Terrain;
 
 namespace TGC.Group.Model
 {
@@ -29,6 +31,7 @@ namespace TGC.Group.Model
         public List<Auto> Autos { get; set; } //aca esta el auto del jugador y los autos de la AI
         public Auto AutoJugador { get; set; }
         public TgcScene MapScene { get; set; }
+        private TgcSkyBox skyBox;
         /// <summary>
         ///     Constructor del juego.
         /// </summary>
@@ -98,6 +101,8 @@ namespace TGC.Group.Model
             GodModeOn = false; //TODO-> esto deberia estar en true cuando tengamos el auto, para que aparezcamos en él.
             this.ToggleGodCamera();
 
+            this.cargarSkyBox();
+
 
             //
             this.CargarScenes();
@@ -105,6 +110,38 @@ namespace TGC.Group.Model
             AutoJugador = new Auto("hummer", 100, 100, 50, 10, 7, new List<Arma>(), PlayerMesh);
             this.Autos.Add(this.AutoJugador);
 
+        }
+
+        /// <summary>
+        /// init del skybox, se lo llama en el metodo init de GameModel.cs
+        /// </summary>
+        private void cargarSkyBox()
+        {
+            //Crear SkyBox
+            skyBox = new TgcSkyBox();
+            skyBox.Center = new Vector3(0, 0, 0);
+            skyBox.Size = new Vector3(10000, 10000, 10000);
+
+            //Configurar color
+            //skyBox.Color = Color.OrangeRed;
+
+            var texturesPath = MediaDir + "Texturas\\Quake\\SkyBox1\\";
+
+            //Configurar las texturas para cada una de las 6 caras
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "phobos_lf.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "phobos_rt.jpg");
+
+            //Hay veces es necesario invertir las texturas Front y Back si se pasa de un sistema RightHanded a uno LeftHanded
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "phobos_bk.jpg");
+            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
+            skyBox.SkyEpsilon = 25f;
+            //Inicializa todos los valores para crear el SkyBox
+            skyBox.Init();
+
+            //Modifier para mover el skybox con la posicion de la caja con traslaciones.
+           // Modifiers.addBoolean("moveWhitCamera", "Move Whit Camera", false);
         }
 
         public void CargarScenes() {
@@ -151,7 +188,7 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-
+            this.SkyBoxUpdate();
 
             //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
             //this.AutoJugador.Update(Input);
@@ -177,6 +214,20 @@ namespace TGC.Group.Model
                 this.ToggleGodCamera();
             }
             
+        }
+
+        private void SkyBoxUpdate()
+        {
+            //Se cambia el valor por defecto del farplane para evitar cliping de farplane.
+            D3DDevice.Instance.Device.Transform.Projection =
+                Matrix.PerspectiveFovLH(D3DDevice.Instance.FieldOfView,
+                    D3DDevice.Instance.AspectRatio,
+                    D3DDevice.Instance.ZNearPlaneDistance,
+                    D3DDevice.Instance.ZFarPlaneDistance * 2f);
+
+            //Se actualiza la posicion del skybox.
+            //if ((bool)Modifiers.getValue("moveWhitCamera")) tengo que comentar esto?
+                skyBox.Center = Camara.Position;
         }
 
         /// <summary>
@@ -224,7 +275,10 @@ namespace TGC.Group.Model
             //rendereo el hummer
             this.PlayerMesh.render();
 
-            
+            //skybox render
+            skyBox.render();
+
+
 
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();
@@ -241,6 +295,7 @@ namespace TGC.Group.Model
             Box.dispose();
             //Dispose del mesh.
             Mesh.dispose();
+            skyBox.dispose();
         }
     }
 }
