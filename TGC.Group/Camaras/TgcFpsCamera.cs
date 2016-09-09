@@ -7,7 +7,7 @@ using TGC.Core.Direct3D;
 using TGC.Core.Input;
 using TGC.Core.Utils;
 
-namespace TGC.GroupoMs.Model
+namespace TGC.GroupoMs.Camaras
 {
     public class TgcFpsCamera : TgcCamera
     {

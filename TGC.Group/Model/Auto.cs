@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.DirectX;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,46 +7,46 @@ using System.Threading.Tasks;
 using TGC.Core.Camara;
 using TGC.Core.Input;
 using TGC.Core.SceneLoader;
-using TGC.Examples.Camara;
+using TGC.GrupoMs.Camara;
 
 namespace TGC.GroupoMs.Model
 {
     public class Auto : MovingObject
     {
-        public int vida { get; set; }
-        public int vidaMaxima { get; set; }
+        public int Vida { get; set; }
+        public int VidaMaxima { get; set; }
         public bool EsAutoJugador { get; set; }
 
-        public int avanceMax { get; set; }
-        public int reversaMax { get; set; } //velocidad maxima en reversa.
-        public int aceleracion { get; set; }
+        public int AvanceMax { get; set; }
+        public int ReversaMax { get; set; } //velocidad maxima en reversa.
+        public int Aceleracion { get; set; }
         
-        public int desaceleracion { get; set; } 
-        public List<Arma> armas { get; set; }
-        
-        
-        
-        //hace que la velocidad se acerque a cero constantemente si no se esta acelerando o frenando.
+        public int Desaceleracion { get; set; } 
+        public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
 
         public Auto(string nombre, int vida, int avanceMaximo, int reversaMax,
                     int aceleracion,int desaceleracion,List<Arma> armas,TgcMesh mesh)
         {
-            //TODO
+            AvanceMax = avanceMaximo;
+            ReversaMax = reversaMax;
+            Desaceleracion = desaceleracion;
+            Armas = armas;
+            Mesh = mesh;
+            Aceleracion = aceleracion;
         }
         public Auto()
         {
-            this.vida = -1;
+            this.Vida = -1;
             this.nombre = "testCar";
-            this.avanceMax = 100;
-            this.reversaMax = 100;
-            this.aceleracion = 100;
-            this.velocidad = 0;
-            this.desaceleracion = 50;
+            this.AvanceMax = 100;
+            this.ReversaMax = 100;
+            this.Aceleracion = 100;
+            this.Velocidad = 0;
+            this.Desaceleracion = 50;
             this.inerciaNegativa = 20;
-            this.armas = new List<Arma>();
+            this.Armas = new List<Arma>();
             //this.direccionFrente = new Microsoft.DirectX.Vector3()
-
         }
 
         /// <summary>
@@ -53,16 +54,17 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         /// <returns></returns>
         public TgcCamera camaraSeguirEsteAuto() {
-            return new TgcThirdPersonCamera(Mesh.Position, 200, 300);
+            Vector3 v = Mesh.Position;
+            return new TgcThirdPersonCamera(v, 200, 300);
         }
 
         public void recibirDanio(int cant)
         {
-            if (this.vidaMaxima < 0) {
+            if (this.VidaMaxima < 0) {
                 return;
             }
-            this.vida = -cant;
-            if (this.vida <= 0)
+            this.Vida = -cant;
+            if (this.Vida <= 0)
             {
                 //TODO this.morir; //explota?
             }
@@ -74,41 +76,40 @@ namespace TGC.GroupoMs.Model
             {
                 //mostrar en pantalla danio dado
             }
-
         }
         public void chocar(Microsoft.DirectX.UnsafeNativeMethods.Vector3 angulo) {
             //this.direccionFrente = + pi/2??
             
         }
-        public void acelerar() {
-            if (this.avanceMax > this.velocidad)
+        public void Acelerar() {
+            if (this.AvanceMax > this.Velocidad)
             {
-                this.velocidad = +this.aceleracion;
-            }
-
-        }
-        public void frenar() //frenar tambien representa acelerar en reversa :P
-        {
-            if(this.reversaMax < this.velocidad)
-            {
-                this.velocidad = -this.desaceleracion;
+                this.Velocidad = +this.Aceleracion;
             }
         }
 
-        internal void Update(TgcD3dInput input)
+        public void Frenar() //frenar tambien representa acelerar en reversa :P
         {
-            this.procesarInercia();
-            
+            if(this.ReversaMax < this.Velocidad)
+            {
+                this.Velocidad = -this.Desaceleracion;
+            }
+        }
+
+        public void Update(TgcD3dInput input)
+        {
+            //ProcesarInercia();
+            Velocidad++;
             //1 acelerar
             if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.W))
             {
-                this.acelerar();
+                Acelerar();
             }
 
             //2 frenar, reversa
             if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.S))
             {
-                this.frenar();
+                Frenar();
             }
 
             //3 izquierda TODO
@@ -142,26 +143,43 @@ namespace TGC.GroupoMs.Model
             {
 
             }
-
-
-            //this.Mesh.
-
-
         }
 
         /// <summary>
         /// lleva la velocidad del vehiculo lentamente a cero.
         /// </summary>
-        private void procesarInercia()
+        private void ProcesarInercia()
         {
-            if (this.velocidad > 0)
+            if (Velocidad == 0)
             {
-                this.velocidad = -this.inerciaNegativa;
+                return;
             }
-            else
+            if (Velocidad > -inerciaNegativa)
             {
-                this.velocidad = +this.inerciaNegativa;
+                Velocidad++;
+                return;
             }
+            if (Velocidad < inerciaNegativa)
+            {
+                Velocidad--;
+                return;
+            }
+
+            if (this.Velocidad > 0)
+            {
+                Velocidad = Velocidad-inerciaNegativa;
+                return;
+            }
+            if(this.Velocidad < 0)
+            {
+                Velocidad = Velocidad+inerciaNegativa;
+                return;
+            }
+           
+            //efecto gravedad?
+            
         }
+
+        
     }
 }

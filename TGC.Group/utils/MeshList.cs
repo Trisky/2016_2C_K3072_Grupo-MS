@@ -11,7 +11,6 @@ namespace TGC.GroupoMs.utils
 
     /// <summary>
     /// Tiene una lista con todos los meshes y sus nombres para facil acceso
-    /// TODO = hacer que la clase sea un singleton
     /// </summary>
     public sealed class  MeshCollection
     {
