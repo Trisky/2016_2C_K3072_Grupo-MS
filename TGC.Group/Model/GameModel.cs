@@ -25,8 +25,8 @@ namespace TGC.Group.Model
     /// </summary>
     public class GameModel : TgcExample
     {
-        private TgcSkyBox skyBox;
-        private List<TgcScene> scenesLst;
+        private TgcSkyBox SkyBox;
+        private List<TgcScene> ScenesLst;
         public TgcMesh PlayerMesh { get; set; }
         public bool GodModeOn { get; set; }
 
@@ -93,28 +93,24 @@ namespace TGC.Group.Model
             //Luego en nuestro juego tendremos que crear una cámara que cambie la matriz de view con variables como movimientos o animaciones de escenas.
 
 
-            //seteo el terreno
+            
             GodModeOn = false; //cuando llamo a toggle lo pone en false
-            this.ToggleGodCamera();
-
-            this.cargarSkyBox();
-
-            this.CargarScenes();
+            ToggleGodCamera();
+            cargarSkyBox();
+            CargarScenes();
         }
 
         private void AsignarPlayersConMeshes(TgcSceneLoader loader)
         {
             Autos = new List<Auto>();
 
-            
             TgcScene hummerScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Meshes\\Vehiculos\\Hummer\\Hummer-TgcScene.xml");
             TgcMesh hummerMesh = hummerScene.Meshes[0];
-            this.PlayerMesh = hummerMesh;
+            PlayerMesh = hummerMesh;
             PlayerMesh.move(0, 5, 0); //muevo el mesh un poco para arriba
 
-            
             AutoJugador = new Auto("hummer", 100, 100, 50, 10, 7, new List<Arma>(), PlayerMesh);
-            this.Autos.Add(this.AutoJugador);
+            Autos.Add(this.AutoJugador);
         }
 
         /// <summary>
@@ -123,9 +119,9 @@ namespace TGC.Group.Model
         private void cargarSkyBox()
         {
             //Crear SkyBox
-            skyBox = new TgcSkyBox();
-            skyBox.Center = new Vector3(0, 0, 0);
-            skyBox.Size = new Vector3(10000, 10000, 10000);
+            SkyBox = new TgcSkyBox();
+            SkyBox.Center = new Vector3(0, 0, 0);
+            SkyBox.Size = new Vector3(10000, 10000, 10000);
 
             //Configurar color
             //skyBox.Color = Color.OrangeRed;
@@ -133,17 +129,17 @@ namespace TGC.Group.Model
             var texturesPath = MediaDir + "Texturas\\Quake\\SkyBox1\\";
 
             //Configurar las texturas para cada una de las 6 caras
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "phobos_lf.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "phobos_rt.jpg");
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Down, texturesPath + "phobos_dn.jpg");
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Left, texturesPath + "phobos_lf.jpg");
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Right, texturesPath + "phobos_rt.jpg");
 
             //Hay veces es necesario invertir las texturas Front y Back si se pasa de un sistema RightHanded a uno LeftHanded
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "phobos_bk.jpg");
-            skyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
-            skyBox.SkyEpsilon = 25f;
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Front, texturesPath + "phobos_bk.jpg");
+            SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Back, texturesPath + "phobos_ft.jpg");
+            SkyBox.SkyEpsilon = 25f;
             //Inicializa todos los valores para crear el SkyBox
-            skyBox.Init();
+            SkyBox.Init();
 
             //Modifier para mover el skybox con la posicion de la caja con traslaciones.
            // Modifiers.addBoolean("moveWhitCamera", "Move Whit Camera", false);
@@ -152,9 +148,9 @@ namespace TGC.Group.Model
         /// <summary>
         /// Cargar scenes, se llama en init.
         /// </summary>
-        public void CargarScenes() {
+        private void CargarScenes() {
             TgcSceneLoader loader = new TgcSceneLoader();
-            this.scenesLst = new List<TgcScene>();
+            this.ScenesLst = new List<TgcScene>();
             this.MapScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
 
             AsignarPlayersConMeshes(loader);
@@ -167,7 +163,7 @@ namespace TGC.Group.Model
         /// </summary>
         /// <param name="ubicacion"></param>
         /// <param name="lookAt"></param>
-        public void ToggleGodCamera() {
+        private void ToggleGodCamera() {
             if (GodModeOn)
             {
                 GodModeOn = false;
@@ -196,14 +192,8 @@ namespace TGC.Group.Model
             this.SkyBoxUpdate();
 
             //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
-            //if(!GodModeOn)
-
-            if (!GodModeOn) //si estoy en modo dios, el auto queda sin movimiento.
-            {
-                AutoJugador.Update(Input);
-            }
-            
-
+            AutoJugador.Update(Input);
+           
             //Capturar Input teclado
             if (Input.keyPressed(Key.F))
             {
@@ -216,12 +206,14 @@ namespace TGC.Group.Model
                
             }
 
+            //godMode Toggle
             if (Input.keyPressed(Key.O))
             {
                 this.ToggleGodCamera();
             }
 
-
+            //PlayerMesh.render();
+            //rendereo todos los autos.
             
         }
 
@@ -236,7 +228,7 @@ namespace TGC.Group.Model
 
             //Se actualiza la posicion del skybox.
             //if ((bool)Modifiers.getValue("moveWhitCamera")) tengo que comentar esto?
-                skyBox.Center = Camara.Position;
+                SkyBox.Center = Camara.Position;
         }
 
         /// <summary>
@@ -284,6 +276,7 @@ namespace TGC.Group.Model
             {
                 Box.BoundingBox.render();
                 Mesh.BoundingBox.render();
+                AutoJugador.Mesh.BoundingBox.render();
             }
 
 
@@ -291,10 +284,17 @@ namespace TGC.Group.Model
             MapScene.renderAll();
 
             //rendereo el mesh del jugador
-            PlayerMesh.render();
+            //PlayerMesh.render();
+
+
+            //render de cada auto.
+            foreach (Auto a in Autos)
+            {
+                a.Render();
+            }
 
             //skybox render
-            skyBox.render();
+            SkyBox.render();
 
 
 
@@ -314,7 +314,7 @@ namespace TGC.Group.Model
             Box.dispose();
             //Dispose del mesh.
             Mesh.dispose();
-            skyBox.dispose();
+            SkyBox.dispose();
         }
     }
 }

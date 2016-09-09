@@ -70,14 +70,15 @@ namespace TGC.GroupoMs.Model
             }
             if (this.EsAutoJugador)
             {
-                //mostrar en pantalla danio recibido
+                /*TODO mostrar en pantalla danio recibido,con 200ms seria suficiente, 
+                podria ir sumandose para saber cuanto le sacamos en esa "rafaga" de disparos.*/
             }
             else
             {
-                //mostrar en pantalla danio dado
+                //TODO mostrar en pantalla danio dado
             }
         }
-        public void chocar(Microsoft.DirectX.UnsafeNativeMethods.Vector3 angulo) {
+        public void chocar(Vector3 angulo) {
             //this.direccionFrente = + pi/2??
             
         }
@@ -99,7 +100,7 @@ namespace TGC.GroupoMs.Model
         public void Update(TgcD3dInput input)
         {
             //ProcesarInercia();
-            Velocidad++;
+            
             //1 acelerar
             if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.W))
             {
@@ -118,19 +119,19 @@ namespace TGC.GroupoMs.Model
                 //cambiar la direccion del mesh en X grados hacia la izquierda
             }
 
-            //4 derecha TOOD
+            //4 derecha TODO
             if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.D))
             {
                 //cambiar la direccion del mesh en X grados hacia la derecha
             }
 
             //5 disparar TODO -- 
-            //if (input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_LEFT))
-            //{
-            //    //disparar 
-            //    //this.ArmaSeleccionada.ammo--;
-            //    //TODO falta evento de fin de ammo.
-            //}
+            if (input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            {
+                //disparar 
+                //this.ArmaSeleccionada.ammo--;
+                //TODO falta evento de fin de ammo.
+            }
 
             //6 cambiar de arma TODO
             if (input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_RIGHT))
@@ -143,6 +144,15 @@ namespace TGC.GroupoMs.Model
             {
 
             }
+
+            MoverMesh();
+        }
+
+        private void MoverMesh()
+        {
+            Vector3 rotation = Mesh.Rotation; //obtengo la orientacion actual del mesh
+            rotation.Multiply(Velocidad); //ahora tengo lo que me tengo q mover en el vector este
+            Mesh.move(rotation);
         }
 
         /// <summary>
@@ -154,32 +164,40 @@ namespace TGC.GroupoMs.Model
             {
                 return;
             }
-            if (Velocidad > -inerciaNegativa)
+            //falta hacer que dismunuya la velocidad cada X tiempo y no por frame.
+            if (Velocidad < -inerciaNegativa)
             {
                 Velocidad++;
                 return;
             }
-            if (Velocidad < inerciaNegativa)
+            if (Velocidad > inerciaNegativa)
             {
                 Velocidad--;
                 return;
             }
 
-            if (this.Velocidad > 0)
+            if (Velocidad > 0)
             {
                 Velocidad = Velocidad-inerciaNegativa;
                 return;
             }
-            if(this.Velocidad < 0)
+            if(Velocidad < 0)
             {
                 Velocidad = Velocidad+inerciaNegativa;
                 return;
             }
            
-            //efecto gravedad?
+            //efecto gravedad? -> TODO
             
         }
 
-        
+        /// <summary>
+        /// Muevo el mesh y lo rendereo.
+        /// </summary>
+        public void Render()
+        {
+
+            Mesh.render();
+        }
     }
 }
