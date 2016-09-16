@@ -14,6 +14,7 @@ using TGC.GroupoMs.Model;
 using System;
 using TGC.Core.Terrain;
 using TGC.GroupoMs.Camaras;
+using TGC.Core;
 
 namespace TGC.Group.Model
 {
@@ -33,8 +34,10 @@ namespace TGC.Group.Model
         public List<Auto> Autos { get; set; } //aca esta el auto del jugador y los autos de la AI
         public Auto AutoJugador { get; set; }
         public TgcScene MapScene { get; set; }
-        
-        
+        //public float ElapsedTime { get; set; }
+
+
+
         //Caja que se muestra en el ejemplo.
         private TgcBox Box { get; set; }
         //Mesh de TgcLogo.
@@ -109,7 +112,7 @@ namespace TGC.Group.Model
             PlayerMesh = hummerMesh;
             PlayerMesh.move(0, 5, 0); //muevo el mesh un poco para arriba
 
-            AutoJugador = new Auto("hummer", 100, 100, 50, 10, 7, new List<Arma>(), PlayerMesh);
+            AutoJugador = new Auto("hummer", 100f, 100f, 50f, 20f, 10f, new List<Arma>(), PlayerMesh,this);
             Autos.Add(this.AutoJugador);
         }
 
@@ -189,7 +192,7 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-            this.SkyBoxUpdate();
+            SkyBoxUpdate();
 
             //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
             AutoJugador.Update(Input);
@@ -209,7 +212,7 @@ namespace TGC.Group.Model
             //godMode Toggle
             if (Input.keyPressed(Key.O))
             {
-                this.ToggleGodCamera();
+                ToggleGodCamera();
             }
 
             //PlayerMesh.render();
@@ -230,12 +233,14 @@ namespace TGC.Group.Model
             //if ((bool)Modifiers.getValue("moveWhitCamera")) tengo que comentar esto?
                 SkyBox.Center = Camara.Position;
         }
-
+        
         /// <summary>
         ///     Se llama cada vez que hay que refrescar la pantalla.
         ///     Escribir aquí todo el código referido al renderizado.
         ///     Borrar todo lo que no haga falta.
         /// </summary>
+        /// 
+
         public override void Render()
         {
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
@@ -249,6 +254,8 @@ namespace TGC.Group.Model
                 DrawText.drawText("GodMode = ON", 0, 40, Color.OrangeRed);
                 
             }
+            
+
             else
             {
                 DrawText.drawText("GodMode = OFF", 0, 40, Color.White);
@@ -279,13 +286,8 @@ namespace TGC.Group.Model
                 AutoJugador.Mesh.BoundingBox.render();
             }
 
-
             //rendereo el mapa.
             MapScene.renderAll();
-
-            //rendereo el mesh del jugador
-            //PlayerMesh.render();
-
 
             //render de cada auto.
             foreach (Auto a in Autos)
@@ -296,11 +298,8 @@ namespace TGC.Group.Model
             //skybox render
             SkyBox.render();
 
-
-
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();
-            
         }
 
         /// <summary>

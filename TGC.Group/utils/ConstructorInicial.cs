@@ -22,12 +22,12 @@ namespace TGC.GroupoMs.utils
             //todo
             return armasLst;
         }
-        List<Auto> Autos() {
-            List<Auto> autosLst = new List<Auto>();
-            autosLst.Add(new Auto("hummer", 100, 100, 50, 10, 7, new List<Arma>(), null));
-            //todo
-            return autosLst;
-        }
+        //List<Auto> Autos() {
+        //    List<Auto> autosLst = new List<Auto>();
+        //    autosLst.Add(new Auto("hummer", 100, 100, 50, 10, 7, new List<Arma>(), null));
+        //    //todo
+        //    return autosLst;
+        //}
 
     }
 }

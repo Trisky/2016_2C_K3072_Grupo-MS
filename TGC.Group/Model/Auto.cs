@@ -8,47 +8,44 @@ using TGC.Core.Camara;
 using TGC.Core.Input;
 using TGC.Core.SceneLoader;
 using TGC.GrupoMs.Camara;
+using Microsoft.DirectX.DirectInput;
+using TGC.Group.Model;
 
 namespace TGC.GroupoMs.Model
 {
     public class Auto : MovingObject
     {
-        public int Vida { get; set; }
-        public int VidaMaxima { get; set; }
+        public float Vida { get; set; }
+        public float VidaMaxima { get; set; }
         public bool EsAutoJugador { get; set; }
 
-        public int AvanceMax { get; set; }
-        public int ReversaMax { get; set; } //velocidad maxima en reversa.
-        public int Aceleracion { get; set; }
-        
-        public int Desaceleracion { get; set; } 
+        public float AvanceMax { get; set; }
+        public float ReversaMax { get; set; } //velocidad maxima en reversa.
+        public float Aceleracion { get; set; }
+        public float DireccionRuedas { get; set; } //negativo para la derecha, positivo para la izquierda
+
+
+        public float Desaceleracion { get; set; } 
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
+        public GameModel GameModel { get; set; }
 
-        public Auto(string nombre, int vida, int avanceMaximo, int reversaMax,
-                    int aceleracion,int desaceleracion,List<Arma> armas,TgcMesh mesh)
+        public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
+                    float aceleracion,float desaceleracion,List<Arma> armas,TgcMesh mesh,GameModel model)
         {
             AvanceMax = avanceMaximo;
             ReversaMax = reversaMax;
             Desaceleracion = desaceleracion;
             Armas = armas;
             Mesh = mesh;
+            Mesh.AutoTransformEnable = true;
+            Mesh.AutoUpdateBoundingBox = true;
             Aceleracion = aceleracion;
+            GameModel = model;
+            InerciaNegativa = 1f;
+            DireccionRuedas = 0f;
         }
-        public Auto()
-        {
-            this.Vida = -1;
-            this.nombre = "testCar";
-            this.AvanceMax = 100;
-            this.ReversaMax = 100;
-            this.Aceleracion = 100;
-            this.Velocidad = 0;
-            this.Desaceleracion = 50;
-            this.inerciaNegativa = 20;
-            this.Armas = new List<Arma>();
-            //this.direccionFrente = new Microsoft.DirectX.Vector3()
-        }
-
+        
         /// <summary>
         /// hace que la camara siga a este auto.
         /// </summary>
@@ -83,46 +80,57 @@ namespace TGC.GroupoMs.Model
             
         }
         public void Acelerar() {
-            if (this.AvanceMax > this.Velocidad)
+            if (AvanceMax < Velocidad)
             {
-                this.Velocidad = +this.Aceleracion;
+                
             }
+            Velocidad += Aceleracion* GameModel.ElapsedTime; //uso elapsed time para que sea time-bound
         }
 
         public void Frenar() //frenar tambien representa acelerar en reversa :P
         {
-            if(this.ReversaMax < this.Velocidad)
-            {
-                this.Velocidad = -this.Desaceleracion;
-            }
+            //if(this.ReversaMax < this.Velocidad)
+            //{
+            Velocidad -= Desaceleracion * GameModel.ElapsedTime;
+            //}
         }
 
+        /// <summary>
+        /// Llamado una vez por frame
+        /// </summary>
+        /// <param name="input"></param>
         public void Update(TgcD3dInput input)
         {
-            //ProcesarInercia();
+            if(!input.keyDown(Key.W) && !input.keyDown(Key.S))
+                ProcesarInercia();
+            if (!input.keyDown(Key.A) && !input.keyDown(Key.D))
+                EnderesarRuedas();
+            
             
             //1 acelerar
-            if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.W))
+
+            
+            if (input.keyDown(Key.W))
             {
                 Acelerar();
             }
 
             //2 frenar, reversa
-            if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.S))
+            if (input.keyDown(Key.S))
             {
                 Frenar();
             }
 
-            //3 izquierda TODO
-            if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.A))
+            //3 izquierda TODO//girar ruedas
+            if (input.keyDown(Key.A))
             {
-                //cambiar la direccion del mesh en X grados hacia la izquierda
+                Doblar(0);
             }
 
-            //4 derecha TODO
-            if (input.keyPressed(Microsoft.DirectX.DirectInput.Key.D))
+            //4 derecha TODO //girar ruedas
+            if (input.keyDown(Key.D))
             {
-                //cambiar la direccion del mesh en X grados hacia la derecha
+                Doblar(1);
             }
 
             //5 disparar TODO -- 
@@ -145,14 +153,40 @@ namespace TGC.GroupoMs.Model
 
             }
 
-            MoverMesh();
+            MoverMesh(); 
         }
 
+        private void Doblar(int lado)
+        {
+            if(lado == 0) //doblo iz
+            {
+                DireccionRuedas -= 3f * GameModel.ElapsedTime;
+            }
+            if(lado == 1) //doblo der
+            {
+                DireccionRuedas += 3f * GameModel.ElapsedTime;
+            }
+        }
+
+        private void EnderesarRuedas()
+        {
+            if (DireccionRuedas > 0)
+                DireccionRuedas -= 3f * GameModel.ElapsedTime;
+            if(DireccionRuedas<0)
+                DireccionRuedas += 3f * GameModel.ElapsedTime;
+
+        }
+
+        /// <summary>
+        /// Indica al mesh su nueva posicion y/o rotacion -- TODO
+        /// </summary>
         private void MoverMesh()
         {
             Vector3 rotation = Mesh.Rotation; //obtengo la orientacion actual del mesh
             rotation.Multiply(Velocidad); //ahora tengo lo que me tengo q mover en el vector este
-            Mesh.move(rotation);
+            //Mesh.move(rotation);
+            Mesh.Position = rotation;
+            //Mesh.
         }
 
         /// <summary>
@@ -160,35 +194,37 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         private void ProcesarInercia()
         {
-            if (Velocidad == 0)
+            
+            if (Velocidad < 0.01f || Velocidad<0.01f)
             {
+                Velocidad = 0f;
                 return;
             }
             //falta hacer que dismunuya la velocidad cada X tiempo y no por frame.
-            if (Velocidad < -inerciaNegativa)
-            {
-                Velocidad++;
-                return;
-            }
-            if (Velocidad > inerciaNegativa)
-            {
-                Velocidad--;
-                return;
-            }
+            //if (Velocidad < -inerciaNegativa)
+            //{
+            //    Velocidad++;
+            //    return;
+            //}
+            //if (Velocidad > inerciaNegativa)
+            //{
+            //    Velocidad--;
+            //    return;
+            //}
 
             if (Velocidad > 0)
             {
-                Velocidad = Velocidad-inerciaNegativa;
+                Velocidad -=InerciaNegativa * GameModel.ElapsedTime;
                 return;
             }
             if(Velocidad < 0)
             {
-                Velocidad = Velocidad+inerciaNegativa;
+                Velocidad +=InerciaNegativa * GameModel.ElapsedTime;
                 return;
             }
            
             //efecto gravedad? -> TODO
-            
+
         }
 
         /// <summary>
@@ -196,7 +232,6 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         public void Render()
         {
-
             Mesh.render();
         }
     }
