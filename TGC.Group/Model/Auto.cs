@@ -31,20 +31,28 @@ namespace TGC.GroupoMs.Model
         public GameModel GameModel { get; set; }
         public TgcThirdPersonCamera CamaraAuto { get; set; }
 
+        public int MyProperty { get; set; }
+
         public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
                     float aceleracion,float desaceleracion,List<Arma> armas,TgcMesh mesh,GameModel model)
         {
             AvanceMax = avanceMaximo;
             ReversaMax = reversaMax;
             Desaceleracion = desaceleracion;
+            InerciaNegativa = 1f;
+            DireccionRuedas = 0f;
             Armas = armas;
+
             Mesh = mesh;
             Mesh.AutoTransformEnable = true;
             Mesh.AutoUpdateBoundingBox = true;
+            Mesh.Scale = new Vector3(0.7f, 0.7f, 0.7f);  //0.0f para el hummer en este mapa.
+            //Mesh.Rotation = new Vector3(0, 0, -1);
             Aceleracion = aceleracion;
+
             GameModel = model;
-            InerciaNegativa = 1f;
-            DireccionRuedas = 0f;
+
+            
         }
         
         /// <summary>
@@ -82,19 +90,18 @@ namespace TGC.GroupoMs.Model
             
         }
         public void Acelerar() {
-            if (AvanceMax < Velocidad)
+            if (AvanceMax > Velocidad)
             {
-                
+                Velocidad += Aceleracion * GameModel.ElapsedTime; //uso elapsed time para que sea time-bound
             }
-            Velocidad += Aceleracion* GameModel.ElapsedTime; //uso elapsed time para que sea time-bound
         }
 
         public void Frenar() //frenar tambien representa acelerar en reversa :P
         {
-            //if(this.ReversaMax < this.Velocidad)
-            //{
+            if(-ReversaMax < Velocidad)
+            {
             Velocidad -= Desaceleracion * GameModel.ElapsedTime;
-            //}
+            }
         }
 
         /// <summary>
@@ -110,8 +117,6 @@ namespace TGC.GroupoMs.Model
             
             
             //1 acelerar
-
-            
             if (input.keyDown(Key.W))
             {
                 Acelerar();
@@ -186,10 +191,14 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         private void MoverMesh()
         {
-            //1- interpretar direccion de las ruedas
+            
+            //1- rotacion
+            //Mesh.Rotation
+
+            //2- traslacion
             Vector3 rotation = Mesh.Rotation; //obtengo la orientacion actual del mesh
             if (rotation == Vector3.Empty)
-                rotation = new Vector3 (0, 0, -1);
+                rotation = new Vector3(0, 0, -1);
             rotation.Multiply(Velocidad); //ahora tengo lo que me tengo q mover en el vector este
             Mesh.move(rotation);
 

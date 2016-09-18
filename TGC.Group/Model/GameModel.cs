@@ -35,9 +35,7 @@ namespace TGC.Group.Model
         public Auto AutoJugador { get; set; }
         public TgcScene MapScene { get; set; }
         public TgcBox CajaScene { get; set; }
-        //public float ElapsedTime { get; set; }
-
-
+        public MenuCaja MenuBox { get; set; }
 
         //Caja que se muestra en el ejemplo.
         private TgcBox Box { get; set; }
@@ -113,7 +111,7 @@ namespace TGC.Group.Model
             PlayerMesh = hummerMesh;
             PlayerMesh.move(0, 5, 0); //muevo el mesh un poco para arriba
 
-            AutoJugador = new Auto("hummer", 100f, 100f, 50f, 20f, 10f, new List<Arma>(), PlayerMesh,this);
+            AutoJugador = new Auto("hummer", 100f, 5f, 3f, 20f, 10f, new List<Arma>(), PlayerMesh,this);
             Autos.Add(this.AutoJugador);
         }
 
@@ -159,7 +157,6 @@ namespace TGC.Group.Model
 
             AsignarPlayersConMeshes(loader);
             //this.scenesLst.Add();
-
         }
 
         /// <summary>
@@ -169,7 +166,7 @@ namespace TGC.Group.Model
             if (GodModeOn)
             {
                 GodModeOn = false;
-                Camara = this.AutoJugador.camaraSeguirEsteAuto();
+                Camara = AutoJugador.camaraSeguirEsteAuto();
                 // apagar godmode y  volver al auto
             }
             else {
@@ -179,8 +176,6 @@ namespace TGC.Group.Model
                 //Camara.SetCamera(cameraPosition, Vector3.Empty); solo es para camara estatica
                 
             }
-            //this.Render();
-            
         }
 
         /// <summary>
@@ -194,6 +189,7 @@ namespace TGC.Group.Model
             SkyBoxUpdate();
 
             //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
+            if(GodModeOn == false)
             AutoJugador.Update(Input);
            
             //Capturar Input teclado
@@ -202,20 +198,34 @@ namespace TGC.Group.Model
                 BoundingBox = !BoundingBox;
             }
 
-            //Capturar Input Mouse
-            if (Input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            // Ir al menu?
+            if (Input.keyPressed(Key.P))
             {
-               
+                if (MenuBox != null)
+                {
+                    GodModeOn = false;
+                    Camara = AutoJugador.camaraSeguirEsteAuto();
+                }
+                else
+                {
+                    GodModeOn = true; //para q el auto no se mueva
+                    MenuBox = new MenuCaja(Input);
+                    Camara = MenuBox.CrearCamaraCaja();
+                    
+                }
             }
+
+                //Capturar Input Mouse
+           if (Input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+           {
+               
+           }
 
             //godMode Toggle
             if (Input.keyPressed(Key.O))
             {
                 ToggleGodCamera();
             }
-
-            //PlayerMesh.render();
-            //rendereo todos los autos.
         }
 
         private void SkyBoxUpdate()
@@ -233,12 +243,8 @@ namespace TGC.Group.Model
         }
         
         /// <summary>
-        ///     Se llama cada vez que hay que refrescar la pantalla.
-        ///     Escribir aquí todo el código referido al renderizado.
-        ///     Borrar todo lo que no haga falta.
+        ///     main render method
         /// </summary>
-        /// 
-
         public override void Render()
         {
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
@@ -305,6 +311,10 @@ namespace TGC.Group.Model
             {
                 s.renderAll();
             }
+
+            //render de menubox solo cuando es necesario.
+            if (GodModeOn == true && MenuBox != null)
+                MenuBox.Render();
 
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();

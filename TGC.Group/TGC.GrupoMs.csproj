@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Camaras\GodModeCamara.cs" />
+    <Compile Include="Camaras\TgcRotationalCamera.cs" />
     <Compile Include="Camaras\TgcThirdPersonCamera.cs" />
     <Compile Include="Form\GameForm.cs">
       <SubType>Form</SubType>
@@ -89,6 +90,7 @@
     <Compile Include="Model\Arma.cs" />
     <Compile Include="Model\Auto.cs" />
     <Compile Include="Model\GameModel.cs" />
+    <Compile Include="Model\MenuCaja.cs" />
     <Compile Include="Model\MovingObject.cs" />
     <Compile Include="Camaras\TgcFpsCamera.cs" />
     <Compile Include="Program.cs" />
