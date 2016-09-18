@@ -29,6 +29,7 @@ namespace TGC.GroupoMs.Model
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
         public GameModel GameModel { get; set; }
+        public TgcThirdPersonCamera CamaraAuto { get; set; }
 
         public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
                     float aceleracion,float desaceleracion,List<Arma> armas,TgcMesh mesh,GameModel model)
@@ -52,7 +53,8 @@ namespace TGC.GroupoMs.Model
         /// <returns></returns>
         public TgcCamera camaraSeguirEsteAuto() {
             Vector3 v = Mesh.Position;
-            return new TgcThirdPersonCamera(v, 200, 300);
+            CamaraAuto = new TgcThirdPersonCamera(v, 200, 300);
+            return CamaraAuto;
         }
 
         public void recibirDanio(int cant)
@@ -104,7 +106,7 @@ namespace TGC.GroupoMs.Model
             if(!input.keyDown(Key.W) && !input.keyDown(Key.S))
                 ProcesarInercia();
             if (!input.keyDown(Key.A) && !input.keyDown(Key.D))
-                EnderesarRuedas();
+                EnderezarRuedas();
             
             
             //1 acelerar
@@ -168,12 +170,14 @@ namespace TGC.GroupoMs.Model
             }
         }
 
-        private void EnderesarRuedas()
+        private void EnderezarRuedas()
         {
+            if (DireccionRuedas < 0.01 || DireccionRuedas > 0.01)
+                DireccionRuedas = 0f;
             if (DireccionRuedas > 0)
-                DireccionRuedas -= 3f * GameModel.ElapsedTime;
+                DireccionRuedas -= 6f * GameModel.ElapsedTime;
             if(DireccionRuedas<0)
-                DireccionRuedas += 3f * GameModel.ElapsedTime;
+                DireccionRuedas += 6f * GameModel.ElapsedTime;
 
         }
 
@@ -182,11 +186,15 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         private void MoverMesh()
         {
+            //1- interpretar direccion de las ruedas
             Vector3 rotation = Mesh.Rotation; //obtengo la orientacion actual del mesh
+            if (rotation == Vector3.Empty)
+                rotation = new Vector3 (0, 0, -1);
             rotation.Multiply(Velocidad); //ahora tengo lo que me tengo q mover en el vector este
-            //Mesh.move(rotation);
-            Mesh.Position = rotation;
-            //Mesh.
+            Mesh.move(rotation);
+
+            if(CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
+            CamaraAuto.Target = Mesh.Position;
         }
 
         /// <summary>

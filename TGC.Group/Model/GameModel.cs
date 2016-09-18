@@ -34,6 +34,7 @@ namespace TGC.Group.Model
         public List<Auto> Autos { get; set; } //aca esta el auto del jugador y los autos de la AI
         public Auto AutoJugador { get; set; }
         public TgcScene MapScene { get; set; }
+        public TgcBox CajaScene { get; set; }
         //public float ElapsedTime { get; set; }
 
 
@@ -41,7 +42,7 @@ namespace TGC.Group.Model
         //Caja que se muestra en el ejemplo.
         private TgcBox Box { get; set; }
         //Mesh de TgcLogo.
-        private TgcMesh Mesh { get; set; }
+        //private TgcMesh Mesh { get; set; }
         //Boleano para ver si dibujamos el boundingbox
         private bool BoundingBox { get; set; }
 
@@ -85,9 +86,9 @@ namespace TGC.Group.Model
             Box.Position = new Vector3(-25, 0, 0);
 
             //Cargo el unico mesh que tiene la escena.
-            Mesh = new TgcSceneLoader().loadSceneFromFile(MediaDir + "LogoTGC-TgcScene.xml").Meshes[0];
+            //Mesh = new TgcSceneLoader().loadSceneFromFile(MediaDir + "LogoTGC-TgcScene.xml").Meshes[0];
             //Defino una escala en el modelo logico del mesh que es muy grande.
-            Mesh.Scale = new Vector3(0.5f, 0.5f, 0.5f);
+            //Mesh.Scale = new Vector3(0.5f, 0.5f, 0.5f);
             
             //Camara.
             //Configuro donde esta la posicion de la camara y hacia donde mira.
@@ -164,8 +165,6 @@ namespace TGC.Group.Model
         /// <summary>
         /// Activa/desactiva la camara de modo dios, cuando la activo el juego sigue funcionando.
         /// </summary>
-        /// <param name="ubicacion"></param>
-        /// <param name="lookAt"></param>
         private void ToggleGodCamera() {
             if (GodModeOn)
             {
@@ -217,7 +216,6 @@ namespace TGC.Group.Model
 
             //PlayerMesh.render();
             //rendereo todos los autos.
-            
         }
 
         private void SkyBoxUpdate()
@@ -247,7 +245,7 @@ namespace TGC.Group.Model
             PreRender();
 
             //Dibuja un texto por pantalla
-            DrawText.drawText("Con la tecla F se dibuja el bounding box.", 0, 20, Color.OrangeRed);
+            DrawText.drawText("F = bounding box.", 0, 20, Color.OrangeRed);
             DrawText.drawText("posicion camara: " + TgcParserUtils.printVector3(Camara.Position), 0, 30, Color.OrangeRed);
             if (GodModeOn)
             {
@@ -261,6 +259,9 @@ namespace TGC.Group.Model
                 DrawText.drawText("GodMode = OFF", 0, 40, Color.White);
                 DrawText.drawText("v=", 0, 50, Color.Orange);
                 DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
+                DrawText.drawText("ruedas=", 0, 60, Color.Green);
+                DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 50, 60, Color.Green);
+
             }
 
             //Siempre antes de renderizar el modelo necesitamos actualizar la matriz de transformacion.
@@ -271,18 +272,19 @@ namespace TGC.Group.Model
             //A modo ejemplo realizamos toda las multiplicaciones, pero aquí solo nos hacia falta la traslación.
             //Finalmente invocamos al render de la caja
             Box.render();
+            //CajaScene.render();
 
             //Cuando tenemos modelos mesh podemos utilizar un método que hace la matriz de transformación estándar.
             //Es útil cuando tenemos transformaciones simples, pero OJO cuando tenemos transformaciones jerárquicas o complicadas.
-            Mesh.UpdateMeshTransform();
+           // Mesh.UpdateMeshTransform();
             //Render del mesh
-            Mesh.render();
+           // Mesh.render();
 
             //Render de BoundingBox, muy útil para debug de colisiones.
             if (BoundingBox)
             {
                 Box.BoundingBox.render();
-                Mesh.BoundingBox.render();
+               // Mesh.BoundingBox.render();
                 AutoJugador.Mesh.BoundingBox.render();
             }
 
@@ -298,6 +300,12 @@ namespace TGC.Group.Model
             //skybox render
             SkyBox.render();
 
+            //render de scenes
+            foreach (TgcScene s in ScenesLst)
+            {
+                s.renderAll();
+            }
+
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();
         }
@@ -312,7 +320,7 @@ namespace TGC.Group.Model
             //Dispose de la caja.
             Box.dispose();
             //Dispose del mesh.
-            Mesh.dispose();
+           // Mesh.dispose();
             SkyBox.dispose();
         }
     }
