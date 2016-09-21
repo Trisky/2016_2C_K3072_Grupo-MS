@@ -15,6 +15,8 @@ namespace TGC.GroupoMs.Model
 {
     public class Auto : MovingObject
     {
+        private float aceleracionVertical;
+
         public float Vida { get; set; }
         public float VidaMaxima { get; set; }
         public bool EsAutoJugador { get; set; }
@@ -42,6 +44,7 @@ namespace TGC.GroupoMs.Model
             InerciaNegativa = 1f;
             DireccionRuedas = 0f;
             Armas = armas;
+            aceleracionVertical = 0f;
 
             Mesh = mesh;
             Mesh.AutoTransformEnable = true;
@@ -110,6 +113,7 @@ namespace TGC.GroupoMs.Model
         /// <param name="input"></param>
         public void Update(TgcD3dInput input)
         {
+
             if(!input.keyDown(Key.W) && !input.keyDown(Key.S))
                 ProcesarInercia();
             if (!input.keyDown(Key.A) && !input.keyDown(Key.D))
@@ -159,8 +163,22 @@ namespace TGC.GroupoMs.Model
             {
 
             }
+            if (input.keyDown(Key.Space))
+            {
+                Saltar();
+            }
+            else
+            {
+                //aceleracionVertical = -1; descomentar cuando el auto choque con el suelo.
+            }
+            
 
             MoverMesh(); 
+        }
+
+        private void Saltar()
+        {
+            aceleracionVertical+=10f*GameModel.ElapsedTime;
         }
 
         private void Doblar(int lado)
@@ -193,17 +211,27 @@ namespace TGC.GroupoMs.Model
         {
             
             //1- rotacion
-            //Mesh.Rotation
+            
 
             //2- traslacion
             Vector3 rotation = Mesh.Rotation; //obtengo la orientacion actual del mesh
             if (rotation == Vector3.Empty)
                 rotation = new Vector3(0, 0, -1);
             rotation.Multiply(Velocidad); //ahora tengo lo que me tengo q mover en el vector este
+
+
+
+
+            //3-saltar
+            
+            rotation.Y += aceleracionVertical;
+
+
             Mesh.move(rotation);
 
-            if(CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
-            CamaraAuto.Target = Mesh.Position;
+            //camera update
+            if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
+                CamaraAuto.Target = Mesh.Position;
         }
 
         /// <summary>
@@ -217,17 +245,6 @@ namespace TGC.GroupoMs.Model
                 Velocidad = 0f;
                 return;
             }
-            //falta hacer que dismunuya la velocidad cada X tiempo y no por frame.
-            //if (Velocidad < -inerciaNegativa)
-            //{
-            //    Velocidad++;
-            //    return;
-            //}
-            //if (Velocidad > inerciaNegativa)
-            //{
-            //    Velocidad--;
-            //    return;
-            //}
 
             if (Velocidad > 0)
             {
