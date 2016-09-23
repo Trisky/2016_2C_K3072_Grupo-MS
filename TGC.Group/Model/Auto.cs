@@ -214,15 +214,19 @@ namespace TGC.GroupoMs.Model
             
 
             //2- traslacion
-            Vector3 rotation = Mesh.Rotation; //obtengo la orientacion actual del mesh
-            if (rotation == Vector3.Empty)
+            Vector3 rotation = Mesh.Rotation; //obtengo la orientacion(rotacion) actual del mesh
+            if (rotation == Vector3.Empty) //si la roteacion es nula, seteo una arbitraria
                 rotation = new Vector3(0, 0, -1);
-            rotation.Multiply(Velocidad); //ahora tengo lo que me tengo q mover en el vector este
+            //ahora multiplico la matriz rotacion por la velocidad del auto (Velocidad es una variable de la clase auto)
+            rotation.Multiply(Velocidad); // esto guarda el resultado de la cuenta en la variable rotation
+
+            //ahora q tengo el vector "movimiento", es decir, direccion y largo del movimiento deseado, me muevo.
 
 
 
 
-            //3-saltar
+
+            //3-saltar TODO
             
             rotation.Y += aceleracionVertical;
 
