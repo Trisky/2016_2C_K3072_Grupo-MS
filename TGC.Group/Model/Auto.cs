@@ -15,28 +15,26 @@ namespace TGC.GroupoMs.Model
 {
     public class Auto : MovingObject
     {
-        private float aceleracionVertical;
+        
 
-        public float Vida { get; set; }
-        public float VidaMaxima { get; set; }
+        
         public bool EsAutoJugador { get; set; }
-
-        public float AvanceMax { get; set; }
-        public float ReversaMax { get; set; } //velocidad maxima en reversa.
-        public float Aceleracion { get; set; }
         public float DireccionRuedas { get; set; } //negativo para la derecha, positivo para la izquierda
 
-
-        public float Desaceleracion { get; set; } 
+        
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
-        public GameModel GameModel { get; set; }
-        public TgcThirdPersonCamera CamaraAuto { get; set; }
+        
+        
+        public TgcMesh RuedaMainMesh { get; set; }
+        //public int MyProperty { get; set; }
 
-        public int MyProperty { get; set; }
+        public Ruedas RuedasTraseras { get; set; }
+        public Ruedas RuedasDelanteras { get; set; }
 
         public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
-                    float aceleracion,float desaceleracion,List<Arma> armas,TgcMesh mesh,GameModel model)
+                    float aceleracion,float desaceleracion,List<Arma> armas,
+                    TgcMesh mesh,GameModel model,Ruedas ruedasAdelante,Ruedas ruedasAtras,TgcMesh ruedaMainMesh)
         {
             AvanceMax = avanceMaximo;
             ReversaMax = reversaMax;
@@ -47,26 +45,22 @@ namespace TGC.GroupoMs.Model
             aceleracionVertical = 0f;
 
             Mesh = mesh;
-            Mesh.AutoTransformEnable = true;
-            Mesh.AutoUpdateBoundingBox = true;
-            Mesh.Scale = new Vector3(0.7f, 0.7f, 0.7f);  //0.0f para el hummer en este mapa.
-            //Mesh.Rotation = new Vector3(0, 0, -1);
             Aceleracion = aceleracion;
 
             GameModel = model;
 
-            
+            RuedasTraseras = ruedasAtras;
+            RuedasDelanteras = ruedasAdelante;
+            RuedaMainMesh = ruedaMainMesh; 
+
+
+
         }
-        
         /// <summary>
         /// hace que la camara siga a este auto.
         /// </summary>
         /// <returns></returns>
-        public TgcCamera camaraSeguirEsteAuto() {
-            Vector3 v = Mesh.Position;
-            CamaraAuto = new TgcThirdPersonCamera(v, 200, 300);
-            return CamaraAuto;
-        }
+        
 
         public void recibirDanio(int cant)
         {
@@ -88,23 +82,14 @@ namespace TGC.GroupoMs.Model
                 //TODO mostrar en pantalla danio dado
             }
         }
-        public void chocar(Vector3 angulo) {
-            //this.direccionFrente = + pi/2??
-            
-        }
-        public void Acelerar() {
-            if (AvanceMax > Velocidad)
-            {
-                Velocidad += Aceleracion * GameModel.ElapsedTime; //uso elapsed time para que sea time-bound
-            }
-        }
 
-        public void Frenar() //frenar tambien representa acelerar en reversa :P
+        public void Chocar(Vector3 angulo)
         {
-            if(-ReversaMax < Velocidad)
-            {
-            Velocidad -= Desaceleracion * GameModel.ElapsedTime;
-            }
+            Velocidad = -Velocidad * 0.2f;
+            PosicionRollback();
+            
+            //this.direccionFrente = + pi/2??
+
         }
 
         /// <summary>
@@ -171,15 +156,13 @@ namespace TGC.GroupoMs.Model
             {
                 //aceleracionVertical = -1; descomentar cuando el auto choque con el suelo.
             }
-            
 
+            RuedasDelanteras.Update(Mesh.Position,Velocidad,DireccionRuedas);
+            RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
             MoverMesh(); 
         }
 
-        private void Saltar()
-        {
-            aceleracionVertical+=10f*GameModel.ElapsedTime;
-        }
+        
 
         private void Doblar(int lado)
         {
@@ -209,7 +192,8 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         private void MoverMesh()
         {
-            
+            PosicionAnterior = Mesh.Position;
+            RotacionAnterior = Mesh.Rotation;
             //1- rotacion
             
 
@@ -230,8 +214,12 @@ namespace TGC.GroupoMs.Model
             
             rotation.Y += aceleracionVertical;
 
+            
 
             Mesh.move(rotation);
+            //4- las ruedas
+            RuedasDelanteras.Update(Mesh.Position, Velocidad, DireccionRuedas);
+            RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
 
             //camera update
             if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
@@ -266,11 +254,14 @@ namespace TGC.GroupoMs.Model
         }
 
         /// <summary>
-        /// Muevo el mesh y lo rendereo.
+        /// rendereo.
         /// </summary>
         public void Render()
         {
             Mesh.render();
+            RuedasDelanteras.Render();
+            RuedasTraseras.Render();
+            RuedaMainMesh.render();
         }
     }
 }

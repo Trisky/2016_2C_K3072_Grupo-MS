@@ -19,10 +19,7 @@ using TGC.Core;
 namespace TGC.Group.Model
 {
     /// <summary>
-    ///     Ejemplo para implementar el TP.
-    ///     Inicialmente puede ser renombrado o copiado para hacer más ejemplos chicos, en el caso de copiar para que se
-    ///     ejecute el nuevo ejemplo deben cambiar el modelo que instancia GameForm <see cref="Form.GameForm.InitGraphics()" />
-    ///     line 97.
+    ///     TP grupo MS
     /// </summary>
     public class GameModel : TgcExample
     {
@@ -102,17 +99,17 @@ namespace TGC.Group.Model
             CargarScenes();
         }
 
+        /// <summary>
+        /// Usa el gameBuilder para crear los distintos elementos.
+        /// </summary>
+        /// <param name="loader"></param>
         private void AsignarPlayersConMeshes(TgcSceneLoader loader)
         {
+            GameBuilder gb = new GameBuilder(MediaDir, this, loader);
             Autos = new List<Auto>();
 
-            TgcScene hummerScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Meshes\\Vehiculos\\Hummer\\Hummer-TgcScene.xml");
-            TgcMesh hummerMesh = hummerScene.Meshes[0];
-            PlayerMesh = hummerMesh;
-            PlayerMesh.move(0, 5, 0); //muevo el mesh un poco para arriba
-
-            AutoJugador = new Auto("hummer", 100f, 5f, 3f, 20f, 10f, new List<Arma>(), PlayerMesh,this);
-            Autos.Add(this.AutoJugador);
+            AutoJugador = gb.CrearHummer();
+            Autos.Add(AutoJugador);
         }
 
         /// <summary>
@@ -173,8 +170,6 @@ namespace TGC.Group.Model
                 GodModeOn = true;
                 var cameraPosition = new Vector3(23, 39, 113);
                 Camara = new TgcFpsCamera(cameraPosition, Input);
-                //Camara.SetCamera(cameraPosition, Vector3.Empty); solo es para camara estatica
-                
             }
         }
 
@@ -256,9 +251,7 @@ namespace TGC.Group.Model
             if (GodModeOn)
             {
                 DrawText.drawText("GodMode = ON", 0, 40, Color.OrangeRed);
-                
             }
-            
 
             else
             {
