@@ -84,7 +84,7 @@ namespace TGC.Group.Model
             //Mesh = new TgcSceneLoader().loadSceneFromFile(MediaDir + "LogoTGC-TgcScene.xml").Meshes[0];
             //Defino una escala en el modelo logico del mesh que es muy grande.
             //Mesh.Scale = new Vector3(0.5f, 0.5f, 0.5f);
-            
+
             //Camara.
             //Configuro donde esta la posicion de la camara y hacia donde mira.
             //Camara.SetCamera(cameraPosition, lookAt);
@@ -92,7 +92,7 @@ namespace TGC.Group.Model
             //Luego en nuestro juego tendremos que crear una cámara que cambie la matriz de view con variables como movimientos o animaciones de escenas.
 
 
-            
+
             GodModeOn = false; //cuando llamo a toggle lo pone en false
             ToggleGodCamera();
             cargarSkyBox();
@@ -141,13 +141,14 @@ namespace TGC.Group.Model
             SkyBox.Init();
 
             //Modifier para mover el skybox con la posicion de la caja con traslaciones.
-           // Modifiers.addBoolean("moveWhitCamera", "Move Whit Camera", false);
+            // Modifiers.addBoolean("moveWhitCamera", "Move Whit Camera", false);
         }
 
         /// <summary>
         /// Cargar scenes, se llama en init.
         /// </summary>
-        private void CargarScenes() {
+        private void CargarScenes()
+        {
             TgcSceneLoader loader = new TgcSceneLoader();
             this.ScenesLst = new List<TgcScene>();
             this.MapScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
@@ -159,14 +160,16 @@ namespace TGC.Group.Model
         /// <summary>
         /// Activa/desactiva la camara de modo dios, cuando la activo el juego sigue funcionando.
         /// </summary>
-        private void ToggleGodCamera() {
+        private void ToggleGodCamera()
+        {
             if (GodModeOn)
             {
                 GodModeOn = false;
                 Camara = AutoJugador.camaraSeguirEsteAuto();
                 // apagar godmode y  volver al auto
             }
-            else {
+            else
+            {
                 GodModeOn = true;
                 var cameraPosition = new Vector3(23, 39, 113);
                 Camara = new TgcFpsCamera(cameraPosition, Input);
@@ -184,9 +187,9 @@ namespace TGC.Group.Model
             SkyBoxUpdate();
 
             //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
-            if(GodModeOn == false)
-            AutoJugador.Update(Input);
-           
+            if (GodModeOn == false)
+                AutoJugador.Update(Input);
+
             //Capturar Input teclado
             if (Input.keyPressed(Key.F))
             {
@@ -206,15 +209,15 @@ namespace TGC.Group.Model
                     GodModeOn = true; //para q el auto no se mueva
                     MenuBox = new MenuCaja(Input);
                     Camara = MenuBox.CrearCamaraCaja();
-                    
+
                 }
             }
 
-                //Capturar Input Mouse
-           if (Input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_LEFT))
-           {
-               
-           }
+            //Capturar Input Mouse
+            if (Input.buttonUp(TgcD3dInput.MouseButtons.BUTTON_LEFT))
+            {
+
+            }
 
             //godMode Toggle
             if (Input.keyPressed(Key.O))
@@ -234,9 +237,9 @@ namespace TGC.Group.Model
 
             //Se actualiza la posicion del skybox.
             //if ((bool)Modifiers.getValue("moveWhitCamera")) tengo que comentar esto?
-                SkyBox.Center = Camara.Position;
+            SkyBox.Center = Camara.Position;
         }
-        
+
         /// <summary>
         ///     main render method
         /// </summary>
@@ -258,8 +261,32 @@ namespace TGC.Group.Model
                 DrawText.drawText("GodMode = OFF", 0, 40, Color.White);
                 DrawText.drawText("v=", 0, 50, Color.Orange);
                 DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
-                DrawText.drawText("ruedas=", 0, 60, Color.Green);
-                DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 50, 60, Color.Green);
+                //DrawText.drawText("ruedas=", 0, 60, Color.Green);
+                //DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 50, 60, Color.Green);
+
+                DrawText.drawText("angOrientacionMesh=", 0, 70, Color.White);
+                DrawText.drawText((AutoJugador.angOrientacionMesh * 180 / (float)Math.PI).ToString(), 160, 70, Color.White);
+
+                DrawText.drawText("MeshPosition=", 0, 80, Color.White);
+                DrawText.drawText(AutoJugador.Mesh.Position.ToString(), 100, 80, Color.White);
+
+               
+
+                DrawText.drawText("scale mesh = ", 0, 160, Color.White);
+                DrawText.drawText(AutoJugador.Mesh.Scale.ToString(), 100, 160, Color.White);
+
+                DrawText.drawText("obb center = ", 0, 220, Color.White);
+                DrawText.drawText(AutoJugador.obb.Center.ToString(), 100, 220, Color.White);
+
+                DrawText.drawText("bounding position = ", 0, 280, Color.White);
+                DrawText.drawText(AutoJugador.Mesh.BoundingBox.ToString(), 150, 280, Color.White);
+
+                DrawText.drawText("collisionFound = ", 0, 340, Color.White);
+                DrawText.drawText(AutoJugador.collisionFound.ToString(), 150, 340, Color.White);
+
+
+
+
 
             }
 
@@ -275,19 +302,20 @@ namespace TGC.Group.Model
 
             //Cuando tenemos modelos mesh podemos utilizar un método que hace la matriz de transformación estándar.
             //Es útil cuando tenemos transformaciones simples, pero OJO cuando tenemos transformaciones jerárquicas o complicadas.
-           // Mesh.UpdateMeshTransform();
+            // Mesh.UpdateMeshTransform();
             //Render del mesh
-           // Mesh.render();
+            // Mesh.render();
 
             //Render de BoundingBox, muy útil para debug de colisiones.
             if (BoundingBox)
             {
                 Box.BoundingBox.render();
-               // Mesh.BoundingBox.render();
+                // Mesh.BoundingBox.render();
                 AutoJugador.Mesh.BoundingBox.render();
             }
 
             //rendereo el mapa.
+            this.MapScene.BoundingBox.render();
             MapScene.renderAll();
 
             //render de cada auto.
@@ -323,7 +351,7 @@ namespace TGC.Group.Model
             //Dispose de la caja.
             Box.dispose();
             //Dispose del mesh.
-           // Mesh.dispose();
+            // Mesh.dispose();
             SkyBox.dispose();
         }
     }
