@@ -260,6 +260,10 @@ namespace TGC.Group.Model
                 DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
                 DrawText.drawText("ruedas=", 0, 60, Color.Green);
                 DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 50, 60, Color.Green);
+                DrawText.drawText("rotacionMesh=", 0, 80, Color.Orange);
+                DrawText.drawText(AutoJugador.RotacionAnterior.ToString(), 170, 80, Color.Orange);
+                DrawText.drawText(Camara.LookAt.ToString(), 0, 80, Color.Black);
+
 
             }
 

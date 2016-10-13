@@ -15,17 +15,13 @@ namespace TGC.GroupoMs.Model
 {
     public class Auto : MovingObject
     {
-        
-
-        
         public bool EsAutoJugador { get; set; }
         public float DireccionRuedas { get; set; } //negativo para la derecha, positivo para la izquierda
 
-        
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
-        
-        
+        public float anguloOrientacionMesh { get; set; }
+
         public TgcMesh RuedaMainMesh { get; set; }
         //public int MyProperty { get; set; }
 
@@ -34,7 +30,8 @@ namespace TGC.GroupoMs.Model
 
         public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
                     float aceleracion,float desaceleracion,List<Arma> armas,
-                    TgcMesh mesh,GameModel model,Ruedas ruedasAdelante,Ruedas ruedasAtras,TgcMesh ruedaMainMesh)
+                    TgcMesh mesh,GameModel model,Ruedas ruedasAdelante,
+                    Ruedas ruedasAtras,TgcMesh ruedaMainMesh)
         {
             AvanceMax = avanceMaximo;
             ReversaMax = reversaMax;
@@ -51,16 +48,10 @@ namespace TGC.GroupoMs.Model
 
             RuedasTraseras = ruedasAtras;
             RuedasDelanteras = ruedasAdelante;
-            RuedaMainMesh = ruedaMainMesh; 
+            RuedaMainMesh = ruedaMainMesh;
 
-
-
+            anguloOrientacionMesh = 0 * (float)Math.PI / 180;
         }
-        /// <summary>
-        /// hace que la camara siga a este auto.
-        /// </summary>
-        /// <returns></returns>
-        
 
         public void recibirDanio(int cant)
         {
@@ -195,8 +186,31 @@ namespace TGC.GroupoMs.Model
             PosicionAnterior = Mesh.Position;
             RotacionAnterior = Mesh.Rotation;
             //1- rotacion
-            
+            anguloOrientacionMesh = ProcesarDireccionRuedas();
+            Vector3 newPosition = ProcesarTraslacion();
 
+            Mesh.Transform =
+                 //Matrix.Translation(-Mesh.Position.X, -Mesh.Position.Y, -Mesh.Position.Z) *
+                 Matrix.Translation(-Mesh.Position.X, -Mesh.Position.Y, -Mesh.Position.Z) *
+                 Matrix.Translation(Mesh.Position.X, Mesh.Position.Y, Mesh.Position.Z) *
+                 Matrix.RotationY(anguloOrientacionMesh) *
+                 Matrix.Translation(newPosition);
+
+            Mesh.Position = newPosition;
+
+            //Mesh.move(rotation);
+            //4- las ruedas
+            RuedasDelanteras.Update(Mesh.Position, Velocidad, DireccionRuedas);
+            RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
+
+            //camera update
+            if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
+                CamaraAuto.Target = Mesh.Position;
+        }
+
+        [Obsolete]
+        private  void deprecatedMover()
+        {
             //2- traslacion
             Vector3 rotation = Mesh.Rotation; //obtengo la orientacion(rotacion) actual del mesh
             if (rotation == Vector3.Empty) //si la roteacion es nula, seteo una arbitraria
@@ -206,24 +220,26 @@ namespace TGC.GroupoMs.Model
 
             //ahora q tengo el vector "movimiento", es decir, direccion y largo del movimiento deseado, me muevo.
 
-
-
-
-
             //3-saltar TODO
-            
+
             rotation.Y += aceleracionVertical;
+        }
 
-            
+        /// <summary>
+        /// Tiene en cuenta la velocidad y la direccion de las ruedas para ver para que lado y cuanto rotamos el auto.
+        /// </summary>
+        private float ProcesarDireccionRuedas()
+        {
+            return DireccionRuedas*Velocidad*0.1f + anguloOrientacionMesh;
+        }
 
-            Mesh.move(rotation);
-            //4- las ruedas
-            RuedasDelanteras.Update(Mesh.Position, Velocidad, DireccionRuedas);
-            RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
-
-            //camera update
-            if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
-                CamaraAuto.Target = Mesh.Position;
+        private Vector3 ProcesarTraslacion()
+        {
+            Vector3 newPosition = new Vector3();
+            newPosition.X = -calcularDesplazamientoX() + Mesh.Position.X;
+            newPosition.Y = 5;
+            newPosition.Z = -calcularDesplazamientoZ() + Mesh.Position.Z;
+            return newPosition;
         }
 
         /// <summary>
@@ -251,6 +267,17 @@ namespace TGC.GroupoMs.Model
            
             //efecto gravedad? -> TODO
 
+        }
+
+
+        public float calcularDesplazamientoX()
+        {
+            return Velocidad* (float)Math.Sin(anguloOrientacionMesh);// - (90 * Math.PI / 180) );
+        }
+
+        public float calcularDesplazamientoZ()
+        {
+            return Velocidad * (float)Math.Cos(anguloOrientacionMesh);// - (90 * Math.PI / 180)  );
         }
 
         /// <summary>
