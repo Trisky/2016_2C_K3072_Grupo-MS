@@ -27,6 +27,7 @@ namespace TGC.GroupoMs.Model
         public float AvanceMax { get; set; }
         public float ReversaMax { get; set; } //velocidad maxima en reversa.
         public float Aceleracion { get; set; }
+        public float velocidadInstantanea;
 
         public float Vida { get; set; }
         public float VidaMaxima { get; set; }
@@ -35,6 +36,27 @@ namespace TGC.GroupoMs.Model
         public Vector3 RotacionAnterior { get; set; }
 
         public TgcThirdPersonCamera CamaraAuto { get; set; }
+
+
+        //----------- Ariel -------------------
+        public bool huboMovimiento;
+        public bool huboRotacion;
+        public Vector3 pivoteMesh;
+        public Vector3 newPosicion;
+        public float angOrientacionMesh = 270 * (float)Math.PI / 180;
+
+        public Matrix matrixRotacion;
+        public float anguloFinal = 0;
+
+
+        //--------------- salto -----------------
+        public float impulsoSalto = 20f;
+        public bool huboSalto = false;
+        public float velocidadInstantaneaVertical = 0;
+        public float VelocidadVertical = 0;
+        public float longitudSalto = 10;
+        public float posY = 5;
+        public float time = 0;
 
         public void PosicionRollback()
         {
@@ -54,20 +76,45 @@ namespace TGC.GroupoMs.Model
             aceleracionVertical += 10f * GameModel.ElapsedTime;
         }
 
-        public void Acelerar()
+        public void Acelero()
         {
-            if (AvanceMax > Velocidad)
-            {
-                Velocidad += Aceleracion * GameModel.ElapsedTime; //uso elapsed time para que sea time-bound
-            }
+            velocidadInstantanea = Aceleracion / 3 * GameModel.ElapsedTime;
+
+            Velocidad += velocidadInstantanea;
+            if (AvanceMax < Velocidad)
+                Velocidad = AvanceMax;
         }
 
-        public void Frenar() //frenar tambien representa acelerar en reversa :P
+        public void Freno()
         {
-            if (-ReversaMax < Velocidad)
+            velocidadInstantanea = -Desaceleracion / 2 * GameModel.ElapsedTime;
+            Velocidad += velocidadInstantanea;
+            if (ReversaMax < Velocidad)
+                Velocidad = ReversaMax;
+        }
+
+        private void ProcesarInercia()
+        {
+
+            if (Velocidad < 0.01f || Velocidad < 0.01f)
             {
-                Velocidad -= Desaceleracion * GameModel.ElapsedTime;
+                Velocidad = 0f;
+                return;
             }
+
+            if (Velocidad > 0)
+            {
+                Velocidad -= InerciaNegativa * GameModel.ElapsedTime;
+                return;
+            }
+            if (Velocidad < 0)
+            {
+                Velocidad += InerciaNegativa * GameModel.ElapsedTime;
+                return;
+            }
+
+            //efecto gravedad? -> TODO
+
         }
     }
 }

@@ -39,25 +39,7 @@ namespace TGC.GroupoMs.Model
         public Ruedas RuedasTraseras { get; set; }
         public Ruedas RuedasDelanteras { get; set; }
 
-        //----------- Ariel -------------------
-        public bool huboMovimiento;
-        public bool huboRotacion;
-        public Vector3 pivoteMesh;
-        public Vector3 newPosicion;
-        public float angOrientacionMesh = 270 * (float)Math.PI / 180;
-        public float velocidadInstantanea;
-        public Matrix matrixRotacion;
-        public float anguloFinal = 0;
 
-
-        //--------------- salto -----------------
-        public float impulsoSalto = 20f;
-        public bool huboSalto = false;
-        public float velocidadInstantaneaVertical = 0;
-        public float VelocidadVertical = 0;
-        public float longitudSalto = 10;
-        public float posY = 5;
-        public float time = 0;
 
         //----------- Boundig box --------------
         public TgcBoundingOrientedBox obb;
@@ -87,77 +69,11 @@ namespace TGC.GroupoMs.Model
 
             //------------Ariel---------------
             Mesh.AutoTransformEnable = false;
-
-            /*
-            hummerMesh.move(0, 5, 0); // la posicion inicial del hummer
-            hummerMesh.AutoTransformEnable = true;
-            hummerMesh.AutoUpdateBoundingBox = true;
-            hummerMesh.Scale = new Vector3(0.7f, 0.7f, 0.7f);*/
-
-            //----------- Colisiones ------------
-            /*
-            pMax = new Vector3(Mesh.BoundingBox.PMax.X * 0.7f, Mesh.BoundingBox.PMax.Y * 0.7f, Mesh.BoundingBox.PMax.Z * 0.7f);
-            pMin = new Vector3(Mesh.BoundingBox.PMin.X * 0.7f, Mesh.BoundingBox.PMin.Y * 0.7f, Mesh.BoundingBox.PMin.Z * 0.7f);
-            */
-
-
-            obb = TgcBoundingOrientedBox.computeFromAABB(Mesh.BoundingBox);
-            //obb.Extents.
-            escenario = scena;
-
             Mesh.AutoUpdateBoundingBox = false;
 
-
+            obb = TgcBoundingOrientedBox.computeFromAABB(Mesh.BoundingBox);
+            escenario = scena;
         }
-        /// <summary>
-        /// hace que la camara siga a este auto.
-        /// </summary>
-        /// <returns></returns>
-
-        public void Acelero()
-        {
-            velocidadInstantanea = Aceleracion / 3 * GameModel.ElapsedTime;
-
-            Velocidad += velocidadInstantanea;
-            if (AvanceMax < Velocidad)
-                Velocidad = AvanceMax;
-        }
-
-        public void Freno()
-        {
-            velocidadInstantanea = -Desaceleracion / 2 * GameModel.ElapsedTime;
-            Velocidad += velocidadInstantanea;
-            if (ReversaMax < Velocidad)
-                Velocidad = ReversaMax;
-        }
-
-
-
-
-        private void ProcesarInercia()
-        {
-
-            if (Velocidad < 0.01f || Velocidad < 0.01f)
-            {
-                Velocidad = 0f;
-                return;
-            }
-
-            if (Velocidad > 0)
-            {
-                Velocidad -= InerciaNegativa * GameModel.ElapsedTime;
-                return;
-            }
-            if (Velocidad < 0)
-            {
-                Velocidad += InerciaNegativa * GameModel.ElapsedTime;
-                return;
-            }
-
-            //efecto gravedad? -> TODO
-
-        }
-
 
         [Obsolete]
         public void recibirDanio(int cant)
