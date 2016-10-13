@@ -12,7 +12,7 @@ using TGC.Group.Model;
 
 namespace TGC.GroupoMs.Model
 {
-    public class MovingObject 
+    public class MovingObject
     {
         public GameModel GameModel { get; set; }
         public string nombre { get; set; }
@@ -93,7 +93,7 @@ namespace TGC.GroupoMs.Model
                 Velocidad = ReversaMax;
         }
 
-        private void ProcesarInercia()
+        public void ProcesarInercia()
         {
 
             if (Velocidad < 0.01f || Velocidad < 0.01f)

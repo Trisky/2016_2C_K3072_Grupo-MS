@@ -28,7 +28,6 @@ namespace TGC.GroupoMs.Model
         public bool EsAutoJugador { get; set; }
         public float DireccionRuedas { get; set; } //negativo para la derecha, positivo para la izquierda
 
-
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
 
@@ -111,7 +110,7 @@ namespace TGC.GroupoMs.Model
         /// <param name="input"></param>
         public void Update(TgcD3dInput input)
         {
-            huboMovimiento = huboRotacion = false; 
+            huboMovimiento = huboRotacion = false;
             collisionFound = huboSalto = false;
 
             PosicionAnterior = Mesh.Position;
