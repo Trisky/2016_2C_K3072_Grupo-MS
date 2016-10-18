@@ -125,7 +125,7 @@ namespace TGC.Group.Model
             //Configurar color
             //skyBox.Color = Color.OrangeRed;
 
-            var texturesPath = MediaDir + "Texturas\\Quake\\SkyBox1\\";
+            var texturesPath = MediaDir + "SkyBox1\\";
 
             //Configurar las texturas para cada una de las 6 caras
             SkyBox.setFaceTexture(TgcSkyBox.SkyFaces.Up, texturesPath + "phobos_up.jpg");
@@ -151,7 +151,7 @@ namespace TGC.Group.Model
         {
             TgcSceneLoader loader = new TgcSceneLoader();
             this.ScenesLst = new List<TgcScene>();
-            this.MapScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
+            this.MapScene = loader.loadSceneFromFile(MediaDir + "Ciudad\\Ciudad-TgcScene.xml");
 
             AsignarPlayersConMeshes(loader);
             //this.scenesLst.Add();
