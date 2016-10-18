@@ -70,15 +70,15 @@ namespace TGC.Group.Model
 
             //Cargamos una textura, tener en cuenta que cargar una textura significa crear una copia en memoria.
             //Es importante cargar texturas en Init, si se hace en el render loop podemos tener grandes problemas si instanciamos muchas.
-            var texture = TgcTexture.createTexture(pathTexturaCaja);
+            //var texture = TgcTexture.createTexture(pathTexturaCaja);
 
             //Creamos una caja 3D ubicada de dimensiones (5, 10, 5) y la textura como color.
             var size = new Vector3(5, 10, 5);
             //Construimos una caja según los parámetros, por defecto la misma se crea con centro en el origen y se recomienda así para facilitar las transformaciones.
-            Box = TgcBox.fromSize(size, texture);
+            //Box = TgcBox.fromSize(size, texture);
             //Posición donde quiero que este la caja, es común que se utilicen estructuras internas para las transformaciones.
             //Entonces actualizamos la posición lógica, luego podemos utilizar esto en render para posicionar donde corresponda con transformaciones.
-            Box.Position = new Vector3(-25, 0, 0);
+            //Box.Position = new Vector3(-25, 0, 0);
 
             //Cargo el unico mesh que tiene la escena.
             //Mesh = new TgcSceneLoader().loadSceneFromFile(MediaDir + "LogoTGC-TgcScene.xml").Meshes[0];
@@ -270,7 +270,8 @@ namespace TGC.Group.Model
                 DrawText.drawText("MeshPosition=", 0, 80, Color.White);
                 DrawText.drawText(AutoJugador.Mesh.Position.ToString(), 100, 80, Color.White);
 
-               
+                DrawText.drawText("Velocidad=", 0, 150, Color.White);
+                DrawText.drawText(AutoJugador.velocity.ToString(), 100, 150, Color.White);
 
                 DrawText.drawText("scale mesh = ", 0, 160, Color.White);
                 DrawText.drawText(AutoJugador.Mesh.Scale.ToString(), 100, 160, Color.White);
@@ -349,7 +350,7 @@ namespace TGC.Group.Model
         public override void Dispose()
         {
             //Dispose de la caja.
-            Box.dispose();
+            //Box.dispose();
             //Dispose del mesh.
             // Mesh.dispose();
             SkyBox.dispose();
