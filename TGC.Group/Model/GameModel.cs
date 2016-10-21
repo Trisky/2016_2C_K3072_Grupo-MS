@@ -31,11 +31,11 @@ namespace TGC.Group.Model
         public List<Auto> Autos { get; set; } //aca esta el auto del jugador y los autos de la AI
         public Auto AutoJugador { get; set; }
         public TgcScene MapScene { get; set; }
-        public TgcBox CajaScene { get; set; }
+        //public TgcBox CajaScene { get; set; }
         public MenuCaja MenuBox { get; set; }
 
         //Caja que se muestra en el ejemplo.
-        private TgcBox Box { get; set; }
+        //private TgcBox Box { get; set; }
         //Mesh de TgcLogo.
         //private TgcMesh Mesh { get; set; }
         //Boleano para ver si dibujamos el boundingbox
@@ -66,19 +66,16 @@ namespace TGC.Group.Model
 
             //Textura de la carperta Media. Game.Default es un archivo de configuracion (Game.settings) util para poner cosas.
             //Pueden abrir el Game.settings que se ubica dentro de nuestro proyecto para configurar.
-            var pathTexturaCaja = MediaDir + Game.Default.TexturaCaja;
+            //var pathTexturaCaja = MediaDir + Game.Default.TexturaCaja;
 
             //Cargamos una textura, tener en cuenta que cargar una textura significa crear una copia en memoria.
             //Es importante cargar texturas en Init, si se hace en el render loop podemos tener grandes problemas si instanciamos muchas.
-            var texture = TgcTexture.createTexture(pathTexturaCaja);
+            //var texture = TgcTexture.createTexture(pathTexturaCaja);
 
             //Creamos una caja 3D ubicada de dimensiones (5, 10, 5) y la textura como color.
-            var size = new Vector3(5, 10, 5);
+            //var size = new Vector3(5, 10, 5);
             //Construimos una caja según los parámetros, por defecto la misma se crea con centro en el origen y se recomienda así para facilitar las transformaciones.
-            Box = TgcBox.fromSize(size, texture);
-            //Posición donde quiero que este la caja, es común que se utilicen estructuras internas para las transformaciones.
-            //Entonces actualizamos la posición lógica, luego podemos utilizar esto en render para posicionar donde corresponda con transformaciones.
-            Box.Position = new Vector3(-25, 0, 0);
+            
 
             //Cargo el unico mesh que tiene la escena.
             //Mesh = new TgcSceneLoader().loadSceneFromFile(MediaDir + "LogoTGC-TgcScene.xml").Meshes[0];
@@ -151,7 +148,7 @@ namespace TGC.Group.Model
         {
             TgcSceneLoader loader = new TgcSceneLoader();
             this.ScenesLst = new List<TgcScene>();
-            this.MapScene = loader.loadSceneFromFile(MediaDir + "MeshCreator\\Scenes\\Ciudad\\Ciudad-TgcScene.xml");
+            this.MapScene = loader.loadSceneFromFile(MediaDir + "Ciudad\\Ciudad-TgcScene.xml");
 
             AsignarPlayersConMeshes(loader);
             //this.scenesLst.Add();
@@ -297,12 +294,12 @@ namespace TGC.Group.Model
 
             //Siempre antes de renderizar el modelo necesitamos actualizar la matriz de transformacion.
             //Debemos recordar el orden en cual debemos multiplicar las matrices, en caso de tener modelos jerárquicos, tenemos control total.
-            Box.Transform = Matrix.Scaling(Box.Scale) *
-                            Matrix.RotationYawPitchRoll(Box.Rotation.Y, Box.Rotation.X, Box.Rotation.Z) *
-                            Matrix.Translation(Box.Position);
+            //Box.Transform = Matrix.Scaling(Box.Scale) *
+            //                Matrix.RotationYawPitchRoll(Box.Rotation.Y, Box.Rotation.X, Box.Rotation.Z) *
+            //                Matrix.Translation(Box.Position);
             //A modo ejemplo realizamos toda las multiplicaciones, pero aquí solo nos hacia falta la traslación.
             //Finalmente invocamos al render de la caja
-            Box.render();
+            //Box.render();
             //CajaScene.render();
 
             //Cuando tenemos modelos mesh podemos utilizar un método que hace la matriz de transformación estándar.
@@ -314,7 +311,7 @@ namespace TGC.Group.Model
             //Render de BoundingBox, muy útil para debug de colisiones.
             if (BoundingBox)
             {
-                Box.BoundingBox.render();
+                //Box.BoundingBox.render();
                 // Mesh.BoundingBox.render();
                 AutoJugador.Mesh.BoundingBox.render();
             }
@@ -354,7 +351,7 @@ namespace TGC.Group.Model
         public override void Dispose()
         {
             //Dispose de la caja.
-            Box.dispose();
+           // Box.dispose();
             //Dispose del mesh.
             // Mesh.dispose();
             SkyBox.dispose();
