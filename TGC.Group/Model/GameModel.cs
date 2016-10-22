@@ -56,6 +56,7 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Init()
         {
+            
             //Device de DirectX para crear primitivas.
             var d3dDevice = D3DDevice.Instance.Device;
 
@@ -85,10 +86,11 @@ namespace TGC.Group.Model
 
 
 
-            GodModeOn = false; //cuando llamo a toggle lo pone en false
-            ToggleGodCamera();
+            GodModeOn = true; //cuando llamo a toggle lo pone en false
+            
             cargarSkyBox();
             CargarScenes();
+            ToggleGodCamera();
         }
 
         /// <summary>

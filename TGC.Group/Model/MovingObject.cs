@@ -61,6 +61,7 @@ namespace TGC.GroupoMs.Model
         {
             Mesh.Position = PosicionAnterior;
             Mesh.Rotation = RotacionAnterior;
+            Velocidad = -Velocidad * 0.1f;
         }
 
         public TgcCamera camaraSeguirEsteAuto()
@@ -77,8 +78,6 @@ namespace TGC.GroupoMs.Model
 
         public void Acelero()
         {
-            
-
             Velocidad += Aceleracion / 3 * GameModel.ElapsedTime; ;
             if (AvanceMax < Velocidad)
                 Velocidad = AvanceMax;

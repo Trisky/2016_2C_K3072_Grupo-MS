@@ -286,7 +286,8 @@ namespace TGC.GroupoMs.Model
             
             if (collisionFound)
             {
-                obb.setRenderColor(Color.Red);          
+                obb.setRenderColor(Color.Red);
+                PosicionRollback();          
             }
             else
             {
