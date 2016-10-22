@@ -34,11 +34,6 @@ namespace TGC.Group.Model
         //public TgcBox CajaScene { get; set; }
         public MenuCaja MenuBox { get; set; }
 
-        //Caja que se muestra en el ejemplo.
-        //private TgcBox Box { get; set; }
-        //Mesh de TgcLogo.
-        //private TgcMesh Mesh { get; set; }
-        //Boleano para ver si dibujamos el boundingbox
         private bool BoundingBox { get; set; }
 
         /// <summary>
@@ -283,11 +278,6 @@ namespace TGC.Group.Model
 
                 DrawText.drawText("collisionFound = ", 0, 400, Color.White);
                 DrawText.drawText(AutoJugador.obb.ToString(), 150, 400, Color.White);
-
-               
-
-
-
 
 
             }

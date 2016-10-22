@@ -48,15 +48,15 @@ namespace TGC.GroupoMs.Model
 
 
         public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
-                    float aceleracion, float desaceleracion, List<Arma> armas,
-                    TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh, TgcScene scena)
+                    float aceleracion, float desaceleracion,
+                    TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh)
         {
             AvanceMax = avanceMaximo;
-            ReversaMax = reversaMax;
+            ReversaMax = -reversaMax;
             Desaceleracion = desaceleracion;
             InerciaNegativa = 1f;
             DireccionRuedas = 0f;
-            Armas = armas;
+            Armas = new List <Arma>();
             aceleracionVertical = 0f;
 
             Mesh = mesh;
@@ -77,7 +77,7 @@ namespace TGC.GroupoMs.Model
             var yMax = Mesh.BoundingBox.PMax.Y;
             obbPosY = (yMax + yMin) / 2 + yMin;
 
-            escenario = scena;
+            escenario = model.MapScene;
         }
 
         [Obsolete]
@@ -140,13 +140,13 @@ namespace TGC.GroupoMs.Model
             //3 izquierda TODO//girar ruedas
             if (input.keyDown(Key.A))
             {
-                Doblar(1);
+                DoblarRuedas(1);
             }
 
             //4 derecha TODO //girar ruedas
             if (input.keyDown(Key.D))
             {
-                Doblar(-1);
+                DoblarRuedas(-1);
             }
 
             if (input.keyDown(Key.F))
@@ -190,21 +190,24 @@ namespace TGC.GroupoMs.Model
             ProcesarInercia();
             MoverMesh();
 
-
         }
 
-        private void Doblar(int lado)
+        private void DoblarRuedas(int lado)
+        {  
+            DireccionRuedas = +lado * 0.4f;
+            Doblar();
+        }
+        private void Doblar()
         {
-            if (Velocidad < 0) lado = lado * -1; //para que doble bien en reversa
-            // doblar a la derecha es antihorario
-
+            float lado = DireccionRuedas;
+            lado = lado * Velocidad;
             angOrientacionMesh += lado * 1f * GameModel.ElapsedTime;
+            //ahora ya tengo para el lado en el que voy a girar y la intensidad del giro, entonces giro el auto.
 
             CamaraAuto.rotateY(-lado * 1f * GameModel.ElapsedTime);
             anguloFinal = anguloFinal - lado * 1f * GameModel.ElapsedTime;
             matrixRotacion = Matrix.RotationY(anguloFinal);
             obb.rotate(new Vector3(0, -lado * 1f * GameModel.ElapsedTime, 0));
-
         }
 
         private void EnderezarRuedas()
@@ -212,20 +215,9 @@ namespace TGC.GroupoMs.Model
             if (DireccionRuedas < 0.01 || DireccionRuedas > 0.01)
                 DireccionRuedas = 0f;
             if (DireccionRuedas > 0)
-                DireccionRuedas -= 6f * GameModel.ElapsedTime;
+                DireccionRuedas -= 2f * GameModel.ElapsedTime;
             if (DireccionRuedas < 0)
-                DireccionRuedas += 6f * GameModel.ElapsedTime;
-
-        }
-
-        /// <summary>
-        /// Indica al mesh su nueva posicion y/o rotacion -- TODO
-        /// </summary>
-        /// 
-        public float calcularDX()
-        {
-            //return velocidadInstantanea * (float)Math.Cos(angOrientacionMesh);
-            return Velocidad * (float)Math.Cos(angOrientacionMesh);
+                DireccionRuedas += 2f * GameModel.ElapsedTime;
         }
 
         public float calcularDY()
@@ -236,7 +228,6 @@ namespace TGC.GroupoMs.Model
                 //return Mesh.Position.Y + velocidadInstantaneaVertical;
                 time += GameModel.ElapsedTime;
                 return posY += 30f * time - 45f * time * time;
-
             }
             else
             {
@@ -244,15 +235,9 @@ namespace TGC.GroupoMs.Model
                 posY = 5;
                 return Mesh.Position.Y - Mesh.Position.Y + 5;
             }
-
         }
 
-        public float calcularDZ()
-        {
-            //return velocidadInstantanea * (float)Math.Sin(angOrientacionMesh);
-            return Velocidad * (float)Math.Sin(angOrientacionMesh);
-        }
-
+        
 
         private void MoverMesh()
         {
@@ -273,8 +258,6 @@ namespace TGC.GroupoMs.Model
                 //
                 //mesh.BoundingBox.render();
                 //Ejecutar algoritmo de detección de colisiones
-                
-                
                 if (collisionResult)
                 {
                     obb.setRenderColor(Color.Red);
@@ -283,8 +266,6 @@ namespace TGC.GroupoMs.Model
                 {
                     obb.setRenderColor(Color.Yellow);
                 }
-                
-                
                 //Hubo colisión con un objeto. Guardar resultado y abortar loop.
                 //if (collisionResult)*/
 
@@ -292,11 +273,9 @@ namespace TGC.GroupoMs.Model
 
                 //var mainMeshBoundingBox = Mesh.BoundingBox;
                 var sceneMeshBoundingBox = mesh.BoundingBox;
-
                 var collisionResult = TgcCollisionUtils.testObbAABB(obb, sceneMeshBoundingBox);
 
                 //TgcCollisionUtils.
-                
 
                 if (collisionResult)
                 {
@@ -305,11 +284,9 @@ namespace TGC.GroupoMs.Model
                 }
             }
             
-
             if (collisionFound)
             {
-                obb.setRenderColor(Color.Red);
-                
+                obb.setRenderColor(Color.Red);          
             }
             else
             {
@@ -356,14 +333,10 @@ namespace TGC.GroupoMs.Model
             if(pintarObb)
                 obb.render();
 
-            
-            
             foreach (var mesh in escenario.Meshes)
             {
-
                 mesh.BoundingBox.render();
             }
-            
         }
     }
 }

@@ -32,23 +32,13 @@ namespace TGC.GroupoMs.Model
             rueda.move(0, -25, 0);
             TgcScene hummerScene = Loader.loadSceneFromFile(MediaDir + "Hummer\\Hummer-TgcScene.xml");
             TgcMesh hummerMesh = hummerScene.Meshes[0];
-            /*
-            rueda.AutoTransformEnable = true;
-            rueda.AutoUpdateBoundingBox = true;
-            */
-            /*
-            hummerMesh.move(0, 5, 0); // la posicion inicial del hummer
-            hummerMesh.AutoTransformEnable = true;
-            hummerMesh.AutoUpdateBoundingBox = true;
-            hummerMesh.Scale = new Vector3(0.7f, 0.7f, 0.7f);
-            */
 
             Ruedas ruedasAdelante = new Ruedas(rueda, new Vector3(60, 3, -40), new Vector3(60, 3, 40), true, scale);
             Ruedas ruedasAtras = new Ruedas(rueda, new Vector3(-60, 3, -40), new Vector3(-60, 3, 40), false, scale);
 
             return new Auto("hummer", 100f, 5f, 3f, 5f, 2f,
-                            new List<Arma>(), hummerMesh, Gm,
-                            ruedasAdelante, ruedasAtras, rueda, MapScene);
+                            hummerMesh, Gm,
+                            ruedasAdelante, ruedasAtras, rueda);
         }
 
         public TgcMesh CrearRueda(float escala)

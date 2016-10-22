@@ -27,7 +27,6 @@ namespace TGC.GroupoMs.Model
         public float AvanceMax { get; set; }
         public float ReversaMax { get; set; } //velocidad maxima en reversa.
         public float Aceleracion { get; set; }
-        public float velocidadInstantanea;
 
         public float Vida { get; set; }
         public float VidaMaxima { get; set; }
@@ -78,25 +77,24 @@ namespace TGC.GroupoMs.Model
 
         public void Acelero()
         {
-            velocidadInstantanea = Aceleracion / 3 * GameModel.ElapsedTime;
+            
 
-            Velocidad += velocidadInstantanea;
+            Velocidad += Aceleracion / 3 * GameModel.ElapsedTime; ;
             if (AvanceMax < Velocidad)
                 Velocidad = AvanceMax;
         }
 
         public void Freno()
         {
-            velocidadInstantanea = -Desaceleracion / 2 * GameModel.ElapsedTime;
-            Velocidad += velocidadInstantanea;
-            if (ReversaMax < Velocidad)
+            Velocidad += -Desaceleracion / 2 * GameModel.ElapsedTime;
+            if (ReversaMax > Velocidad)
                 Velocidad = ReversaMax;
         }
 
         public void ProcesarInercia()
         {
 
-            if (Velocidad < 0.01f || Velocidad < 0.01f)
+            if ((Velocidad < 0.01f && Velocidad > 0f) || (Velocidad > -0.01f && Velocidad < 0f)) //si velocidad esta entre +-0.01f
             {
                 Velocidad = 0f;
                 return;
@@ -109,12 +107,22 @@ namespace TGC.GroupoMs.Model
             }
             if (Velocidad < 0)
             {
-                Velocidad += InerciaNegativa * GameModel.ElapsedTime;
+                Velocidad += 0.8f*InerciaNegativa * GameModel.ElapsedTime;
                 return;
             }
 
             //efecto gravedad? -> TODO
 
+        }
+        public float calcularDX()
+        {
+            //return velocidadInstantanea * (float)Math.Cos(angOrientacionMesh);
+            return Velocidad * (float)Math.Cos(angOrientacionMesh);
+        }
+        public float calcularDZ()
+        {
+            //return velocidadInstantanea * (float)Math.Sin(angOrientacionMesh);
+            return Velocidad * (float)Math.Sin(angOrientacionMesh);
         }
     }
 }
