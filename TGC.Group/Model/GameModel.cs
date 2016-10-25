@@ -189,6 +189,10 @@ namespace TGC.Group.Model
             {
                 BoundingBox = !BoundingBox;
             }
+            if (Input.keyPressed(Key.L))
+            {
+                AutoJugador.RenderLuces = !AutoJugador.RenderLuces;
+            }
 
             // Ir al menu?
             if (Input.keyPressed(Key.P))

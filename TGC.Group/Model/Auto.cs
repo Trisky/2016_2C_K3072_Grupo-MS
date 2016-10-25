@@ -23,7 +23,7 @@ namespace TGC.GroupoMs.Model
     {
 
 
-
+        
         public bool pintarObb;
         //public bool collisionResult;
         public float obbPosY = 0;
@@ -39,6 +39,8 @@ namespace TGC.GroupoMs.Model
 
         public Ruedas RuedasTraseras { get; set; }
         public Ruedas RuedasDelanteras { get; set; }
+        public LucesAuto Luces { get; set; }
+        public bool RenderLuces { get;  set; }
 
 
 
@@ -78,6 +80,10 @@ namespace TGC.GroupoMs.Model
             obbPosY = (yMax + yMin) / 2 + yMin;
 
             escenario = model.MapScene;
+
+            //--------luces
+            Luces = new LucesAuto(escenario,Mesh, ruedasAdelante, ruedasAtras,CamaraAuto);
+            RenderLuces = false;
         }
 
         [Obsolete]
@@ -191,6 +197,8 @@ namespace TGC.GroupoMs.Model
             //RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
             ProcesarInercia();
             MoverMesh();
+
+            if(RenderLuces) Luces.Update();
 
         }
 
@@ -311,6 +319,7 @@ namespace TGC.GroupoMs.Model
             RuedasDelanteras.Render();
             RuedasTraseras.Render();
             RuedaMainMesh.render();
+            if(RenderLuces) Luces.Render();
            
             //escenario.BoundingBox.render();
 
