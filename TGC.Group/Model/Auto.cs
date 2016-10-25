@@ -23,8 +23,8 @@ namespace TGC.GroupoMs.Model
     {
 
 
-        public bool collisionFound;
-        public bool pintarObb = false;
+
+        public bool pintarObb;
         //public bool collisionResult;
         public float obbPosY = 0;
         public bool EsAutoJugador { get; set; }
@@ -117,7 +117,7 @@ namespace TGC.GroupoMs.Model
         public void Update(TgcD3dInput input)
         {
             huboMovimiento = huboRotacion = false;
-            collisionFound = huboSalto = false;
+            bool collisionFound = huboSalto = false;
             //pintarObb = false;
 
             PosicionAnterior = Mesh.Position;
@@ -126,8 +126,11 @@ namespace TGC.GroupoMs.Model
             //1 acelerar
             if (input.keyDown(Key.W))
             {
-                Acelero();
+                Acelero(1);
                 huboMovimiento = true;
+
+                if (input.keyDown(Key.LeftShift))
+                    Acelero(0.5f); //turbo!
             }
 
             //2 frenar, reversa
@@ -176,7 +179,6 @@ namespace TGC.GroupoMs.Model
             //8 saltar
             if (input.keyDown(Key.Space) && (Mesh.Position.Y == 5))
             {
-
                 huboSalto = true;
             }
 
@@ -246,72 +248,21 @@ namespace TGC.GroupoMs.Model
             //4- las ruedas
             RuedasDelanteras.Update(Mesh.Position, Velocidad, DireccionRuedas);
             RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
-            //---- colisiones---
+
+            //??
             obb.Center = new Vector3(Mesh.Position.X + calcularDX(), obbPosY + 0 + calcularDY(), Mesh.Position.Z + calcularDZ());
 
-            collisionFound = false;
-
-            foreach (var mesh in escenario.Meshes)
-            {
-                /*
-                //Los dos BoundingBox que vamos a testear
-                //
-                //mesh.BoundingBox.render();
-                //Ejecutar algoritmo de detección de colisiones
-                if (collisionResult)
-                {
-                    obb.setRenderColor(Color.Red);
-                }
-                else
-                {
-                    obb.setRenderColor(Color.Yellow);
-                }
-                //Hubo colisión con un objeto. Guardar resultado y abortar loop.
-                //if (collisionResult)*/
-
-                //if(TgcCollisionUtils.testObbAABB(obb, mesh.BoundingBox))
-
-                //var mainMeshBoundingBox = Mesh.BoundingBox;
-                var sceneMeshBoundingBox = mesh.BoundingBox;
-                var collisionResult = TgcCollisionUtils.testObbAABB(obb, sceneMeshBoundingBox);
-
-                //TgcCollisionUtils.
-
-                if (collisionResult)
-                {
-                    collisionFound = true;
-                    break;
-                }
-            }
-            
-            if (collisionFound)
-            {
-                obb.setRenderColor(Color.Red);
-                PosicionRollback();          
-            }
-            else
-            {
-                obb.setRenderColor(Color.Yellow);
-            }
-            /*
-            if (collisionFound)
-            {
-                // Mesh.Position = originalPos;
-                
-                //RuedasDelanteras.Update2(matrixRotacion, Matrix.Translation(newPosicion), newPosicion);
-                //RuedasTraseras.Update2(matrixRotacion, Matrix.Translation(newPosicion), newPosicion);
-            }
-            */
+            //5 ---- colisiones---
+            ProcesarColisiones();
+           
+            //6 - me muevo
             var m = matrixRotacion *
                 Matrix.Translation(newPosicion);
 
-            Mesh.Transform = m;
-
-            //Mesh.BoundingBox.transform(m);
+            Mesh.Transform = m; //Mesh.BoundingBox.transform(m);
 
             RuedasDelanteras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
             RuedasTraseras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
-
 
             Mesh.Position = newPosicion;
 
@@ -319,6 +270,38 @@ namespace TGC.GroupoMs.Model
             if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
                 CamaraAuto.Target = Mesh.Position;
         }
+
+        private void ProcesarColisiones()
+        {
+            bool collisionFound = false;
+            var autoBB = Mesh.BoundingBox;
+            foreach (var sceneMesh in escenario.Meshes)
+            {
+                var sceneMeshBoundingBox = sceneMesh.BoundingBox;
+                //var collisionResult = TgcCollisionUtils.testObbAABB(obb, sceneMeshBoundingBox);
+
+                //1- me fijo si el bb de este mesh choca con el del auto
+                var collisionResult = TgcCollisionUtils.classifyBoxBox(autoBB, sceneMeshBoundingBox);
+
+                //2 -si lo hizo, salgo del foreach.
+                if (collisionResult != TgcCollisionUtils.BoxBoxResult.Afuera)
+                {
+                    collisionFound = true;
+                    break;
+                }
+            }
+            //3 - si chocó, pongo el bounding box en rojo (apretar F para ver el bb).
+            if (collisionFound)
+            {
+                obb.setRenderColor(Color.Red);
+                //PosicionRollback();
+            }
+            else
+            {
+                obb.setRenderColor(Color.Yellow);
+            }
+        }
+
         /// <summary>
         /// rendereo.
         /// </summary>

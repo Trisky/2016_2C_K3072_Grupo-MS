@@ -275,8 +275,8 @@ namespace TGC.Group.Model
                 DrawText.drawText("bounding position = ", 0, 280, Color.White);
                 DrawText.drawText(AutoJugador.Mesh.BoundingBox.ToString(), 150, 280, Color.White);
 
-                DrawText.drawText("collisionFound = ", 0, 340, Color.White);
-                DrawText.drawText(AutoJugador.collisionFound.ToString(), 150, 340, Color.White);
+                //DrawText.drawText("collisionFound = ", 0, 340, Color.White);
+                //DrawText.drawText(AutoJugador.collisionFound.ToString(), 150, 340, Color.White);
 
                 DrawText.drawText("collisionFound = ", 0, 400, Color.White);
                 DrawText.drawText(AutoJugador.obb.ToString(), 150, 400, Color.White);

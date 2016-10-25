@@ -76,9 +76,9 @@ namespace TGC.GroupoMs.Model
             aceleracionVertical += 10f * GameModel.ElapsedTime;
         }
 
-        public void Acelero()
+        public void Acelero(float valor)
         {
-            Velocidad += Aceleracion / 3 * GameModel.ElapsedTime; ;
+            Velocidad += valor*Aceleracion / 3 * GameModel.ElapsedTime; ;
             if (AvanceMax < Velocidad)
                 Velocidad = AvanceMax;
         }
