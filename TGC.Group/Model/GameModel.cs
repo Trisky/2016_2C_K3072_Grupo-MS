@@ -159,7 +159,7 @@ namespace TGC.Group.Model
             if (GodModeOn)
             {
                 GodModeOn = false;
-                Camara = AutoJugador.camaraSeguirEsteAuto();
+                Camara = AutoJugador.camaraSeguirEsteAuto(this);
                 // apagar godmode y  volver al auto
             }
             else
@@ -200,7 +200,7 @@ namespace TGC.Group.Model
                 if (MenuBox != null)
                 {
                     GodModeOn = false;
-                    Camara = AutoJugador.camaraSeguirEsteAuto();
+                    Camara = AutoJugador.camaraSeguirEsteAuto(this);
                 }
                 else
                 {
@@ -310,10 +310,10 @@ namespace TGC.Group.Model
                 //Box.BoundingBox.render();
                 // Mesh.BoundingBox.render();
                 AutoJugador.Mesh.BoundingBox.render();
+                MapScene.BoundingBox.render();
             }
 
             //rendereo el mapa.
-            this.MapScene.BoundingBox.render();
             MapScene.renderAll();
 
             //render de cada auto.

@@ -57,6 +57,9 @@ namespace TGC.GroupoMs.Model
         public float posY = 5;
         public float time = 0;
 
+
+        public MotionBlur motionBlur;
+
         public void PosicionRollback()
         {
             Mesh.Position = PosicionAnterior;
@@ -64,10 +67,11 @@ namespace TGC.GroupoMs.Model
             Velocidad = -Velocidad * 0.1f;
         }
 
-        public TgcCamera camaraSeguirEsteAuto()
+        public TgcCamera camaraSeguirEsteAuto(GameModel model)
         {
             Vector3 v = Mesh.Position;
             CamaraAuto = new TgcThirdPersonCamera(v, 200, 300);
+            //motionBlur = new MotionBlur(CamaraAuto, model);
             return CamaraAuto;
         }
 

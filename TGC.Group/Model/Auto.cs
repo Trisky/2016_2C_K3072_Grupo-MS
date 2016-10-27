@@ -47,6 +47,10 @@ namespace TGC.GroupoMs.Model
         //----------- Boundig box --------------
         public TgcBoundingOrientedBox obb;
         public TgcScene escenario;
+        private bool fixEjecutado;
+
+        //--
+
 
 
         public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
@@ -60,7 +64,7 @@ namespace TGC.GroupoMs.Model
             DireccionRuedas = 0f;
             Armas = new List <Arma>();
             aceleracionVertical = 0f;
-
+            Velocidad = 0f;
             Mesh = mesh;
             Aceleracion = aceleracion;
 
@@ -84,6 +88,18 @@ namespace TGC.GroupoMs.Model
             //--------luces
             Luces = new LucesAuto(escenario,Mesh, ruedasAdelante, ruedasAtras,CamaraAuto);
             RenderLuces = false;
+
+            EsAutoJugador = true;            
+            fixEjecutado = false; //para arreglar el temita de que el auto no aparece. 
+        }
+
+        private void BugFixAutoNoAparece()
+        {
+            if (fixEjecutado ) return;
+            DireccionRuedas = 1f;
+            Doblar();
+            fixEjecutado = true;
+
         }
 
         [Obsolete]
@@ -122,6 +138,10 @@ namespace TGC.GroupoMs.Model
         /// <param name="input"></param>
         public void Update(TgcD3dInput input)
         {
+
+
+            BugFixAutoNoAparece();
+
             huboMovimiento = huboRotacion = false;
             bool collisionFound = huboSalto = false;
             //pintarObb = false;
@@ -199,6 +219,7 @@ namespace TGC.GroupoMs.Model
             MoverMesh();
 
             if(RenderLuces) Luces.Update();
+            if(motionBlur !=null ) motionBlur.Update(0f);
 
         }
 
@@ -320,10 +341,11 @@ namespace TGC.GroupoMs.Model
             RuedasTraseras.Render();
             RuedaMainMesh.render();
             if(RenderLuces) Luces.Render();
-           
+            if(motionBlur !=null ) motionBlur.Render();
+
             //escenario.BoundingBox.render();
 
-            if(pintarObb)
+            if (pintarObb)
                 obb.render();
 
             foreach (var mesh in escenario.Meshes)
