@@ -92,6 +92,7 @@
     </Compile>
     <Compile Include="Model\Arma.cs" />
     <Compile Include="Model\Auto.cs" />
+    <Compile Include="Model\efectos\HumoEscape.cs" />
     <Compile Include="Model\GameBuilder.cs" />
     <Compile Include="Model\GameModel.cs" />
     <Compile Include="Model\efectos\LucesAuto.cs" />

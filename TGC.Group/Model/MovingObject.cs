@@ -9,17 +9,22 @@ using TGC.Core.Example;
 using TGC.GrupoMs.Camara;
 using TGC.Core.Camara;
 using TGC.Group.Model;
+using TGC.GroupoMs.Model.efectos;
+using TGC.Core.Geometry;
+using System.Drawing;
 
 namespace TGC.GroupoMs.Model
 {
     public class MovingObject
     {
+        public bool fixEjecutado;
         public GameModel GameModel { get; set; }
         public string nombre { get; set; }
         public float Velocidad { get; set; } //velocidad actual, cantidad que se mueve por frame.
         public TgcMesh Mesh { get; set; }
         public float InerciaNegativa { get; set; } // cte de cada uno
         public Vector3 direccionMovimiento { get; set; } //hacia donde apunta.
+        public float DireccionRuedas { get; set; } //negativo para la derecha, positivo para la izquierda
 
         public float aceleracionVertical;
         public float Desaceleracion { get; set; }
@@ -59,6 +64,8 @@ namespace TGC.GroupoMs.Model
 
 
         public MotionBlur motionBlur;
+        public TgcBox humoBox;
+        public HumoEscape humoEscape;
 
         public void PosicionRollback()
         {
@@ -82,7 +89,7 @@ namespace TGC.GroupoMs.Model
 
         public void Acelero(float valor)
         {
-            Velocidad += valor*Aceleracion / 3 * GameModel.ElapsedTime; ;
+            Velocidad += valor * Aceleracion / 3 * GameModel.ElapsedTime; ;
             if (AvanceMax < Velocidad)
                 Velocidad = AvanceMax;
         }
@@ -110,12 +117,9 @@ namespace TGC.GroupoMs.Model
             }
             if (Velocidad < 0)
             {
-                Velocidad += 0.8f*InerciaNegativa * GameModel.ElapsedTime;
+                Velocidad += 0.8f * InerciaNegativa * GameModel.ElapsedTime;
                 return;
             }
-
-            //efecto gravedad? -> TODO
-
         }
         public float calcularDX()
         {
@@ -126,6 +130,38 @@ namespace TGC.GroupoMs.Model
         {
             //return velocidadInstantanea * (float)Math.Sin(angOrientacionMesh);
             return Velocidad * (float)Math.Sin(angOrientacionMesh);
+        }
+
+        public void CrearHumoCanioDeEscape(GameModel model)
+        {
+            humoBox = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10, 10, 10), Color.Blue);
+            humoEscape = new HumoEscape(model);
+        }
+
+        public float calcularDY()
+        {
+            if (huboSalto || Mesh.Position.Y > 5)
+            {
+                //velocidadInstantaneaVertical = 5 + 100f * GameModel.ElapsedTime - 400 * GameModel.ElapsedTime * GameModel.ElapsedTime;
+                //return Mesh.Position.Y + velocidadInstantaneaVertical;
+                time += GameModel.ElapsedTime;
+                return posY += 30f * time - 45f * time * time;
+            }
+            else
+            {
+                time = 0;
+                posY = 5;
+                return Mesh.Position.Y - Mesh.Position.Y + 5;
+            }
+        }
+        public  void EnderezarRuedas()
+        {
+            if (DireccionRuedas < 0.01 || DireccionRuedas > 0.01)
+                DireccionRuedas = 0f;
+            if (DireccionRuedas > 0)
+                DireccionRuedas -= 2f * GameModel.ElapsedTime;
+            if (DireccionRuedas < 0)
+                DireccionRuedas += 2f * GameModel.ElapsedTime;
         }
     }
 }

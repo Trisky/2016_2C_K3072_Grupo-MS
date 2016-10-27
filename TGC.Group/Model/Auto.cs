@@ -15,6 +15,7 @@ using TGC.Core.BoundingVolumes;
 using TGC.Core.Geometry;
 using TGC.Core.Collision;
 using System.Drawing;
+using TGC.GroupoMs.Model.efectos;
 //using TGC.Core.SceneLoader;
 
 namespace TGC.GroupoMs.Model
@@ -28,7 +29,7 @@ namespace TGC.GroupoMs.Model
         //public bool collisionResult;
         public float obbPosY = 0;
         public bool EsAutoJugador { get; set; }
-        public float DireccionRuedas { get; set; } //negativo para la derecha, positivo para la izquierda
+
 
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
@@ -47,7 +48,7 @@ namespace TGC.GroupoMs.Model
         //----------- Boundig box --------------
         public TgcBoundingOrientedBox obb;
         public TgcScene escenario;
-        private bool fixEjecutado;
+        private bool nitroActivado;
 
         //--
 
@@ -57,6 +58,7 @@ namespace TGC.GroupoMs.Model
                     float aceleracion, float desaceleracion,
                     TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh)
         {
+            CrearHumoCanioDeEscape(model);
             AvanceMax = avanceMaximo;
             ReversaMax = -reversaMax;
             Desaceleracion = desaceleracion;
@@ -93,14 +95,7 @@ namespace TGC.GroupoMs.Model
             fixEjecutado = false; //para arreglar el temita de que el auto no aparece. 
         }
 
-        private void BugFixAutoNoAparece()
-        {
-            if (fixEjecutado ) return;
-            DireccionRuedas = 1f;
-            Doblar();
-            fixEjecutado = true;
-
-        }
+        
 
         [Obsolete]
         public void recibirDanio(int cant)
@@ -138,7 +133,7 @@ namespace TGC.GroupoMs.Model
         /// <param name="input"></param>
         public void Update(TgcD3dInput input)
         {
-
+            nitroActivado = false;
 
             BugFixAutoNoAparece();
 
@@ -156,7 +151,12 @@ namespace TGC.GroupoMs.Model
                 huboMovimiento = true;
 
                 if (input.keyDown(Key.LeftShift))
+                {
                     Acelero(0.5f); //turbo!
+                    nitroActivado = true;
+
+                }
+                    
             }
 
             //2 frenar, reversa
@@ -220,9 +220,17 @@ namespace TGC.GroupoMs.Model
 
             if(RenderLuces) Luces.Update();
             if(motionBlur !=null ) motionBlur.Update(0f);
+            
 
+            
         }
-
+        public void BugFixAutoNoAparece()
+        {
+            if (fixEjecutado) return;
+            DireccionRuedas = 1f;
+            Doblar();
+            fixEjecutado = true;
+        }
         private void DoblarRuedas(int lado)
         {  
             DireccionRuedas = +lado * 0.4f;
@@ -241,35 +249,6 @@ namespace TGC.GroupoMs.Model
             obb.rotate(new Vector3(0, -lado * 1f * GameModel.ElapsedTime, 0));
         }
 
-        private void EnderezarRuedas()
-        {
-            if (DireccionRuedas < 0.01 || DireccionRuedas > 0.01)
-                DireccionRuedas = 0f;
-            if (DireccionRuedas > 0)
-                DireccionRuedas -= 2f * GameModel.ElapsedTime;
-            if (DireccionRuedas < 0)
-                DireccionRuedas += 2f * GameModel.ElapsedTime;
-        }
-
-        public float calcularDY()
-        {
-            if (huboSalto || Mesh.Position.Y > 5)
-            {
-                //velocidadInstantaneaVertical = 5 + 100f * GameModel.ElapsedTime - 400 * GameModel.ElapsedTime * GameModel.ElapsedTime;
-                //return Mesh.Position.Y + velocidadInstantaneaVertical;
-                time += GameModel.ElapsedTime;
-                return posY += 30f * time - 45f * time * time;
-            }
-            else
-            {
-                time = 0;
-                posY = 5;
-                return Mesh.Position.Y - Mesh.Position.Y + 5;
-            }
-        }
-
-        
-
         private void MoverMesh()
         {
             newPosicion = new Vector3(Mesh.Position.X + calcularDX(), calcularDY(), Mesh.Position.Z + calcularDZ());
@@ -281,8 +260,8 @@ namespace TGC.GroupoMs.Model
             //??
             obb.Center = new Vector3(Mesh.Position.X + calcularDX(), obbPosY + 0 + calcularDY(), Mesh.Position.Z + calcularDZ());
 
-            //5 ---- colisiones---
-            ProcesarColisiones();
+            
+            
            
             //6 - me muevo
             var m = matrixRotacion *
@@ -294,10 +273,15 @@ namespace TGC.GroupoMs.Model
             RuedasTraseras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
 
             Mesh.Position = newPosicion;
+            humoEscape.Update(newPosicion, Mesh.Rotation);
 
             //camera update
             if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
                 CamaraAuto.Target = Mesh.Position;
+            
+            
+            //7 ---- colisiones---
+            ProcesarColisiones();
         }
 
         private void ProcesarColisiones()
@@ -352,6 +336,7 @@ namespace TGC.GroupoMs.Model
             {
                 mesh.BoundingBox.render();
             }
+            humoEscape.Render(nitroActivado);
         }
     }
 }
