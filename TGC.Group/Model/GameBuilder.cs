@@ -27,14 +27,17 @@ namespace TGC.GroupoMs.Model
 
         public Auto CrearHummer(TgcScene MapScene)
         {
-            float scale = 0.1f;
-            TgcMesh rueda = CrearRueda(scale);
+            float scaleRuedas = 1f;
+            TgcMesh rueda = CrearRueda(1f);
             rueda.move(0, -25, 0);
             TgcScene hummerScene = Loader.loadSceneFromFile(MediaDir + "Hummer\\Hummer-TgcScene.xml");
             TgcMesh hummerMesh = hummerScene.Meshes[0];
+            hummerMesh.Scale = new Vector3(0.4f,0.4f,0.4f);
 
-            Ruedas ruedasAdelante = new Ruedas(rueda, new Vector3(60, 3, -40), new Vector3(60, 3, 40), true, scale);
-            Ruedas ruedasAtras = new Ruedas(rueda, new Vector3(-60, 3, -40), new Vector3(-60, 3, 40), false, scale);
+            //para las ruedas el offset es (ancho,altura,largo)
+            float y = 13f;
+            Ruedas  ruedasAtras   = new Ruedas(rueda, new Vector3(40, y, 54), new Vector3(-40, y, 54), true, scaleRuedas);
+            Ruedas ruedasAdelante = new Ruedas(rueda, new Vector3(-40, y, -62), new Vector3(40, y, -62), false, scaleRuedas);
 
             return new Auto("hummer", 100f, 5f, 3f, 5f, 2f,
                             hummerMesh, Gm,
@@ -44,7 +47,7 @@ namespace TGC.GroupoMs.Model
         public TgcMesh CrearRueda(float escala)
         {
             //TgcMesh rueda = Loader.loadSceneFromFile(MediaDir + "ModelosX\\rueda.x").Meshes[0];
-            TgcMesh rueda = Loader.loadSceneFromFile(MediaDir + "Olla\\Olla-TgcScene.xml").Meshes[0];
+            TgcMesh rueda = Loader.loadSceneFromFile(MediaDir + "Rueda\\Rueda-TgcScene.xml").Meshes[0];
             rueda.Scale = new Vector3(escala, escala, escala);
             //rueda.AutoTransformEnable = false;
             return rueda;

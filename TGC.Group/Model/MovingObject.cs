@@ -156,12 +156,16 @@ namespace TGC.GroupoMs.Model
         }
         public  void EnderezarRuedas()
         {
-            if (DireccionRuedas < 0.01 || DireccionRuedas > 0.01)
-                DireccionRuedas = 0f;
+            //if (DireccionRuedas < 0.01 || DireccionRuedas > 0.01)
+            //    DireccionRuedas = 0f;
             if (DireccionRuedas > 0)
-                DireccionRuedas -= 2f * GameModel.ElapsedTime;
+                DireccionRuedas -= 0.02f * GameModel.ElapsedTime;
             if (DireccionRuedas < 0)
-                DireccionRuedas += 2f * GameModel.ElapsedTime;
+                DireccionRuedas += 0.02f * GameModel.ElapsedTime;
+            //if (DireccionRuedas > 1f)
+            //    DireccionRuedas = 1f;
+            //if (DireccionRuedas < 1f)
+            //    DireccionRuedas = -1f;
         }
     }
 }

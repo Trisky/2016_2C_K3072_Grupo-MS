@@ -49,7 +49,7 @@ namespace TGC.GroupoMs.Model
             string compilationErrors;
 
             string dir = Game.Default.ShadersDirectory;
-            string motionBlurPath = dir + "\\MotionBlur.fx";
+            string motionBlurPath = dir + "MotionBlur.fx";
             effect = Effect.FromFile(D3DDevice.Instance.Device,  motionBlurPath,
                 null, null, ShaderFlags.PreferFlowControl, null, out compilationErrors);
             if (effect == null)
@@ -112,17 +112,17 @@ namespace TGC.GroupoMs.Model
             time += gameModel.ElapsedTime;
             float r = velocidad * 5; // subir y bajar la constante para ajustar la intensidad del efecto
 
-            foreach(TgcMesh mesh in meshes)
+            foreach (TgcMesh mesh in meshes)
             {
                 mesh.Position = new Vector3(r * (float)Math.Cos(time * 0.5), 0, 0 * (float)Math.Sin(time * 0.5));
             }
-            
+
         }
         public void Render()
         {
-            var device = D3DDevice.Instance.Device;
-            var pOldRT = device.GetRenderTarget(0);
-            var pSurf = g_pVel1.GetSurfaceLevel(0);
+            Device device = D3DDevice.Instance.Device;
+            Surface pOldRT = device.GetRenderTarget(0);
+            Surface pSurf = g_pVel1.GetSurfaceLevel(0);
             device.SetRenderTarget(0, pSurf);
             // hago lo mismo con el depthbuffer, necesito el que no tiene multisampling
             var pOldDS = device.DepthStencilSurface;

@@ -20,6 +20,7 @@ namespace TGC.GroupoMs.Model
         public float aux = 0;
         public float angRotRueda = 0;
         public float radioRueda = 5f;
+        private float angulo;
 
         public TgcMesh RuedaMeshIzq { get; set; }
         public TgcMesh RuedaMeshDer { get; set; }
@@ -28,39 +29,33 @@ namespace TGC.GroupoMs.Model
         public Vector3 Separacion { get; set; }
         public bool SonDelanteras { get; set; } //para saber si las tenemos que rotar cuando giro el volante.
         public Vector3 Escala { get; set; }
+        public Matrix MatrizPosInicialIzquierda { get; set; }
+        public Matrix MatrizPosInicialDerecha { get; set; }
+        public Matrix MatrizMovimiento { get; set; }
+        private Vector3 scale3;
 
         public Ruedas(TgcMesh ruedaMainMesh, Vector3 offsetRuedaIzq, Vector3 offsetRuedaDer, bool sonDelanteras, float scale)
         {
-            Vector3 scale3 = new Vector3(scale, scale, scale);
+            scale3 = new Vector3(scale, scale, scale);
             OffsetRuedaDer = offsetRuedaDer;
             OffsetRuedaIzq = offsetRuedaIzq;
             Escala = scale3;
+            angulo = 0;
             //Escala = ruedaMainMesh.Scale;
+            SonDelanteras = sonDelanteras;
 
             //------------------- RUEDA IZQUIERDA --------------------------
-
             RuedaMeshIzq = ruedaMainMesh.createMeshInstance
                                 (ruedaMainMesh.Name + offsetRuedaIzq.ToString() + "_Izq");
             RuedaMeshIzq.Scale = scale3;
             RuedaMeshIzq.AutoTransformEnable = false;
-            //RuedaMeshIzq.Transform = Matrix.Identity * Matrix.Scaling(scale3);
-            //RuedaMeshIzq.AutoUpdateBoundingBox = false;
-            //RuedaMeshIzq.Transform = Matrix.Identity;
-            //RuedaMeshIzq.Transform = Matrix.RotationX(90 * (float)Math.PI / 180);
-
-
-
+            MatrizPosInicialIzquierda = Matrix.Translation(OffsetRuedaIzq);
             //------------------- RUEDA DERECHA   --------------------------
             RuedaMeshDer = ruedaMainMesh.createMeshInstance
                                 (ruedaMainMesh.Name + offsetRuedaDer.ToString() + "_Der");
             RuedaMeshDer.Scale = scale3;
             RuedaMeshDer.AutoTransformEnable = false;
-            //RuedaMeshDer.Transform = Matrix.Identity * Matrix.Scaling(scale3);
-            //RuedaMeshDer.AutoUpdateBoundingBox = true;
-
-            SonDelanteras = sonDelanteras;
-
-
+            MatrizPosInicialDerecha = Matrix.Translation(offsetRuedaDer);
         }
 
         /// <summary>
@@ -69,12 +64,12 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         /// <param name="posicion"></param>
         /// <param name="velocidad"></param>
+        [Obsolete]
         public void Update(Vector3 posicionAuto, float velocidad, float DireccionRuedas)
         {
             //1- ubico las ruedas en su posicion
             //RuedaMeshDer.Position = posicionAuto + OffsetRuedaDer;
             //RuedaMeshIzq.Position = posicionAuto + OffsetRuedaIzq;
-
 
             if (SonDelanteras)
             {
@@ -85,7 +80,7 @@ namespace TGC.GroupoMs.Model
             //RotarRuedas(velocidad,Escala);
             //TODO
         }
-
+        [Obsolete]
         public void Update2(Matrix MR, Matrix MT, Vector3 Mpos)
         {
             //Matrix.RotationZ((float)Math.PI * 270 / 180) *
@@ -101,16 +96,19 @@ namespace TGC.GroupoMs.Model
                    * MT * Matrix.Translation(OffsetRuedaDer);
                 RuedaMeshDer.Transform = Matrix.Scaling(Escala) * MT * Matrix.Translation(OffsetRuedaIzq);
             }
-
-
         }
-        /// <summary>
-        /// efecto del avance del auto
-        /// </summary>
-        /// <param name="velocidad"></param>
-        /// <param name="Escala"></param>
-        /// 
+        
+        public void Update4(Matrix MR,float velocidad,float direccionRuedas)
+        {
+            direccionRuedas = direccionRuedas*4;
+            angulo -= FastMath.QUARTER_PI *0.4f  * velocidad;
+            var velRotacion = Matrix.RotationX(angulo);
+            RuedaMeshDer.Transform = velRotacion * Matrix.RotationY(direccionRuedas) * MatrizPosInicialDerecha * MR *Matrix.Scaling(scale3);
+            RuedaMeshIzq.Transform = velRotacion * Matrix.RotationY(direccionRuedas) * MatrizPosInicialIzquierda * MR* Matrix.Scaling(scale3);
+        }
+        
 
+        [Obsolete]
         public void Update3(Vector3 cochePos, Matrix MR, float angOrientacion, float v)
         {
             var aux2 = 1;
@@ -122,8 +120,7 @@ namespace TGC.GroupoMs.Model
             {
                 aux = 0;
                 aux2 = -1;
-            }
-                
+            }   
 
             angRotRueda += v / radioRueda;
             if (v == 5)

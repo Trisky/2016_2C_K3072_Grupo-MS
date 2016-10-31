@@ -40,26 +40,25 @@ namespace TGC.GroupoMs.Model.efectos
            
             selectedParticleCount = 10;
 
-            //emmiter1
+            //emmiter1 humo
             emitter1 = new ParticleEmitter(texturePath + texturaHumito, selectedParticleCount);
             emitter1.Position = new Vector3(0, 15, 0);
 
             Vector3 speed = new Vector3(5, 5, 5);
             emitter1.MinSizeParticle = 5f;
-            emitter1.MaxSizeParticle = 10f;
+            emitter1.MaxSizeParticle = 7f;
             emitter1.ParticleTimeToLive = 0.5f;
             emitter1.CreationFrecuency = 0.1f;
             emitter1.Dispersion = 15;
             emitter1.Speed = speed;
 
-            //emmiter2
+            //emmiter fuego
             selectedParticleCount = 10;
             emitter2 = new ParticleEmitter(texturePath + texturaFuego, selectedParticleCount);
             emitter2.Position = new Vector3(0, 15, 0);
 
-            
             emitter2.MinSizeParticle = 5f;
-            emitter2.MaxSizeParticle = 10f;
+            emitter2.MaxSizeParticle = 7f;
             emitter2.ParticleTimeToLive = 0.5f;
             emitter2.CreationFrecuency = 0.1f;
             emitter2.Dispersion = 15;

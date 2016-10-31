@@ -15,6 +15,7 @@ using System;
 using TGC.Core.Terrain;
 using TGC.GroupoMs.Camaras;
 using TGC.Core;
+using TGC.GroupoMs.Model.efectos;
 
 namespace TGC.Group.Model
 {
@@ -23,8 +24,12 @@ namespace TGC.Group.Model
     /// </summary>
     public class GameModel : TgcExample
     {
-        private TgcSkyBox SkyBox;
+        public TgcSkyBox SkyBox;
         private List<TgcScene> ScenesLst;
+        public bool FinishedLoading { get; set; }
+
+        public Niebla Niebla { get; set; }
+
         public TgcMesh PlayerMesh { get; set; }
         public bool GodModeOn { get; set; }
 
@@ -56,6 +61,7 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Init()
         {
+            FinishedLoading = false;
             
             //Device de DirectX para crear primitivas.
             var d3dDevice = D3DDevice.Instance.Device;
@@ -91,6 +97,7 @@ namespace TGC.Group.Model
             cargarSkyBox();
             CargarScenes();
             ToggleGodCamera();
+            Niebla = new Niebla(this);
         }
 
         /// <summary>
@@ -144,8 +151,12 @@ namespace TGC.Group.Model
         private void CargarScenes()
         {
             TgcSceneLoader loader = new TgcSceneLoader();
-            this.ScenesLst = new List<TgcScene>();
             this.MapScene = loader.loadSceneFromFile(MediaDir + "Ciudad\\Ciudad-TgcScene.xml");
+            
+            foreach (TgcMesh mesh in MapScene.Meshes)
+            {
+
+            }
 
             AsignarPlayersConMeshes(loader);
             //this.scenesLst.Add();
@@ -160,13 +171,16 @@ namespace TGC.Group.Model
             {
                 GodModeOn = false;
                 Camara = AutoJugador.camaraSeguirEsteAuto(this);
+                
                 // apagar godmode y  volver al auto
             }
             else
             {
                 GodModeOn = true;
-                var cameraPosition = new Vector3(23, 39, 113);
+                var cameraPosition = Camara.Position;
                 Camara = new TgcFpsCamera(cameraPosition, Input);
+                Camara.SetCamera(cameraPosition, AutoJugador.newPosicion);
+                //Niebla.CargarCamara(Camara);
             }
         }
 
@@ -178,11 +192,18 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-            SkyBoxUpdate();
+             SkyBoxUpdate();
+            if (FinishedLoading)
+                Niebla.Update(Camara);
 
             //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
             if (GodModeOn == false)
                 AutoJugador.Update(Input);
+            if (GodModeOn)
+            {
+                if (Input.keyPressed(Key.Z))
+                    AutoJugador.Acelero(1.4f);
+            }
 
             //Capturar Input teclado
             if (Input.keyPressed(Key.F))
@@ -197,18 +218,20 @@ namespace TGC.Group.Model
             // Ir al menu?
             if (Input.keyPressed(Key.P))
             {
-                if (MenuBox != null)
-                {
-                    GodModeOn = false;
-                    Camara = AutoJugador.camaraSeguirEsteAuto(this);
-                }
-                else
-                {
-                    GodModeOn = true; //para q el auto no se mueva
-                    MenuBox = new MenuCaja(Input);
-                    Camara = MenuBox.CrearCamaraCaja();
+                Niebla.CargarCamara(Camara);
+                FinishedLoading = true;
+                //if (MenuBox != null)
+                //{
+                //    GodModeOn = false;
+                //    Camara = AutoJugador.camaraSeguirEsteAuto(this);
+                //}
+                //else
+                //{
+                //    GodModeOn = true; //para q el auto no se mueva
+                //    MenuBox = new MenuCaja(Input);
+                //    Camara = MenuBox.CrearCamaraCaja();
 
-                }
+                //}
             }
 
             //Capturar Input Mouse
@@ -245,7 +268,7 @@ namespace TGC.Group.Model
         {
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
             PreRender();
-
+            if(FinishedLoading) Niebla.Render();
             //Dibuja un texto por pantalla
             DrawText.drawText("F = bounding box.", 0, 20, Color.OrangeRed);
             DrawText.drawText("posicion camara: " + TgcParserUtils.printVector3(Camara.Position), 0, 30, Color.OrangeRed);
@@ -253,7 +276,7 @@ namespace TGC.Group.Model
             {
                 DrawText.drawText("GodMode = ON", 0, 40, Color.OrangeRed);
             }
-
+            
             else
             {
                 DrawText.drawText("GodMode = OFF", 0, 40, Color.White);
@@ -282,10 +305,8 @@ namespace TGC.Group.Model
                 //DrawText.drawText("collisionFound = ", 0, 340, Color.White);
                 //DrawText.drawText(AutoJugador.collisionFound.ToString(), 150, 340, Color.White);
 
-                DrawText.drawText("collisionFound = ", 0, 400, Color.White);
-                DrawText.drawText(AutoJugador.obb.ToString(), 150, 400, Color.White);
-
-
+                DrawText.drawText("direccionRuedas = ", 0, 400, Color.White);
+                DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 150, 400, Color.White);
             }
 
             //Siempre antes de renderizar el modelo necesitamos actualizar la matriz de transformacion.
@@ -314,22 +335,17 @@ namespace TGC.Group.Model
             }
 
             //rendereo el mapa.
-            MapScene.renderAll();
+            
 
             //render de cada auto.
             foreach (Auto a in Autos)
             {
                 a.Render();
             }
-
+            MapScene.renderAll();
             //skybox render
             SkyBox.render();
 
-            //render de scenes
-            foreach (TgcScene s in ScenesLst)
-            {
-                s.renderAll();
-            }
 
             //render de menubox solo cuando es necesario.
             if (GodModeOn == true && MenuBox != null)

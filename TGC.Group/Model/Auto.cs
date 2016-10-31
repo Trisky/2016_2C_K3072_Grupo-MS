@@ -29,7 +29,7 @@ namespace TGC.GroupoMs.Model
         //public bool collisionResult;
         public float obbPosY = 0;
         public bool EsAutoJugador { get; set; }
-
+        private Vector3 scale3;
 
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
@@ -49,6 +49,7 @@ namespace TGC.GroupoMs.Model
         public TgcBoundingOrientedBox obb;
         public TgcScene escenario;
         private bool nitroActivado;
+        public bool finishedLoading;
 
         //--
 
@@ -58,6 +59,9 @@ namespace TGC.GroupoMs.Model
                     float aceleracion, float desaceleracion,
                     TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh)
         {
+            var scale = 0.6f;
+            scale3 = new Vector3(scale, scale, scale);
+
             CrearHumoCanioDeEscape(model);
             AvanceMax = avanceMaximo;
             ReversaMax = -reversaMax;
@@ -69,9 +73,8 @@ namespace TGC.GroupoMs.Model
             Velocidad = 0f;
             Mesh = mesh;
             Aceleracion = aceleracion;
-
             GameModel = model;
-
+            
             RuedasTraseras = ruedasAtras;
             RuedasDelanteras = ruedasAdelante;
             RuedaMainMesh = ruedaMainMesh;
@@ -88,14 +91,13 @@ namespace TGC.GroupoMs.Model
             escenario = model.MapScene;
 
             //--------luces
-            Luces = new LucesAuto(escenario,Mesh, ruedasAdelante, ruedasAtras,CamaraAuto);
+            Luces = new LucesAuto(model.MapScene,Mesh, ruedasAdelante, ruedasAtras,CamaraAuto);
             RenderLuces = false;
 
             EsAutoJugador = true;            
             fixEjecutado = false; //para arreglar el temita de que el auto no aparece. 
         }
 
-        
 
         [Obsolete]
         public void recibirDanio(int cant)
@@ -154,9 +156,7 @@ namespace TGC.GroupoMs.Model
                 {
                     Acelero(0.5f); //turbo!
                     nitroActivado = true;
-
                 }
-                    
             }
 
             //2 frenar, reversa
@@ -173,6 +173,7 @@ namespace TGC.GroupoMs.Model
             }
 
             //4 derecha TODO //girar ruedas
+
             if (input.keyDown(Key.D))
             {
                 DoblarRuedas(-1);
@@ -220,15 +221,14 @@ namespace TGC.GroupoMs.Model
 
             if(RenderLuces) Luces.Update();
             if(motionBlur !=null ) motionBlur.Update(0f);
-            
-
-            
+            if (RenderLuces) Luces.Update();
         }
         public void BugFixAutoNoAparece()
         {
             if (fixEjecutado) return;
-            DireccionRuedas = 1f;
+            DireccionRuedas = 0.1f;
             Doblar();
+            DireccionRuedas = 0f;
             fixEjecutado = true;
         }
         private void DoblarRuedas(int lado)
@@ -254,8 +254,8 @@ namespace TGC.GroupoMs.Model
             newPosicion = new Vector3(Mesh.Position.X + calcularDX(), calcularDY(), Mesh.Position.Z + calcularDZ());
             
             //4- las ruedas
-            RuedasDelanteras.Update(Mesh.Position, Velocidad, DireccionRuedas);
-            RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
+            //RuedasDelanteras.Update(Mesh.Position, Velocidad, DireccionRuedas);
+            //RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
 
             //??
             obb.Center = new Vector3(Mesh.Position.X + calcularDX(), obbPosY + 0 + calcularDY(), Mesh.Position.Z + calcularDZ());
@@ -269,8 +269,11 @@ namespace TGC.GroupoMs.Model
 
             Mesh.Transform = m; //Mesh.BoundingBox.transform(m);
 
-            RuedasDelanteras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
-            RuedasTraseras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
+            //RuedasDelanteras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
+            //RuedasTraseras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
+            RuedasDelanteras.Update4(m, Velocidad,-DireccionRuedas*0);
+            RuedasTraseras.Update4(m, Velocidad, 0);
+
 
             Mesh.Position = newPosicion;
             humoEscape.Update(newPosicion, Mesh.Rotation);
@@ -323,9 +326,9 @@ namespace TGC.GroupoMs.Model
             Mesh.render();
             RuedasDelanteras.Render();
             RuedasTraseras.Render();
-            RuedaMainMesh.render();
-            if(RenderLuces) Luces.Render();
-            if(motionBlur !=null ) motionBlur.Render();
+            //RuedaMainMesh.render();
+            if(RenderLuces) Luces.Update();
+            if(motionBlur !=null && finishedLoading ) motionBlur.Render();
 
             //escenario.BoundingBox.render();
 

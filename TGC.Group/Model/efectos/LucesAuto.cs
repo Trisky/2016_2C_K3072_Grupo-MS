@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TGC.Core.Camara;
 using TGC.Core.Geometry;
 using TGC.Core.SceneLoader;
 using TGC.Core.Shaders;
@@ -19,10 +20,10 @@ namespace TGC.GroupoMs.Model
         private TgcBox lightMesh;
 
         private List<TgcMesh> lstMeshes;
-        private TgcThirdPersonCamera camara;
+        private TgcCamera camara;
 
 
-        public LucesAuto(TgcScene scene, TgcMesh auto, Ruedas r1, Ruedas r2, TgcThirdPersonCamera cam)
+        public LucesAuto(TgcScene scene, TgcMesh auto, Ruedas r1, Ruedas r2, TgcCamera cam)
         {
             camara = cam;
             lightMesh = TgcBox.fromSize(new Vector3(10, 10, 10), Color.Red);
@@ -36,7 +37,7 @@ namespace TGC.GroupoMs.Model
                 lstMeshes.Add(mesh);
             }
             //agrego auto
-            lstMeshes.Add(auto);
+            //lstMeshes.Add(auto);
 
 
             //agrego ruedas
@@ -45,15 +46,16 @@ namespace TGC.GroupoMs.Model
             lstMeshes.Add(r2.RuedaMeshIzq);
             lstMeshes.Add(r2.RuedaMeshDer);
         }
-        public void Update()
+        
+        private void Init()
         {
-            //no hace nada :P
-        }
 
+
+        }
         /// <summary>
         /// Este render debe realizarse despues de renderizar el mapScene!
         /// </summary>
-        public void Render()
+        public void Update()
         {
             Effect currentShader = TgcShaders.Instance.TgcMeshSpotLightShader;
             foreach (var mesh in lstMeshes)
@@ -92,7 +94,9 @@ namespace TGC.GroupoMs.Model
                 mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor((Color.White)));
                 mesh.Effect.SetValue("materialSpecularColor", ColorValue.FromColor((Color.White)));
                 mesh.Effect.SetValue("materialSpecularExp",1f);
+                mesh.render();
             }
+            
         }
     }
 }
