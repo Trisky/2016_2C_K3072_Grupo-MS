@@ -24,7 +24,7 @@ namespace TGC.GroupoMs.Model
     {
 
 
-
+        
         public bool pintarObb;
         //public bool collisionResult;
         public float obbPosY = 0;
@@ -41,7 +41,7 @@ namespace TGC.GroupoMs.Model
         public Ruedas RuedasTraseras { get; set; }
         public Ruedas RuedasDelanteras { get; set; }
         public LucesAuto Luces { get; set; }
-        public bool RenderLuces { get; set; }
+        public bool RenderLuces { get;  set; }
 
 
 
@@ -50,7 +50,6 @@ namespace TGC.GroupoMs.Model
         public TgcScene escenario;
         private bool nitroActivado;
         public bool finishedLoading;
-        public bool volanteo;
 
         //--
 
@@ -69,13 +68,13 @@ namespace TGC.GroupoMs.Model
             Desaceleracion = desaceleracion;
             InerciaNegativa = 1f;
             DireccionRuedas = 0f;
-            Armas = new List<Arma>();
+            Armas = new List <Arma>();
             aceleracionVertical = 0f;
             Velocidad = 0f;
             Mesh = mesh;
             Aceleracion = aceleracion;
             GameModel = model;
-
+            
             RuedasTraseras = ruedasAtras;
             RuedasDelanteras = ruedasAdelante;
             RuedaMainMesh = ruedaMainMesh;
@@ -88,14 +87,14 @@ namespace TGC.GroupoMs.Model
             var yMin = Mesh.BoundingBox.PMin.Y;
             var yMax = Mesh.BoundingBox.PMax.Y;
             obbPosY = (yMax + yMin) / 2 + yMin;
-            obb.Extents = new Vector3(obb.Extents.X, obb.Extents.Y, obb.Extents.Z * -1);
+
             escenario = model.MapScene;
 
             //--------luces
-            Luces = new LucesAuto(model.MapScene, Mesh, ruedasAdelante, ruedasAtras, CamaraAuto);
+            Luces = new LucesAuto(model.MapScene,Mesh, ruedasAdelante, ruedasAtras,CamaraAuto);
             RenderLuces = false;
 
-            EsAutoJugador = true;
+            EsAutoJugador = true;            
             fixEjecutado = false; //para arreglar el temita de que el auto no aparece. 
         }
 
@@ -137,7 +136,7 @@ namespace TGC.GroupoMs.Model
         public void Update(TgcD3dInput input)
         {
             nitroActivado = false;
-            volanteo = false;
+
             BugFixAutoNoAparece();
 
             huboMovimiento = huboRotacion = false;
@@ -220,8 +219,8 @@ namespace TGC.GroupoMs.Model
             ProcesarInercia();
             MoverMesh();
 
-            if (RenderLuces) Luces.Update();
-            if (motionBlur != null) motionBlur.Update(0f);
+            if(RenderLuces) Luces.Update();
+            if(motionBlur !=null ) motionBlur.Update(0f);
             if (RenderLuces) Luces.Update();
         }
         public void BugFixAutoNoAparece()
@@ -233,8 +232,7 @@ namespace TGC.GroupoMs.Model
             fixEjecutado = true;
         }
         private void DoblarRuedas(int lado)
-        {
-            volanteo = true;
+        {  
             DireccionRuedas = +lado * 0.4f;
             Doblar();
         }
@@ -254,7 +252,7 @@ namespace TGC.GroupoMs.Model
         private void MoverMesh()
         {
             newPosicion = new Vector3(Mesh.Position.X + calcularDX(), calcularDY(), Mesh.Position.Z + calcularDZ());
-
+            
             //4- las ruedas
             //RuedasDelanteras.Update(Mesh.Position, Velocidad, DireccionRuedas);
             //RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
@@ -262,9 +260,9 @@ namespace TGC.GroupoMs.Model
             //??
             obb.Center = new Vector3(Mesh.Position.X + calcularDX(), obbPosY + 0 + calcularDY(), Mesh.Position.Z + calcularDZ());
 
-
-
-
+            
+            
+           
             //6 - me muevo
             var m = matrixRotacion *
                 Matrix.Translation(newPosicion);
@@ -273,10 +271,7 @@ namespace TGC.GroupoMs.Model
 
             //RuedasDelanteras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
             //RuedasTraseras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
-            var auxDireccion = DireccionRuedas;
-            if (!volanteo)
-                auxDireccion = 0;
-            RuedasDelanteras.Update4(m, Velocidad, -auxDireccion);
+            RuedasDelanteras.Update4(m, Velocidad,-DireccionRuedas*0);
             RuedasTraseras.Update4(m, Velocidad, 0);
 
 
@@ -286,8 +281,8 @@ namespace TGC.GroupoMs.Model
             //camera update
             if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
                 CamaraAuto.Target = Mesh.Position;
-
-
+            
+            
             //7 ---- colisiones---
             ProcesarColisiones();
         }
@@ -295,13 +290,17 @@ namespace TGC.GroupoMs.Model
         private void ProcesarColisiones()
         {
             bool collisionFound = false;
+            var autoBB = Mesh.BoundingBox;
             foreach (var sceneMesh in escenario.Meshes)
             {
-                var escenaAABB = sceneMesh.BoundingBox;
-                var collisionResult = TgcCollisionUtils.testObbAABB(obb, escenaAABB);
+                var sceneMeshBoundingBox = sceneMesh.BoundingBox;
+                //var collisionResult = TgcCollisionUtils.testObbAABB(obb, sceneMeshBoundingBox);
+
+                //1- me fijo si el bb de este mesh choca con el del auto
+                var collisionResult = TgcCollisionUtils.classifyBoxBox(autoBB, sceneMeshBoundingBox);
 
                 //2 -si lo hizo, salgo del foreach.
-                if (collisionResult)
+                if (collisionResult != TgcCollisionUtils.BoxBoxResult.Afuera)
                 {
                     collisionFound = true;
                     break;
@@ -311,7 +310,7 @@ namespace TGC.GroupoMs.Model
             if (collisionFound)
             {
                 obb.setRenderColor(Color.Red);
-                PosicionRollback();
+                //PosicionRollback();
             }
             else
             {
@@ -328,9 +327,8 @@ namespace TGC.GroupoMs.Model
             RuedasDelanteras.Render();
             RuedasTraseras.Render();
             //RuedaMainMesh.render();
-            if (RenderLuces)
-                Luces.Update();
-            if (motionBlur != null && finishedLoading) motionBlur.Render();
+            if(RenderLuces) Luces.Update();
+            if(motionBlur !=null && finishedLoading ) motionBlur.Render();
 
             //escenario.BoundingBox.render();
 
