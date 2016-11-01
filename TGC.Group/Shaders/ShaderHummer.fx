@@ -25,6 +25,7 @@ sampler2D diffuseMap = sampler_state
 };
 
 float time = 0;
+float Velocidad = 0;
 
 /**************************************************************************************/
 /* RenderScene */
@@ -71,14 +72,17 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 	// Animar posicion
 	/*Input.Position.x += sin(time)*30*sign(Input.Position.x);
 	Input.Position.y += cos(time)*30*sign(Input.Position.y-20);
-	Input.Position.z += sin(time)*30*sign(Input.Position.z);
-	*/
+	Input.Position.z += sin(time)*30*sign(Input.Position.z);*/
+	
 
 	// Animar posicion
 	float Y = Input.Position.y;
 	float Z = Input.Position.z;
-	Input.Position.y = Y * cos(time) - Z * sin(time);
-	Input.Position.z = Z * cos(time) + Y * sin(time);
+	float v = 0.08*Velocidad;// *sin(time);
+	if (v < 1) v = 1;
+	if (v > 1.2) v = 1.25;
+	Input.Position.y = Y*v;// *cos(v) - Z * sin(v);
+	Input.Position.z = Z*v;// *cos(v) + Y * sin(v);
 
 	//Proyectar posicion
 	Output.Position = mul(Input.Position, matWorldViewProj);

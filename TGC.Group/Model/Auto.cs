@@ -334,8 +334,7 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         public void Render()
         {
-
-            AplicarShader();
+            AplicarShader(); //para que cambie de color al meter nitro
             Mesh.render();
             RuedasDelanteras.Render();
             RuedasTraseras.Render();
@@ -354,14 +353,14 @@ namespace TGC.GroupoMs.Model
                 mesh.BoundingBox.render();
             }
             humoEscape.Render(nitroActivado);
-
-        
     }
         
         private void AplicarShader()
         {
             if (!EsAutoJugador) return;
-            if (!nitroActivado)
+            efectoShaderNitroHummer.SetValue("time", GameModel.ElapsedTime);
+            efectoShaderNitroHummer.SetValue("Velocidad", 4*Velocidad);
+            if (!nitroActivado )
             {
                 Mesh.Effect = efectoOriginal;
                 Mesh.Technique = TechniqueOriginal;
