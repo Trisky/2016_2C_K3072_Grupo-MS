@@ -39,7 +39,8 @@ namespace TGC.GroupoMs.Model
             scale3 = new Vector3(scale, scale, scale);
             OffsetRuedaDer = offsetRuedaDer;
             OffsetRuedaIzq = offsetRuedaIzq;
-            Escala = scale3;
+            //Escala = scale3;
+            Escala = new Vector3(2f, 2f, 2f);
             angulo = 0;
             //Escala = ruedaMainMesh.Scale;
             SonDelanteras = sonDelanteras;
@@ -97,16 +98,16 @@ namespace TGC.GroupoMs.Model
                 RuedaMeshDer.Transform = Matrix.Scaling(Escala) * MT * Matrix.Translation(OffsetRuedaIzq);
             }
         }
-        
-        public void Update4(Matrix MR,float velocidad,float direccionRuedas)
+
+        public void Update4(Matrix MR, float velocidad, float direccionRuedas)
         {
-            direccionRuedas = direccionRuedas*4;
-            angulo -= FastMath.QUARTER_PI *0.4f  * velocidad;
+            //direccionRuedas = direccionRuedas*4;
+            angulo -= FastMath.QUARTER_PI * 0.4f * velocidad;
             var velRotacion = Matrix.RotationX(angulo);
-            RuedaMeshDer.Transform = velRotacion * Matrix.RotationY(direccionRuedas) * MatrizPosInicialDerecha * MR *Matrix.Scaling(scale3);
-            RuedaMeshIzq.Transform = velRotacion * Matrix.RotationY(direccionRuedas) * MatrizPosInicialIzquierda * MR* Matrix.Scaling(scale3);
+            RuedaMeshDer.Transform = Matrix.Scaling(Escala) * velRotacion * Matrix.RotationY(direccionRuedas) * MatrizPosInicialDerecha * MR;
+            RuedaMeshIzq.Transform = Matrix.Scaling(Escala) * velRotacion * Matrix.RotationY(direccionRuedas) * MatrizPosInicialIzquierda * MR;
         }
-        
+
 
         [Obsolete]
         public void Update3(Vector3 cochePos, Matrix MR, float angOrientacion, float v)
@@ -120,7 +121,7 @@ namespace TGC.GroupoMs.Model
             {
                 aux = 0;
                 aux2 = -1;
-            }   
+            }
 
             angRotRueda += v / radioRueda;
             if (v == 5)
