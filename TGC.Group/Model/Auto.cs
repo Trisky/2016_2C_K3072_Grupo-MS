@@ -16,6 +16,8 @@ using TGC.Core.Geometry;
 using TGC.Core.Collision;
 using System.Drawing;
 using TGC.GroupoMs.Model.efectos;
+using TGC.Core.Shaders;
+using Microsoft.DirectX.Direct3D;
 //using TGC.Core.SceneLoader;
 
 namespace TGC.GroupoMs.Model
@@ -42,6 +44,7 @@ namespace TGC.GroupoMs.Model
         public Ruedas RuedasDelanteras { get; set; }
         public LucesAuto Luces { get; set; }
         public bool RenderLuces { get; set; }
+        public string TechniqueOriginal { get; private set; }
 
 
 
@@ -51,6 +54,8 @@ namespace TGC.GroupoMs.Model
         private bool nitroActivado;
         public bool finishedLoading;
         public bool volanteo;
+        private Microsoft.DirectX.Direct3D.Effect efectoShaderNitroHummer;
+        private Microsoft.DirectX.Direct3D.Effect efectoOriginal;
 
         //--
 
@@ -97,6 +102,11 @@ namespace TGC.GroupoMs.Model
 
             EsAutoJugador = true;
             fixEjecutado = false; //para arreglar el temita de que el auto no aparece. 
+
+            //shader pal hummer
+            TechniqueOriginal = Mesh.Technique;
+            efectoOriginal = Mesh.Effect;
+            efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
         }
 
 
@@ -324,6 +334,8 @@ namespace TGC.GroupoMs.Model
         /// </summary>
         public void Render()
         {
+
+            AplicarShader();
             Mesh.render();
             RuedasDelanteras.Render();
             RuedasTraseras.Render();
@@ -342,6 +354,23 @@ namespace TGC.GroupoMs.Model
                 mesh.BoundingBox.render();
             }
             humoEscape.Render(nitroActivado);
+
+        
+    }
+        
+        private void AplicarShader()
+        {
+            if (!EsAutoJugador) return;
+            if (!nitroActivado)
+            {
+                Mesh.Effect = efectoOriginal;
+                Mesh.Technique = TechniqueOriginal;
+            }
+            else
+            {
+                Mesh.Effect = efectoShaderNitroHummer;
+                Mesh.Technique = "RenderScene";
+            }
         }
     }
 }

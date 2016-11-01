@@ -177,6 +177,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Shaders\MotionBlur.fx" />
+    <Content Include="Shaders\ShaderHummer.fx" />
     <Content Include="Shaders\TgcFogShader.fx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
