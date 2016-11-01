@@ -79,6 +79,7 @@
     <Compile Include="Camaras\GodModeCamara.cs" />
     <Compile Include="Camaras\TgcRotationalCamera.cs" />
     <Compile Include="Camaras\TgcThirdPersonCamera.cs" />
+    <Compile Include="Cameras\GodCamera.cs" />
     <Compile Include="Form\GameForm.cs">
       <SubType>Form</SubType>
     </Compile>

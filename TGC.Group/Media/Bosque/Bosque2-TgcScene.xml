@@ -1,0 +1,105 @@
+<tgcScene>
+  <name>Bosque2</name>
+  <texturesExport enabled="True" dir="Textures" />
+  <lightmapExport enabled="False" dir="LightMaps" />
+  <sceneBoundingBox min="[-295.6156,0,-9.2033]" max="[1018.83,91.3548,938.17]" />
+  <materials count="2">
+    <m name="Standardmaterial" type="Standardmaterial">
+      <ambient>[0,0,0,0]</ambient>
+      <diffuse>[0,0,0,0]</diffuse>
+      <specular>[0,0,0,0]</specular>
+      <opacity>1</opacity>
+      <alphaBlendEnable>False</alphaBlendEnable>
+      <bitmap uvTiling="[1,1]" uvOffset="[1,1]">Arbusto.png</bitmap>
+    </m>
+    <m name="Standardmaterial" type="Standardmaterial">
+      <ambient>[0,0,0,0]</ambient>
+      <diffuse>[0,0,0,0]</diffuse>
+      <specular>[0,0,0,0]</specular>
+      <opacity>1</opacity>
+      <alphaBlendEnable>False</alphaBlendEnable>
+      <bitmap uvTiling="[1,1]" uvOffset="[1,1]">stone_wall.jpg</bitmap>
+    </m>
+  </materials>
+  <meshes count="5">
+    <mesh name="Plane_1" layer="Default" type="Original" matId="0" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[-101.8183,0,7.4312]" max="[1018.83,0,938.17]" />
+      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
+      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
+      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="12">-101.8183 0 7.4312 1018.83 0 7.4312 1018.83 0 938.17 -101.8183 0 938.17 </vertices>
+      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
+      <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+      <userProps count="0" />
+    </mesh>
+    <mesh name="Plane_2" layer="Default" type="Original" matId="0" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[-179.8808,0,83.4584]" max="[-172.5925,0,85.7865]" />
+      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
+      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
+      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="12">-179.8807 0 83.4584 -172.5925 0 83.4584 -172.5925 0 85.7865 -179.8807 0 85.7865 </vertices>
+      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
+      <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+      <userProps count="0" />
+    </mesh>
+    <mesh name="Plane_3" layer="Default" type="Original" matId="0" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[-295.6156,0,112.9561]" max="[-278.1371,0,153.9305]" />
+      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
+      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
+      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="12">-295.6155 0 112.9561 -278.1371 0 112.9561 -278.1371 0 153.9305 -295.6155 0 153.9305 </vertices>
+      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
+      <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+      <userProps count="0" />
+    </mesh>
+    <mesh name="Plane_4" layer="Default" type="Original" matId="0" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[-272.8409,0,168.2575]" max="[-256.365,0,193.6094]" />
+      <coordinatesIdx count="6">0 1 2 0 2 3 </coordinatesIdx>
+      <textCoordsIdx count="6">0 1 2 0 2 3 </textCoordsIdx>
+      <colorsIdx count="6">0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="12">-272.8409 0 168.2575 -256.3649 0 168.2575 -256.3649 0 193.6094 -272.8409 0 193.6094 </vertices>
+      <normals count="12">0 -1 0 0 -1 0 0 -1 0 0 -1 0 </normals>
+      <texCoords count="8">1 1 0 1 0 0 1 0 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+      <userProps count="0" />
+    </mesh>
+    <mesh name="ParedCastillo" layer="0" type="Original" matId="1" color="[1,1,1]" visibility="1.0" lightmap="">
+      <boundingBox min="[-43.7372,0,-9.2033]" max="[43.7372,91.3548,9.2033]" />
+      <coordinatesIdx count="204">0 1 2 2 3 0 4 5 6 6 7 4 8 9 10 10 11 8 1 12 13 13 2 1 14 15 16 16 17 14 3 18 19 19 0 3 15 14 20 20 21 15 21 20 1 1 0 21 9 8 22 22 23 9 23 22 3 3 2 23 24 25 26 26 27 24 28 29 19 19 12 28 30 31 32 32 33 30 34 35 13 13 18 34 14 17 28 28 20 14 20 28 12 12 1 20 10 9 23 23 35 10 35 23 2 2 13 35 8 11 34 34 22 8 22 34 18 18 3 22 16 15 21 21 29 16 29 21 0 0 19 29 13 12 4 4 7 13 12 19 5 5 4 12 19 18 6 6 5 19 18 13 7 7 6 18 17 16 25 25 24 17 16 29 26 26 25 16 29 28 27 27 26 29 28 17 24 24 27 28 11 10 31 31 30 11 10 35 32 32 31 10 35 34 33 33 32 35 34 11 30 30 33 34 </coordinatesIdx>
+      <textCoordsIdx count="204">0 1 2 2 3 0 0 1 2 2 3 0 4 5 6 6 7 4 8 9 10 10 11 8 4 5 6 6 7 4 8 9 10 10 11 8 12 13 14 14 15 12 15 14 1 1 0 15 4 5 16 16 17 4 17 16 3 3 2 17 12 13 14 14 15 12 15 14 1 1 0 15 4 5 16 16 17 4 17 16 3 3 2 17 5 6 18 18 19 5 19 18 9 9 8 19 7 4 20 20 21 7 21 20 11 11 10 21 5 6 18 18 19 5 19 18 9 9 8 19 7 4 20 20 21 7 21 20 11 11 10 21 10 9 22 22 23 10 7 6 12 12 13 7 10 9 22 22 23 10 7 6 12 12 13 7 7 6 12 12 13 7 7 21 24 24 13 7 7 6 12 12 13 7 18 6 12 12 25 18 7 6 12 12 13 7 7 21 24 24 13 7 7 6 12 12 13 7 18 6 12 12 25 18 </textCoordsIdx>
+      <colorsIdx count="204">0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 </colorsIdx>
+      <matIds count="1">0 </matIds>
+      <textCoordsLightMapIdx count="0">
+      </textCoordsLightMapIdx>
+      <vertices count="108">-8.7474 0 -9.2033 -8.7474 0 9.2033 8.7474 0 9.2033 8.7474 0 -9.2033 -8.7474 91.3548 9.2033 -8.7474 91.3548 -9.2033 8.7474 91.3548 -9.2033 8.7474 91.3548 9.2033 43.7372 0 -9.2033 43.7372 0 9.2033 43.7372 76.5206 9.2033 43.7372 76.5206 -9.2033 -8.7474 76.5206 9.2033 8.7474 76.5206 9.2033 -43.7372 0 9.2033 -43.7372 0 -9.2033 -43.7372 76.5206 -9.2033 -43.7372 76.5206 9.2033 8.7474 76.5206 -9.2033 -8.7474 76.5206 -9.2033 -26.2423 0 9.2033 -26.2423 0 -9.2033 26.2423 0 -9.2033 26.2423 0 9.2033 -43.7372 91.3548 9.2033 -43.7372 91.3548 -9.2033 -26.2423 91.3548 -9.2033 -26.2423 91.3548 9.2033 -26.2423 76.5206 9.2033 -26.2423 76.5206 -9.2033 43.7372 91.3548 -9.2033 43.7372 91.3548 9.2033 26.2423 91.3548 9.2033 26.2423 91.3548 -9.2033 26.2423 76.5206 -9.2033 26.2423 76.5206 9.2033 </vertices>
+      <normals count="108">0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 1 0 0 1 0 0 1 0 0 1 0 0 0 0 1 0 0 1 -1 0 0 -1 0 0 -1 0 0 -1 0 0 0 0 -1 0 0 -1 0 -1 0 0 -1 0 0 -1 0 0 -1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 0 1 0 </normals>
+      <texCoords count="52">0.9995 0.4001 0.0005 0.4001 0.0005 0.5999 0.9995 0.5999 0.0005 0.9995 0.9995 0.9995 0.9995 0.1627 0.0005 0.1627 0.5999 0.9995 0.5999 0.1627 0.4001 0.1627 0.4001 0.9995 0.9995 0.0005 0.0005 0.0005 0.0005 0.2003 0.9995 0.2003 0.9995 0.7997 0.0005 0.7997 0.7997 0.1627 0.7997 0.9995 0.2003 0.9995 0.2003 0.1627 0.5999 0.0005 0.4001 0.0005 0.2003 0.0005 0.7997 0.0005 </texCoords>
+      <colors count="3">255 255 255 </colors>
+      <texCoordsLightMap count="0">
+      </texCoordsLightMap>
+    </mesh>
+  </meshes>
+</tgcScene>

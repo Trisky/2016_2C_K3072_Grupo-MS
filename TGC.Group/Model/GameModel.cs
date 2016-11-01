@@ -16,6 +16,7 @@ using TGC.Core.Terrain;
 using TGC.GroupoMs.Camaras;
 using TGC.Core;
 using TGC.GroupoMs.Model.efectos;
+using TGC.GrupoMs.Model.Elementos;
 
 namespace TGC.Group.Model
 {
@@ -40,6 +41,7 @@ namespace TGC.Group.Model
         public MenuCaja MenuBox { get; set; }
 
         private bool BoundingBox { get; set; }
+        public TgcScene BosqueScene { get; private set; }
 
         /// <summary>
         ///     Constructor del juego.
@@ -108,9 +110,24 @@ namespace TGC.Group.Model
         {
             GameBuilder gb = new GameBuilder(MediaDir, this, loader);
             Autos = new List<Auto>();
-
+            CrearBosque(loader);
             AutoJugador = gb.CrearHummer(MapScene);
+
             Autos.Add(AutoJugador);
+            
+
+
+
+        }
+        private void CrearBosque(TgcSceneLoader loader)
+        {
+            BosqueScene = loader.loadSceneFromFile(MediaDir + "Bosque\\bosque2-TgcScene.xml");
+            
+            foreach (TgcMesh m in BosqueScene.Meshes)
+            {
+                m.move(new Vector3(1100, -1, -1000));
+                m.Scale = new Vector3(1.8f, 2, 2);
+            }
         }
 
         /// <summary>
@@ -152,13 +169,11 @@ namespace TGC.Group.Model
         {
             TgcSceneLoader loader = new TgcSceneLoader();
             this.MapScene = loader.loadSceneFromFile(MediaDir + "Ciudad\\Ciudad-TgcScene.xml");
-            
-            foreach (TgcMesh mesh in MapScene.Meshes)
-            {
-
-            }
 
             AsignarPlayersConMeshes(loader);
+
+
+            //CrearBosque(loader);
             //this.scenesLst.Add();
         }
 
@@ -177,9 +192,9 @@ namespace TGC.Group.Model
             else
             {
                 GodModeOn = true;
-                var cameraPosition = Camara.Position;
-                Camara = new TgcFpsCamera(cameraPosition, Input);
-                Camara.SetCamera(cameraPosition, AutoJugador.newPosicion);
+                var cameraPosition = new Vector3(100,100,100);
+                Camara = new GodCamera(cameraPosition, Input);
+                //Camara.SetCamera(cameraPosition, new Vector3 (0,0,0));
                 //Niebla.CargarCamara(Camara);
             }
         }
@@ -219,7 +234,7 @@ namespace TGC.Group.Model
             if (Input.keyPressed(Key.P))
             {
                 Niebla.CargarCamara(Camara);
-                FinishedLoading = true;
+                
                 //if (MenuBox != null)
                 //{
                 //    GodModeOn = false;
@@ -266,6 +281,7 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Render()
         {
+            if (!FinishedLoading) return;
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
             PreRender();
             if(FinishedLoading) Niebla.Render();
@@ -343,6 +359,7 @@ namespace TGC.Group.Model
                 a.Render();
             }
             MapScene.renderAll();
+            if(BosqueScene!=null)BosqueScene.renderAll();
             //skybox render
             SkyBox.render();
 

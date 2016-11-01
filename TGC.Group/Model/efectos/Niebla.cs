@@ -27,6 +27,7 @@ namespace TGC.GroupoMs.Model.efectos
 
         public bool fogShader { get; set; }
         private TgcScene mapScene;
+        private TgcScene bosqueScene;
 
         public Niebla(GameModel gm)
         {
@@ -40,6 +41,7 @@ namespace TGC.GroupoMs.Model.efectos
             fogShader = false;
             skyBox = gm.SkyBox;
             mapScene = gm.MapScene;
+            bosqueScene = gm.BosqueScene;
             //ahora cargo todo en el efecto de directX
             
         }
@@ -94,20 +96,27 @@ namespace TGC.GroupoMs.Model.efectos
             //ahora la ciudad
             foreach (var mesh in mapScene.Meshes)
             {
-                if (fogShader)
-                {
-                    mesh.Effect = effect;
-                    mesh.Technique = "RenderScene";
-                }
-                else
-                {
-                    mesh.Effect = TgcShaders.Instance.TgcMeshShader;
-                    mesh.Technique = "DIFFUSE_MAP";
-                }
-                //mesh.UpdateMeshTransform();
-                //mesh.render();
+                ActivarEfecto(mesh);
+            }
+            //ahora el bosque
+            //foreach (var mesh in bosqueScene.Meshes)
+            //{
+            //    ActivarEfecto(mesh);
+            //}
+        }
+
+        private void ActivarEfecto(TgcMesh mesh)
+        {
+            if (fogShader)
+            {
+                mesh.Effect = effect;
+                mesh.Technique = "RenderScene";
+            }
+            else
+            {
+                mesh.Effect = TgcShaders.Instance.TgcMeshShader;
+                mesh.Technique = "DIFFUSE_MAP";
             }
         }
-        
     }
 }

@@ -23,16 +23,23 @@ namespace TGC.GroupoMs.Model
         private TgcCamera camara;
 
 
-        public LucesAuto(TgcScene scene, TgcMesh auto, Ruedas r1, Ruedas r2, TgcCamera cam)
+        public LucesAuto(Auto auto,Ruedas r1, Ruedas r2, TgcCamera cam)
         {
+            
             camara = cam;
             lightMesh = TgcBox.fromSize(new Vector3(10, 10, 10), Color.Red);
 
             //lista para todos los meshes
             lstMeshes = new List<TgcMesh>();
-
+            var scene = auto.ciudadScene;
+            
             //agrego meshes del scene a la lista
-            foreach(var mesh in scene.Meshes)
+            foreach (var mesh in scene.Meshes)
+            {
+                lstMeshes.Add(mesh);
+            }
+            var bosqueScene = auto.bosqueScene;
+            foreach (var mesh in bosqueScene.Meshes)
             {
                 lstMeshes.Add(mesh);
             }
