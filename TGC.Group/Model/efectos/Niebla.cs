@@ -34,9 +34,9 @@ namespace TGC.GroupoMs.Model.efectos
             effect = TgcShaders.loadEffect(gm.ShadersDir+ "TgcFogShader.fx");
             fog = new TgcFog();
             fog.Enabled = true;
-            fog.StartDistance = 500f;
-            fog.EndDistance = 2000f;
-            fog.Density = 0.025f;
+            fog.StartDistance = 600f;
+            fog.EndDistance = 3000f;
+            fog.Density = 0.015f;
             fog.Color = Color.Gray;
             fogShader = false;
             skyBox = gm.SkyBox;

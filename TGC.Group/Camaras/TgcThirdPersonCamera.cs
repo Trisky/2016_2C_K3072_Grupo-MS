@@ -80,6 +80,10 @@ namespace TGC.GrupoMs.Camara
             Target = Vector3.Empty;
             position = Vector3.Empty;
         }
+        public void Chocando()
+        {
+            OffsetForward = 0;
+        }
 
         /// <summary>
         ///     Configura los valores iniciales de la cámara

@@ -26,7 +26,7 @@ namespace TGC.GroupoMs.Model
     {
 
 
-        private List<TgcMesh> MeshesCercanos;
+        
         public bool pintarObb;
         //public bool collisionResult;
         public float obbPosY = 0;
@@ -50,13 +50,13 @@ namespace TGC.GroupoMs.Model
 
         //----------- Boundig box --------------
         public TgcBoundingOrientedBox obb;
-        public TgcScene ciudadScene { get; set; }
-        public TgcScene bosqueScene { get; set; }
+
         private bool nitroActivado;
         public bool finishedLoading;
         public bool volanteo;
         private Microsoft.DirectX.Direct3D.Effect efectoShaderNitroHummer;
         private Microsoft.DirectX.Direct3D.Effect efectoOriginal;
+        
 
         //--
 
@@ -66,6 +66,7 @@ namespace TGC.GroupoMs.Model
                     float aceleracion, float desaceleracion,
                     TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh)
         {
+            
             MeshesCercanos = new List<TgcMesh>();
             var scale = 0.6f;
             scale3 = new Vector3(scale, scale, scale);
@@ -153,7 +154,7 @@ namespace TGC.GroupoMs.Model
             nitroActivado = false;
             volanteo = false;
             BugFixAutoNoAparece();
-
+            SeleccionarMeshesCercanos(400f);
             huboMovimiento = huboRotacion = false;
             bool collisionFound = huboSalto = false;
             //pintarObb = false;
@@ -231,13 +232,15 @@ namespace TGC.GroupoMs.Model
 
             //RuedasDelanteras.Update(Mesh.Position,Velocidad,DireccionRuedas);
             //RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
+            
             ProcesarInercia();
             MoverMesh();
 
             if (RenderLuces) Luces.Update();
             if (motionBlur != null) motionBlur.Update(0f);
             if (RenderLuces) Luces.Update();
-            SeleccionarMeshesCercanos();
+            
+            
         }
         public void BugFixAutoNoAparece()
         {
@@ -247,6 +250,7 @@ namespace TGC.GroupoMs.Model
             DireccionRuedas = 0f;
             fixEjecutado = true;
             GameModel.FinishedLoading = true; //para render de niebla
+            //elapsedtime = GameModel.ElapsedTime;
         }
         private void DoblarRuedas(int lado)
         {
@@ -295,9 +299,9 @@ namespace TGC.GroupoMs.Model
             Mesh.Position = newPosicion;
             humoEscape.Update(newPosicion, Mesh.Rotation);
 
-            //camera update
-            if (CamaraAuto != null) //actualizo la posicion de la camara respecto de la del mesh
-                CamaraAuto.Target = Mesh.Position;
+            //actualizo la posicion de la camara respecto de la del mesh
+            CamaraAuto.Target = Mesh.Position;
+            ManejarColisionCamara();
 
 
             //7 ---- colisiones---
@@ -372,33 +376,6 @@ namespace TGC.GroupoMs.Model
                 Mesh.Effect = efectoShaderNitroHummer;
                 Mesh.Technique = "RenderScene";
             }
-        }
-
-        //OPTIMIZACION
-        private void SeleccionarMeshesCercanos()
-        {
-            //para la ciudad
-            foreach (var sceneMesh in ciudadScene.Meshes)
-            {
-                if (MeshEstaCerca(sceneMesh))
-                    MeshesCercanos.Add(sceneMesh);
-            }
-            //para el bosque
-            foreach (var sceneMesh in bosqueScene.Meshes)
-            {
-                if (MeshEstaCerca(sceneMesh))
-                    MeshesCercanos.Add(sceneMesh);
-            }
-
-        }
-        float distanciaDefault = 100f; //los meshes que estan mas lejos que esto no los evaluo en las colisiones.
-        private bool MeshEstaCerca(TgcMesh sceneMesh)
-        {
-            float d = TgcCollisionUtils.sqDistPointAABB(Mesh.Position, sceneMesh.BoundingBox);
-
-            if (d < distanciaDefault) return true;
-            else return false;
-        }
-        //FIN OPTIMIZACION
+        } 
     }
 }

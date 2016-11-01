@@ -1,9 +1,12 @@
 ﻿using Microsoft.DirectX;
+using Microsoft.DirectX.Direct3D;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TGC.Core.Direct3D;
 using TGC.Core.SceneLoader;
 using TGC.Core.Text;
 using TGC.Group.Model;
@@ -52,5 +55,17 @@ namespace TGC.GroupoMs.Model
             //rueda.AutoTransformEnable = false;
             return rueda;
         }
+
+        public TgcScene CrearBosque()
+        {
+            var BosqueScene = Loader.loadSceneFromFile(MediaDir + "Bosque\\bosque2-TgcScene.xml");
+            foreach (TgcMesh m in BosqueScene.Meshes)
+            {
+                m.move(new Vector3(1100, -1, -1000));
+                m.Scale = new Vector3(1.8f, 2, 2);
+            }
+            return BosqueScene;
+        }
+
     }
 }

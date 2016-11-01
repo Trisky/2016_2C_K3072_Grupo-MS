@@ -17,6 +17,7 @@ using TGC.GroupoMs.Camaras;
 using TGC.Core;
 using TGC.GroupoMs.Model.efectos;
 using TGC.GrupoMs.Model.Elementos;
+using TGC.GroupoMs.Model.ScreenOverlay;
 
 namespace TGC.Group.Model
 {
@@ -42,6 +43,7 @@ namespace TGC.Group.Model
 
         private bool BoundingBox { get; set; }
         public TgcScene BosqueScene { get; private set; }
+        public Velocimetro Velocimetro { get; set; }
 
         /// <summary>
         ///     Constructor del juego.
@@ -67,39 +69,14 @@ namespace TGC.Group.Model
             
             //Device de DirectX para crear primitivas.
             var d3dDevice = D3DDevice.Instance.Device;
-
-            //Textura de la carperta Media. Game.Default es un archivo de configuracion (Game.settings) util para poner cosas.
-            //Pueden abrir el Game.settings que se ubica dentro de nuestro proyecto para configurar.
-            //var pathTexturaCaja = MediaDir + Game.Default.TexturaCaja;
-
-            //Cargamos una textura, tener en cuenta que cargar una textura significa crear una copia en memoria.
-            //Es importante cargar texturas en Init, si se hace en el render loop podemos tener grandes problemas si instanciamos muchas.
-            //var texture = TgcTexture.createTexture(pathTexturaCaja);
-
-            //Creamos una caja 3D ubicada de dimensiones (5, 10, 5) y la textura como color.
-            //var size = new Vector3(5, 10, 5);
-            //Construimos una caja según los parámetros, por defecto la misma se crea con centro en el origen y se recomienda así para facilitar las transformaciones.
-            
-
-            //Cargo el unico mesh que tiene la escena.
-            //Mesh = new TgcSceneLoader().loadSceneFromFile(MediaDir + "LogoTGC-TgcScene.xml").Meshes[0];
-            //Defino una escala en el modelo logico del mesh que es muy grande.
-            //Mesh.Scale = new Vector3(0.5f, 0.5f, 0.5f);
-
-            //Camara.
-            //Configuro donde esta la posicion de la camara y hacia donde mira.
-            //Camara.SetCamera(cameraPosition, lookAt);
-            //Internamente el framework construye la matriz de view con estos dos vectores.
-            //Luego en nuestro juego tendremos que crear una cámara que cambie la matriz de view con variables como movimientos o animaciones de escenas.
-
-
-
             GodModeOn = true; //cuando llamo a toggle lo pone en false
             
             cargarSkyBox();
             CargarScenes();
             ToggleGodCamera();
             Niebla = new Niebla(this);
+            Niebla.CargarCamara(Camara);
+
         }
 
         /// <summary>
@@ -110,25 +87,15 @@ namespace TGC.Group.Model
         {
             GameBuilder gb = new GameBuilder(MediaDir, this, loader);
             Autos = new List<Auto>();
-            CrearBosque(loader);
+            BosqueScene = gb.CrearBosque();
             AutoJugador = gb.CrearHummer(MapScene);
-
             Autos.Add(AutoJugador);
+
+            //sprites en pantalla
+            Velocimetro = new Velocimetro(this);
             
-
-
-
         }
-        private void CrearBosque(TgcSceneLoader loader)
-        {
-            BosqueScene = loader.loadSceneFromFile(MediaDir + "Bosque\\bosque2-TgcScene.xml");
-            
-            foreach (TgcMesh m in BosqueScene.Meshes)
-            {
-                m.move(new Vector3(1100, -1, -1000));
-                m.Scale = new Vector3(1.8f, 2, 2);
-            }
-        }
+        
 
         /// <summary>
         /// init del skybox, se lo llama en el metodo init de GameModel.cs
@@ -233,7 +200,7 @@ namespace TGC.Group.Model
             // Ir al menu?
             if (Input.keyPressed(Key.P))
             {
-                Niebla.CargarCamara(Camara);
+                
                 
                 //if (MenuBox != null)
                 //{
@@ -260,6 +227,7 @@ namespace TGC.Group.Model
             {
                 ToggleGodCamera();
             }
+            
         }
 
         private void SkyBoxUpdate()
@@ -367,6 +335,9 @@ namespace TGC.Group.Model
             //render de menubox solo cuando es necesario.
             if (GodModeOn == true && MenuBox != null)
                 MenuBox.Render();
+
+            //Dibujo los sprites2d en pantalla
+            Velocimetro.Render();
 
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
             PostRender();

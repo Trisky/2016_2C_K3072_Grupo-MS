@@ -12,6 +12,7 @@ using TGC.Group.Model;
 using TGC.GroupoMs.Model.efectos;
 using TGC.Core.Geometry;
 using System.Drawing;
+using TGC.Core.Collision;
 
 namespace TGC.GroupoMs.Model
 {
@@ -74,10 +75,13 @@ namespace TGC.GroupoMs.Model
             Velocidad = -Velocidad * 0.1f;
         }
 
+
+        public float camaraOffsetDefaulForward;
         public TgcCamera camaraSeguirEsteAuto(GameModel model)
         {
             Vector3 v = Mesh.Position;
-            CamaraAuto = new TgcThirdPersonCamera(v, 200, 300);
+            camaraOffsetDefaulForward = 300;
+            CamaraAuto = new TgcThirdPersonCamera(v, 150, camaraOffsetDefaulForward);                
             //motionBlur = new MotionBlur(CamaraAuto, model);
             return CamaraAuto;
         }
@@ -167,5 +171,58 @@ namespace TGC.GroupoMs.Model
             //if (DireccionRuedas < 1f)
             //    DireccionRuedas = -1f;
         }
+
+
+ 
+        public void ManejarColisionCamara()
+        {
+            var meshes = MeshesCercanos;
+            float distanciaDefault = 100f;
+            bool choca = false;
+
+
+            foreach (var sceneMesh in ciudadScene.Meshes)
+            {
+                if (MeshEstaCerca(CamaraAuto.Position, sceneMesh, distanciaDefault))
+                {
+                    CamaraAuto.OffsetForward = CamaraAuto.OffsetForward - 12f*GameModel.ElapsedTime;
+                    choca = true;
+                    break;
+                }
+            }
+            if (!choca)
+                CamaraAuto.OffsetForward = camaraOffsetDefaulForward +12f* GameModel.ElapsedTime;
+        }
+
+
+        //OPTIMIZACION
+        public TgcScene ciudadScene { get; set; }
+        public TgcScene bosqueScene { get; set; }
+        public List<TgcMesh> MeshesCercanos;
+
+        public void SeleccionarMeshesCercanos(float distanciaDefault)
+        {
+            //para la ciudad
+            foreach (var sceneMesh in ciudadScene.Meshes)
+            {
+                if (MeshEstaCerca(Mesh.Position,sceneMesh,distanciaDefault))
+                    MeshesCercanos.Add(sceneMesh);
+            }
+            //para el bosque
+            foreach (var sceneMesh in bosqueScene.Meshes)
+            {
+                if (MeshEstaCerca(Mesh.Position,sceneMesh,distanciaDefault))
+                    MeshesCercanos.Add(sceneMesh);
+            }
+        }
+        //los meshes que estan mas lejos que esto no los evaluo en las colisiones.
+        public bool MeshEstaCerca(Vector3 pos,TgcMesh sceneMesh,float distanciaDefault)
+        {
+            float d = TgcCollisionUtils.sqDistPointAABB(pos, sceneMesh.BoundingBox);
+
+            if (d < distanciaDefault) return true;
+            else return false;
+        }
+        //FIN OPTIMIZACION
     }
 }
