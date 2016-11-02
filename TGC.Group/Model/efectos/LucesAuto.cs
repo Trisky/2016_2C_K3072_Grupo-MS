@@ -15,6 +15,10 @@ using TGC.GrupoMs.Camara;
 
 namespace TGC.GroupoMs.Model
 {
+    /// <summary>
+    /// ESTO NO ANDA, usar la otra clase de luces (CREO)
+    /// </summary>
+    [Obsolete]
     public class LucesAuto
     {
         private TgcBox lightMesh;
@@ -38,11 +42,7 @@ namespace TGC.GroupoMs.Model
             {
                 lstMeshes.Add(mesh);
             }
-            var bosqueScene = auto.bosqueScene;
-            foreach (var mesh in bosqueScene.Meshes)
-            {
-                lstMeshes.Add(mesh);
-            }
+            
             //agrego auto
             //lstMeshes.Add(auto);
 

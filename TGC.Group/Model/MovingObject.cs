@@ -13,6 +13,7 @@ using TGC.GroupoMs.Model.efectos;
 using TGC.Core.Geometry;
 using System.Drawing;
 using TGC.Core.Collision;
+using TGC.Core.Utils;
 
 namespace TGC.GroupoMs.Model
 {
@@ -72,16 +73,15 @@ namespace TGC.GroupoMs.Model
         {
             Mesh.Position = PosicionAnterior;
             Mesh.Rotation = RotacionAnterior;
-            Velocidad = -Velocidad * 0.1f;
+            Velocidad = -Velocidad * 0.45f;
         }
 
 
-        public float camaraOffsetDefaulForward;
+        public static  float camaraOffsetDefaulForward = 300f;
         public TgcCamera camaraSeguirEsteAuto(GameModel model)
         {
             Vector3 v = Mesh.Position;
-            camaraOffsetDefaulForward = 300;
-            CamaraAuto = new TgcThirdPersonCamera(v, 150, camaraOffsetDefaulForward);                
+            CamaraAuto = new TgcThirdPersonCamera(v, 150, 300f);                
             //motionBlur = new MotionBlur(CamaraAuto, model);
             return CamaraAuto;
         }
@@ -172,32 +172,82 @@ namespace TGC.GroupoMs.Model
             //    DireccionRuedas = -1f;
         }
 
-
- 
         public void ManejarColisionCamara()
         {
-            var meshes = MeshesCercanos;
-            float distanciaDefault = 100f;
-            bool choca = false;
+            //Actualizar valores de camara segun modifiers
+            //COPIADO DE EJEMPLO COLISIONES CAMARA del tgc viewer
 
+            //Pedirle a la camara cual va a ser su proxima posicion
+            Vector3 position;
+            Vector3 target;
+            CamaraAuto.CalculatePositionTarget(out position, out target);
 
-            foreach (var sceneMesh in ciudadScene.Meshes)
+            //Detectar colisiones entre el segmento de recta camara-personaje y todos los objetos del escenario
+            Vector3 q;
+            var minDistSq = FastMath.Pow2(CamaraAuto.OffsetForward);
+            foreach (var obstaculo in ciudadScene.Meshes)
             {
-                if (MeshEstaCerca(CamaraAuto.Position, sceneMesh, distanciaDefault))
+                //Hay colision del segmento camara-personaje y el objeto
+                if (TgcCollisionUtils.intersectSegmentAABB(target, position, obstaculo.BoundingBox, out q))
                 {
-                    CamaraAuto.OffsetForward = CamaraAuto.OffsetForward - 12f*GameModel.ElapsedTime;
-                    choca = true;
-                    break;
+                    //Si hay colision, guardar la que tenga menor distancia
+                    var distSq = Vector3.Subtract(q, target).LengthSq();
+                    //Hay dos casos singulares, puede que tengamos mas de una colision hay que quedarse con el menor offset.
+                    //Si no dividimos la distancia por 2 se acerca mucho al target.
+                    minDistSq = FastMath.Min(distSq / 2, minDistSq);
                 }
             }
-            if (!choca)
-                CamaraAuto.OffsetForward = camaraOffsetDefaulForward +12f* GameModel.ElapsedTime;
+
+            //Acercar la camara hasta la minima distancia de colision encontrada (pero ponemos un umbral maximo de cercania)
+            var newOffsetForward = -FastMath.Sqrt(minDistSq);
+
+            if (FastMath.Abs(newOffsetForward) < 10)
+            {
+                newOffsetForward = -10;
+            }
+            if(camaraOffsetDefaulForward > CamaraAuto.OffsetForward)
+            {
+                CamaraAuto.OffsetForward = (newOffsetForward - 42f * GameModel.ElapsedTime)*(-1f);
+                
+            }
+            else
+            {
+                CamaraAuto.OffsetForward = -newOffsetForward;
+            }
+            
+            //CamaraAuto.OffsetForward = newOffsetForward;
+
+            //Asignar la ViewMatrix haciendo un LookAt desde la posicion final anterior al centro de la camara
+            CamaraAuto.CalculatePositionTarget(out position, out target);
+            CamaraAuto.SetCamera(position, target);
+
         }
+
+
+ 
+        //public void ManejarColisionCamara()
+        //{
+        //    float distanciaDefault = 100f;
+        //    bool choca = false;
+
+
+        //    foreach (var sceneMesh in ciudadScene.Meshes)
+        //    {
+        //        if (MeshEstaCerca(CamaraAuto.Position, sceneMesh, distanciaDefault))
+        //        {
+        //            CamaraAuto.OffsetForward = CamaraAuto.OffsetForward - 12f*GameModel.ElapsedTime;
+        //            choca = true;
+        //            break;
+        //        }
+        //    }
+        //    if (!choca)
+        //        CamaraAuto.OffsetForward = camaraOffsetDefaulForward +12f* GameModel.ElapsedTime;
+        //}
 
 
         //OPTIMIZACION
         public TgcScene ciudadScene { get; set; }
-        public TgcScene bosqueScene { get; set; }
+        //public TgcScene bosqueScene { get; set; }
         public List<TgcMesh> MeshesCercanos;
 
         public void SeleccionarMeshesCercanos(float distanciaDefault)
@@ -209,11 +259,11 @@ namespace TGC.GroupoMs.Model
                     MeshesCercanos.Add(sceneMesh);
             }
             //para el bosque
-            foreach (var sceneMesh in bosqueScene.Meshes)
-            {
-                if (MeshEstaCerca(Mesh.Position,sceneMesh,distanciaDefault))
-                    MeshesCercanos.Add(sceneMesh);
-            }
+            //foreach (var sceneMesh in bosqueScene.Meshes)
+            //{
+            //    if (MeshEstaCerca(Mesh.Position,sceneMesh,distanciaDefault))
+            //        MeshesCercanos.Add(sceneMesh);
+            //}
         }
         //los meshes que estan mas lejos que esto no los evaluo en las colisiones.
         public bool MeshEstaCerca(Vector3 pos,TgcMesh sceneMesh,float distanciaDefault)

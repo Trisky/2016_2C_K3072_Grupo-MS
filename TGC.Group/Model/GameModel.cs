@@ -18,6 +18,7 @@ using TGC.Core;
 using TGC.GroupoMs.Model.efectos;
 using TGC.GrupoMs.Model.Elementos;
 using TGC.GroupoMs.Model.ScreenOverlay;
+using TGC.Core.Collision;
 
 namespace TGC.Group.Model
 {
@@ -28,6 +29,8 @@ namespace TGC.Group.Model
     {
         public TgcSkyBox SkyBox;
         private List<TgcScene> ScenesLst;
+        public List<LuzFija> LucesLst;
+
         public bool FinishedLoading { get; set; }
 
         public Niebla Niebla { get; set; }
@@ -42,7 +45,7 @@ namespace TGC.Group.Model
         public MenuCaja MenuBox { get; set; }
 
         private bool BoundingBox { get; set; }
-        public TgcScene BosqueScene { get; private set; }
+        //public TgcScene BosqueScene { get; private set; }
         public Velocimetro Velocimetro { get; set; }
 
         /// <summary>
@@ -63,6 +66,8 @@ namespace TGC.Group.Model
         ///     procesamiento que podemos pre calcular para nuestro juego.
         ///     Borrar el codigo ejemplo no utilizado.
         /// </summary>
+        
+        
         public override void Init()
         {
             FinishedLoading = false;
@@ -77,6 +82,8 @@ namespace TGC.Group.Model
             Niebla = new Niebla(this);
             Niebla.CargarCamara(Camara);
 
+
+            
         }
 
         /// <summary>
@@ -87,10 +94,10 @@ namespace TGC.Group.Model
         {
             GameBuilder gb = new GameBuilder(MediaDir, this, loader);
             Autos = new List<Auto>();
-            BosqueScene = gb.CrearBosque();
+            //BosqueScene = gb.CrearBosque();
             AutoJugador = gb.CrearHummer(MapScene);
             Autos.Add(AutoJugador);
-
+            gb.CrearLuces();
             //sprites en pantalla
             Velocimetro = new Velocimetro(this);
             
@@ -135,7 +142,7 @@ namespace TGC.Group.Model
         private void CargarScenes()
         {
             TgcSceneLoader loader = new TgcSceneLoader();
-            this.MapScene = loader.loadSceneFromFile(MediaDir + "Ciudad\\Ciudad-TgcScene.xml");
+            this.MapScene = loader.loadSceneFromFile(MediaDir + "Bosque\\ciudad-mod4-TgcScene.xml");
 
             AsignarPlayersConMeshes(loader);
 
@@ -322,12 +329,33 @@ namespace TGC.Group.Model
             
 
             //render de cada auto.
+            
             foreach (Auto a in Autos)
             {
+                foreach (LuzFija luz in LucesLst)
+                {
+                    luz.setValues(a.Mesh, a.CamaraAuto.Position);
+                }
+                
                 a.Render();
             }
-            MapScene.renderAll();
-            if(BosqueScene!=null)BosqueScene.renderAll();
+            
+            foreach(TgcMesh mesh in MapScene.Meshes)
+            {
+                var c = TgcCollisionUtils.classifyFrustumAABB(Frustum, mesh.BoundingBox);
+                if(c != TgcCollisionUtils.FrustumResult.OUTSIDE)
+                {
+                    foreach (LuzFija luz in LucesLst)
+                    {
+                        luz.setValues(mesh, AutoJugador.CamaraAuto.Position);
+                    }
+                    
+                    mesh.render();
+                }
+                
+            }
+            //MapScene.renderAll();
+            //if(BosqueScene!=null)BosqueScene.renderAll();
             //skybox render
             SkyBox.render();
 

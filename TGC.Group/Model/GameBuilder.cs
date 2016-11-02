@@ -10,6 +10,7 @@ using TGC.Core.Direct3D;
 using TGC.Core.SceneLoader;
 using TGC.Core.Text;
 using TGC.Group.Model;
+using TGC.GroupoMs.Model.efectos;
 
 namespace TGC.GroupoMs.Model
 {
@@ -56,15 +57,21 @@ namespace TGC.GroupoMs.Model
             return rueda;
         }
 
-        public TgcScene CrearBosque()
+        //public TgcScene CrearBosque()
+        //{
+        //    var BosqueScene = Loader.loadSceneFromFile(MediaDir + "Bosque\\bosque2-TgcScene.xml");
+        //    foreach (TgcMesh m in BosqueScene.Meshes)
+        //    {
+        //        m.move(new Vector3(1100, -1, -1000));
+        //        m.Scale = new Vector3(1.8f, 2, 2);
+        //    }
+        //    return BosqueScene;
+        //}
+
+        public void CrearLuces()
         {
-            var BosqueScene = Loader.loadSceneFromFile(MediaDir + "Bosque\\bosque2-TgcScene.xml");
-            foreach (TgcMesh m in BosqueScene.Meshes)
-            {
-                m.move(new Vector3(1100, -1, -1000));
-                m.Scale = new Vector3(1.8f, 2, 2);
-            }
-            return BosqueScene;
+            Gm.LucesLst = new List<LuzFija>();
+            Gm.LucesLst.Add(new LuzFija(new Vector3(100, 100, 100), new Vector3(0, 0, 0))) ;
         }
 
     }

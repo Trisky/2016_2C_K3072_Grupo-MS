@@ -27,7 +27,7 @@ namespace TGC.GroupoMs.Model.efectos
 
         public bool fogShader { get; set; }
         private TgcScene mapScene;
-        private TgcScene bosqueScene;
+
 
         public Niebla(GameModel gm)
         {
@@ -41,7 +41,7 @@ namespace TGC.GroupoMs.Model.efectos
             fogShader = false;
             skyBox = gm.SkyBox;
             mapScene = gm.MapScene;
-            bosqueScene = gm.BosqueScene;
+
             //ahora cargo todo en el efecto de directX
             
         }

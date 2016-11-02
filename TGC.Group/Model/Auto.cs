@@ -98,7 +98,7 @@ namespace TGC.GroupoMs.Model
             obbPosY = (yMax + yMin) / 2 + yMin;
             obb.Extents = new Vector3(obb.Extents.X, obb.Extents.Y, obb.Extents.Z * -1);
             ciudadScene = model.MapScene;
-            bosqueScene = model.BosqueScene;
+
             
 
             //--------luces
@@ -251,6 +251,7 @@ namespace TGC.GroupoMs.Model
             fixEjecutado = true;
             GameModel.FinishedLoading = true; //para render de niebla
             //elapsedtime = GameModel.ElapsedTime;
+            
         }
         private void DoblarRuedas(int lado)
         {
@@ -301,17 +302,23 @@ namespace TGC.GroupoMs.Model
 
             //actualizo la posicion de la camara respecto de la del mesh
             CamaraAuto.Target = Mesh.Position;
-            ManejarColisionCamara();
+            
 
 
             //7 ---- colisiones---
             ProcesarColisiones();
+            ClippingFix();
         }
-        
+
+        private void ClippingFix()
+        {
+            //throw new NotImplementedException();
+        }
+
         private void ProcesarColisiones()
         {
             bool collisionFound = false;
-            foreach (var sceneMesh in MeshesCercanos)
+            foreach (var sceneMesh in ciudadScene.Meshes)
             {
                 var escenaAABB = sceneMesh.BoundingBox;
                 var collisionResult = TgcCollisionUtils.testObbAABB(obb, escenaAABB);
@@ -333,6 +340,7 @@ namespace TGC.GroupoMs.Model
             {
                 obb.setRenderColor(Color.Yellow);
             }
+            ManejarColisionCamara();
         }
 
         /// <summary>
@@ -351,13 +359,13 @@ namespace TGC.GroupoMs.Model
 
             //escenario.BoundingBox.render();
 
-            if (pintarObb)
-                obb.render();
+            //if (pintarObb)
+            //    obb.render();
 
-            foreach (var mesh in ciudadScene.Meshes)
-            {
-                mesh.BoundingBox.render();
-            }
+            //foreach (var mesh in ciudadScene.Meshes)
+            //{
+            //    mesh.BoundingBox.render();
+            //}
             humoEscape.Render(nitroActivado);
     }
         
