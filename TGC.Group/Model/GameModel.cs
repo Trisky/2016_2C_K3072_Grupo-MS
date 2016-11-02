@@ -95,11 +95,12 @@ namespace TGC.Group.Model
             GameBuilder gb = new GameBuilder(MediaDir, this, loader);
             Autos = new List<Auto>();
             //BosqueScene = gb.CrearBosque();
-            AutoJugador = gb.CrearHummer(MapScene);
+            Velocimetro = new Velocimetro(this);
+            AutoJugador = gb.CrearHummer(MapScene, Velocimetro);
             Autos.Add(AutoJugador);
             gb.CrearLuces();
             //sprites en pantalla
-            Velocimetro = new Velocimetro(this);
+            
             
         }
         

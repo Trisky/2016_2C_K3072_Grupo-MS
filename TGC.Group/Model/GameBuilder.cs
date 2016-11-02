@@ -29,7 +29,7 @@ namespace TGC.GroupoMs.Model
         }
 
 
-        public Auto CrearHummer(TgcScene MapScene)
+        public Auto CrearHummer(TgcScene MapScene, Velocimetro velocimetro)
         {
             float scaleRuedas = 1f;
             TgcMesh rueda = CrearRueda(1f);
@@ -45,7 +45,7 @@ namespace TGC.GroupoMs.Model
 
             return new Auto("hummer", 100f, 5f, 3f, 5f, 2f,
                             hummerMesh, Gm,
-                            ruedasAdelante, ruedasAtras, rueda);
+                            ruedasAdelante, ruedasAtras, rueda, velocimetro);
         }
 
         public TgcMesh CrearRueda(float escala)

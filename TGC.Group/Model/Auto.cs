@@ -32,6 +32,7 @@ namespace TGC.GroupoMs.Model
         public float obbPosY = 0;
         public bool EsAutoJugador { get; set; }
         private Vector3 scale3;
+        public bool marchaAtras;
 
         public List<Arma> Armas { get; set; }
         public Arma ArmaSeleccionada { get; set; }
@@ -56,6 +57,7 @@ namespace TGC.GroupoMs.Model
         public bool volanteo;
         private Microsoft.DirectX.Direct3D.Effect efectoShaderNitroHummer;
         private Microsoft.DirectX.Direct3D.Effect efectoOriginal;
+        public Velocimetro velocimetro;
         
 
         //--
@@ -64,7 +66,7 @@ namespace TGC.GroupoMs.Model
 
         public Auto(string nombre, float vida, float avanceMaximo, float reversaMax,
                     float aceleracion, float desaceleracion,
-                    TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh)
+                    TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh, Velocimetro velocimetroIN)
         {
             
             MeshesCercanos = new List<TgcMesh>();
@@ -112,6 +114,7 @@ namespace TGC.GroupoMs.Model
             TechniqueOriginal = Mesh.Technique;
             efectoOriginal = Mesh.Effect;
             efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
+            velocimetro = velocimetroIN;
         }
 
 
@@ -161,6 +164,9 @@ namespace TGC.GroupoMs.Model
 
             PosicionAnterior = Mesh.Position;
             RotacionAnterior = Mesh.Rotation;
+            marchaAtras = false;
+
+
 
             //1 acelerar
             if (input.keyDown(Key.W))
@@ -180,6 +186,7 @@ namespace TGC.GroupoMs.Model
             {
                 Freno();
                 huboMovimiento = true;
+                marchaAtras = true;
             }
 
             //3 izquierda TODO//girar ruedas
@@ -284,7 +291,7 @@ namespace TGC.GroupoMs.Model
             obb.Center = new Vector3(Mesh.Position.X + calcularDX(), obbPosY + 0 + calcularDY(), Mesh.Position.Z + calcularDZ());
 
             //6 - me muevo
-            var m = matrixRotacion *
+            var m = Matrix.Scaling(scale3) * matrixRotacion *
                 Matrix.Translation(newPosicion);
 
             Mesh.Transform = m; //Mesh.BoundingBox.transform(m);
@@ -335,12 +342,14 @@ namespace TGC.GroupoMs.Model
             {
                 obb.setRenderColor(Color.Red);
                 PosicionRollback();
+
             }
             else
             {
                 obb.setRenderColor(Color.Yellow);
             }
             ManejarColisionCamara();
+            velocimetro.Update(Velocidad, marchaAtras);
         }
 
         /// <summary>
@@ -367,6 +376,7 @@ namespace TGC.GroupoMs.Model
             //    mesh.BoundingBox.render();
             //}
             humoEscape.Render(nitroActivado);
+            
     }
         
         private void AplicarShader()
