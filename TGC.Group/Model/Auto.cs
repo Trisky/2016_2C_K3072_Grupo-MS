@@ -115,6 +115,8 @@ namespace TGC.GroupoMs.Model
             efectoOriginal = Mesh.Effect;
             efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
             velocimetro = velocimetroIN;
+
+            
         }
 
 
@@ -256,7 +258,7 @@ namespace TGC.GroupoMs.Model
             Doblar();
             DireccionRuedas = 0f;
             fixEjecutado = true;
-            GameModel.FinishedLoading = true; //para render de niebla
+            
             //elapsedtime = GameModel.ElapsedTime;
             
         }

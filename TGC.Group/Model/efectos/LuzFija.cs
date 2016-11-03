@@ -26,6 +26,7 @@ namespace TGC.GroupoMs.Model.efectos
         public float spotAngle;
         public float spotExponent;
         public Vector3 lightDir;
+        public Vector3 CamaraPos;
 
         public LuzFija(Vector3 pos, Vector3 dir)
         {
@@ -34,10 +35,15 @@ namespace TGC.GroupoMs.Model.efectos
             lightDir = dir;
             lightDir.Normalize();
             lightColor = Color.White;
-            lightIntensity = 150f;
+            lightIntensity = 35f;
             specularEx = 9f;
-            spotAngle = 39f;
+            spotAngle = 36f;
             spotExponent = 7f;
+        }
+
+        public void setCamara(TgcThirdPersonCamera cam)
+        {
+            CamaraPos = cam.Position;
         }
 
         public void setValues(TgcMesh mesh,Vector3 posicionCamara)
@@ -57,7 +63,7 @@ namespace TGC.GroupoMs.Model.efectos
             mesh.Effect.SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(posicionCamara));
             mesh.Effect.SetValue("spotLightDir", TgcParserUtils.vector3ToFloat3Array(direccionLuz));
             mesh.Effect.SetValue("lightIntensity", lightIntensity);
-            mesh.Effect.SetValue("lightAttenuation", 0.5750f);
+            mesh.Effect.SetValue("lightAttenuation", 0.3f);
             mesh.Effect.SetValue("spotLightAngleCos", FastMath.ToRad(45f));
             mesh.Effect.SetValue("spotLightExponent", 20f);
             mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor(Color.Gray));

@@ -81,8 +81,8 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 	float v = 0.08*Velocidad;// *sin(time);
 	if (v < 1) v = 1;
 	if (v > 1.2) v = 1.25;
-	Input.Position.y = Y*v;// *cos(v) - Z * sin(v);
-	Input.Position.z = Z*v;// *cos(v) + Y * sin(v);
+	Input.Position.y = Y/v;// *cos(v) - Z * sin(v);
+	Input.Position.z = Z;// *cos(v) + Y * sin(v);
 
 	//Proyectar posicion
 	Output.Position = mul(Input.Position, matWorldViewProj);
@@ -91,8 +91,9 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 	Output.Texcoord = Input.Texcoord;
 
 	// Animar color
-	Input.Color.r = abs(sin(time));
-	Input.Color.g = abs(cos(time));
+	Input.Color.r = 255;// Input.Color.r*v + 222;
+	//Input.Color.r = abs(sin(time));
+	//Input.Color.g;// = abs(cos(time));
 
 	//Propago el color x vertice
 	Output.Color = Input.Color;
@@ -108,7 +109,9 @@ float4 ps_main(float2 Texcoord: TEXCOORD0, float4 Color : COLOR0) : COLOR0
 	float4 fvBaseColor = tex2D(diffuseMap, Texcoord);
 	// combino color y textura
 	// en este ejemplo combino un 80% el color de la textura y un 20%el del vertice
-	return 0.8*fvBaseColor + 0.001*Color*Velocidad;
+	fvBaseColor.r = fvBaseColor.r + 0.005*(Velocidad-1.2);// *3 * sin(2 * time);// *sin(time);
+	fvBaseColor.g = fvBaseColor.g;//*sin(time);
+		return fvBaseColor;// -0.01*Color*Velocidad;
 }
 
 // ------------------------------------------------------------------

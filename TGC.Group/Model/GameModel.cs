@@ -28,7 +28,7 @@ namespace TGC.Group.Model
     public class GameModel : TgcExample
     {
         public TgcSkyBox SkyBox;
-        private List<TgcScene> ScenesLst;
+        //private List<TgcScene> ScenesLst;
         public List<LuzFija> LucesLst;
 
         public bool FinishedLoading { get; set; }
@@ -74,15 +74,12 @@ namespace TGC.Group.Model
             
             //Device de DirectX para crear primitivas.
             var d3dDevice = D3DDevice.Instance.Device;
+            
             GodModeOn = true; //cuando llamo a toggle lo pone en false
             
-            cargarSkyBox();
+            
             CargarScenes();
             ToggleGodCamera();
-            Niebla = new Niebla(this);
-            Niebla.CargarCamara(Camara);
-
-
             
         }
 
@@ -144,6 +141,8 @@ namespace TGC.Group.Model
         {
             TgcSceneLoader loader = new TgcSceneLoader();
             this.MapScene = loader.loadSceneFromFile(MediaDir + "Bosque\\ciudad-mod4-TgcScene.xml");
+            cargarSkyBox();
+            Niebla = new Niebla(this);
 
             AsignarPlayersConMeshes(loader);
 
@@ -170,7 +169,7 @@ namespace TGC.Group.Model
                 var cameraPosition = new Vector3(100,100,100);
                 Camara = new GodCamera(cameraPosition, Input);
                 //Camara.SetCamera(cameraPosition, new Vector3 (0,0,0));
-                //Niebla.CargarCamara(Camara);
+
             }
         }
 
@@ -260,7 +259,8 @@ namespace TGC.Group.Model
             if (!FinishedLoading) return;
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
             PreRender();
-            if(FinishedLoading) Niebla.Render();
+            
+            Niebla.Aplicar();
             //Dibuja un texto por pantalla
             DrawText.drawText("F = bounding box.", 0, 20, Color.OrangeRed);
             DrawText.drawText("posicion camara: " + TgcParserUtils.printVector3(Camara.Position), 0, 30, Color.OrangeRed);
@@ -335,28 +335,27 @@ namespace TGC.Group.Model
             {
                 foreach (LuzFija luz in LucesLst)
                 {
-                    luz.setValues(a.Mesh, a.CamaraAuto.Position);
+                    //luz.setValues(a.Mesh, AutoJugador.CamaraAuto.Position);
                 }
                 
                 a.Render();
             }
-            
-            foreach(TgcMesh mesh in MapScene.Meshes)
+
+            foreach (TgcMesh mesh in MapScene.Meshes)
             {
-                var c = TgcCollisionUtils.classifyFrustumAABB(Frustum, mesh.BoundingBox);
-                if(c != TgcCollisionUtils.FrustumResult.OUTSIDE)
+                //var c = TgcCollisionUtils.classifyFrustumAABB(Frustum, mesh.BoundingBox);
+                //if(c != TgcCollisionUtils.FrustumResult.OUTSIDE)
+                //{
+                var pos = AutoJugador.CamaraAuto.Position;
+                if (pos == null) pos = new Vector3(100, 100, 100);
+                foreach (LuzFija luz in LucesLst)
                 {
-                    foreach (LuzFija luz in LucesLst)
-                    {
-                        luz.setValues(mesh, AutoJugador.CamaraAuto.Position);
-                    }
-                    
-                    mesh.render();
+                    luz.setValues(mesh, pos);
                 }
-                
+
+                mesh.render();
+                //}
             }
-            //MapScene.renderAll();
-            //if(BosqueScene!=null)BosqueScene.renderAll();
             //skybox render
             SkyBox.render();
 

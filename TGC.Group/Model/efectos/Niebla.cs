@@ -26,6 +26,8 @@ namespace TGC.GroupoMs.Model.efectos
         private TgcSkyBox skyBox;
 
         public bool fogShader { get; set; }
+        public GameModel Gm { get; private set; }
+
         private TgcScene mapScene;
 
 
@@ -41,6 +43,7 @@ namespace TGC.GroupoMs.Model.efectos
             fogShader = false;
             skyBox = gm.SkyBox;
             mapScene = gm.MapScene;
+            Gm = gm;
 
             //ahora cargo todo en el efecto de directX
             
@@ -49,12 +52,14 @@ namespace TGC.GroupoMs.Model.efectos
         {
             ConfigurarDirectX(camara.Position);
             fogShader = true;
+           // Gm.FinishedLoading = true;
         }
         public void CargarCamara(TgcThirdPersonCamera camara)
         {
             ConfigurarDirectX(camara.Position);
             fogShader = true;
-            Render();
+            Gm.FinishedLoading = true;
+            //Render();
 
         }
 
@@ -76,7 +81,7 @@ namespace TGC.GroupoMs.Model.efectos
         /// <summary>
         /// seteo las tecnicas de render pero en realidad no rendereo nada aca.
         /// </summary>
-        public void Render()
+        public void Aplicar()
         {
             //primero el skybox
             foreach (var mesh in skyBox.Faces)
@@ -98,11 +103,6 @@ namespace TGC.GroupoMs.Model.efectos
             {
                 ActivarEfecto(mesh);
             }
-            //ahora el bosque
-            //foreach (var mesh in bosqueScene.Meshes)
-            //{
-            //    ActivarEfecto(mesh);
-            //}
         }
 
         private void ActivarEfecto(TgcMesh mesh)

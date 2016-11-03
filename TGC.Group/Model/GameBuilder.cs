@@ -71,7 +71,7 @@ namespace TGC.GroupoMs.Model
         public void CrearLuces()
         {
             Gm.LucesLst = new List<LuzFija>();
-            Gm.LucesLst.Add(new LuzFija(new Vector3(100, 100, 100), new Vector3(0, 0, 0))) ;
+            Gm.LucesLst.Add(new LuzFija(new Vector3(0, 0, 0), new Vector3(0, 0, 0))) ;
         }
 
     }
