@@ -108,7 +108,7 @@ namespace TGC.GroupoMs.Model
             Vector3 v = Mesh.Position;
             CamaraAuto = new TgcThirdPersonCamera(v, 150, 300f);
             //motionBlur = new MotionBlur(CamaraAuto, model);
-            //GameModel.Niebla.CargarCamara(CamaraAuto);
+            GameModel.Niebla.CargarCamara(CamaraAuto);
             return CamaraAuto;
         }
 

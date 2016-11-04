@@ -207,7 +207,7 @@ namespace TGC.Group.Model
             // Ir al menu?
             if (Input.keyPressed(Key.P))
             {
-                Niebla.CargarCamara(Camara);
+                //Niebla.CargarCamara(Camara);
 
             }
 
