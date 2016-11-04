@@ -94,6 +94,8 @@
     <Compile Include="Model\Arma.cs" />
     <Compile Include="Model\Auto.cs" />
     <Compile Include="Model\efectos\LuzFija.cs" />
+    <Compile Include="Model\efectos\PointLight.cs" />
+    <Compile Include="Model\efectos\ShadowMap.cs" />
     <Compile Include="Model\ScreenOverlay\Utils\CustomBitmap.cs" />
     <Compile Include="Model\ScreenOverlay\Utils\CustomSprite.cs" />
     <Compile Include="Model\efectos\HumoEscape.cs" />
@@ -183,7 +185,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Shaders\MotionBlur.fx" />
+    <Content Include="Shaders\MultiDiffuseLights.fx" />
     <Content Include="Shaders\ShaderHummer.fx" />
+    <Content Include="Shaders\ShadowMap.fx" />
     <Content Include="Shaders\TgcFogShader.fx" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

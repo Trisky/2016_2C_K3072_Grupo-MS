@@ -26,6 +26,7 @@ sampler2D diffuseMap = sampler_state
 
 float time = 0;
 float Velocidad = 0;
+float Deformation = 1;
 
 /**************************************************************************************/
 /* RenderScene */
@@ -76,13 +77,19 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 	
 
 	// Animar posicion
+	float X = Input.Position.x;
 	float Y = Input.Position.y;
 	float Z = Input.Position.z;
 	float v = 0.08*Velocidad;// *sin(time);
+	float d = Deformation;
+	//if (d < 1) d = 1;
+	//if (d > 2) d = 2;
 	if (v < 1) v = 1;
 	if (v > 1.2) v = 1.25;
 	Input.Position.y = Y/v;// *cos(v) - Z * sin(v);
-	Input.Position.z = Z;// *cos(v) + Y * sin(v);
+	Input.Position.x = X +sin(time) * 8*Velocidad;
+	Input.Position.z = Z/d;// *cos(v) + Y * sin(v);
+
 
 	//Proyectar posicion
 	Output.Position = mul(Input.Position, matWorldViewProj);
@@ -106,7 +113,29 @@ float4 ps_main(float2 Texcoord: TEXCOORD0, float4 Color : COLOR0) : COLOR0
 {
 	// Obtener el texel de textura
 	// diffuseMap es el sampler, Texcoord son las coordenadas interpoladas
-	float4 fvBaseColor = tex2D(diffuseMap, Texcoord);
+	float screen_dx = 2650;
+	float2 texPantalla = 2650*Texcoord; //
+	texPantalla.x = floor(texPantalla.x);
+	texPantalla.y = floor(texPantalla.y);
+
+	/*if (fmod(texPantalla.x, 32)) {
+		discard;
+	}*/
+	//return 0;
+		
+	float4 fvBaseColor = tex2D(diffuseMap, Texcoord);// *2 * sin(time)); //para que se ponga re loco
+
+	//punto1
+	/*float2 q = 2 * Tex - 1;
+	float d = lenght(q);
+	float 4 colorBase = 0;
+	if (d < 0) {
+		float k = d*d;
+		float2 uv = 0, 5 + normalize(q) * 0, 5 * k;
+		Colorbase = tex2D(RenderTarget, uv);
+		fvBaseColor=Colorbase
+	}*/
+
 	// combino color y textura
 	// en este ejemplo combino un 80% el color de la textura y un 20%el del vertice
 	fvBaseColor.r = fvBaseColor.r + 0.005*(Velocidad-1.2);// *3 * sin(2 * time);// *sin(time);

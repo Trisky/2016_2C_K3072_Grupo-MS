@@ -30,6 +30,20 @@ namespace TGC.GroupoMs.Model.efectos
             
         }
 
+        public HumoEscape(GameModel gm,bool a)
+        {
+            gameModel = gm;
+            if (!a) return; //solo para cuando quiero que sea de choque
+            Init();
+            emitter1.MinSizeParticle = 40f;
+            emitter1.MaxSizeParticle = 60f;
+            emitter1.ParticleTimeToLive = 4.5f;
+            emitter1.CreationFrecuency = 0.1f;
+            emitter1.Dispersion = 15;
+            emitter1.Speed = new Vector3(5, 5, 5); 
+
+        }
+
         public void Init()
         {
 
@@ -76,6 +90,8 @@ namespace TGC.GroupoMs.Model.efectos
             
             //emitter.ro
         }
+
+        //public void Update(Vector3 pos)
 
         //public void MoverHumoCanioEscapeA(Vector3 newPosicion, Vector3 rotation)
         //{

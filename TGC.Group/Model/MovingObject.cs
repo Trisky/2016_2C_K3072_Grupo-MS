@@ -71,11 +71,36 @@ namespace TGC.GroupoMs.Model
 
         public void PosicionRollback()
         {
+            TirarHumoChoque();
             Mesh.Position = PosicionAnterior;
             Mesh.Rotation = RotacionAnterior;
             Velocidad = -Velocidad * 0.45f;
+
+
+            //GameModel.AutoJugador.Doblar(40);
+            if (Velocidad < 1f)
+            {
+                DeformationConstant = 2.3f;
+                GameModel.AutoJugador.Doblar(40);
+            }
+        }
+        public void RecobrarForma()
+        {
+            if(DeformationConstant > 1f)
+            {
+                DeformationConstant = DeformationConstant - 0.3f*GameModel.ElapsedTime;
+            }
         }
 
+        public float tInicioHumo=1f; //para el choque
+        public static float tDuracionHumo =10f;
+        public float tFinHumo=2f;
+
+        private void TirarHumoChoque()
+        {
+            tInicioHumo = GameModel.ElapsedTime;
+            tFinHumo = tInicioHumo + tDuracionHumo;
+        }
 
         public static  float camaraOffsetDefaulForward = 300f;
         public TgcCamera camaraSeguirEsteAuto(GameModel model)
@@ -83,7 +108,7 @@ namespace TGC.GroupoMs.Model
             Vector3 v = Mesh.Position;
             CamaraAuto = new TgcThirdPersonCamera(v, 150, 300f);
             //motionBlur = new MotionBlur(CamaraAuto, model);
-            GameModel.Niebla.CargarCamara(CamaraAuto);
+            //GameModel.Niebla.CargarCamara(CamaraAuto);
             return CamaraAuto;
         }
 
@@ -142,6 +167,8 @@ namespace TGC.GroupoMs.Model
             humoBox = TgcBox.fromSize(new Vector3(0, 0, 0), new Vector3(10, 10, 10), Color.Blue);
             humoEscape = new HumoEscape(model);
         }
+
+        
 
         public float calcularDY()
         {
@@ -208,7 +235,7 @@ namespace TGC.GroupoMs.Model
             }
             if(camaraOffsetDefaulForward > CamaraAuto.OffsetForward)
             {
-                CamaraAuto.OffsetForward = (newOffsetForward - 42f * GameModel.ElapsedTime)*(-1f);
+                CamaraAuto.OffsetForward = (newOffsetForward - 72f * GameModel.ElapsedTime)*(-1f); //enderezo lentamente
                 
             }
             else
@@ -225,7 +252,7 @@ namespace TGC.GroupoMs.Model
         }
 
 
- 
+
         //public void ManejarColisionCamara()
         //{
         //    float distanciaDefault = 100f;
@@ -245,9 +272,11 @@ namespace TGC.GroupoMs.Model
         //        CamaraAuto.OffsetForward = camaraOffsetDefaulForward +12f* GameModel.ElapsedTime;
         //}
 
-
+        public float DeformationConstant { get; set; }
         //OPTIMIZACION
         public TgcScene ciudadScene { get; set; }
+        
+
         //public TgcScene bosqueScene { get; set; }
         public List<TgcMesh> MeshesCercanos;
 

@@ -26,40 +26,34 @@ namespace TGC.GroupoMs.Model.efectos
         private TgcSkyBox skyBox;
 
         public bool fogShader { get; set; }
-        public GameModel Gm { get; private set; }
-
         private TgcScene mapScene;
-
 
         public Niebla(GameModel gm)
         {
-            effect = TgcShaders.loadEffect(gm.ShadersDir+ "TgcFogShader.fx");
+            effect = TgcShaders.loadEffect(gm.ShadersDir + "TgcFogShader.fx");
             fog = new TgcFog();
             fog.Enabled = true;
-            fog.StartDistance = 600f;
-            fog.EndDistance = 3000f;
-            fog.Density = 0.015f;
+            fog.StartDistance = 500f;
+            fog.EndDistance = 2000f;
+            fog.Density = 0.025f;
             fog.Color = Color.Gray;
             fogShader = false;
             skyBox = gm.SkyBox;
             mapScene = gm.MapScene;
-            Gm = gm;
-
+            //bosqueScene = gm.BosqueScene;
             //ahora cargo todo en el efecto de directX
-            
+
         }
-        public void CargarCamara (TgcCamera camara)
+        public void CargarCamara(TgcCamera camara)
         {
             ConfigurarDirectX(camara.Position);
             fogShader = true;
-           // Gm.FinishedLoading = true;
         }
         public void CargarCamara(TgcThirdPersonCamera camara)
         {
             ConfigurarDirectX(camara.Position);
             fogShader = true;
-            Gm.FinishedLoading = true;
-            //Render();
+            Render();
 
         }
 
@@ -81,7 +75,7 @@ namespace TGC.GroupoMs.Model.efectos
         /// <summary>
         /// seteo las tecnicas de render pero en realidad no rendereo nada aca.
         /// </summary>
-        public void Aplicar()
+        public void Render()
         {
             //primero el skybox
             foreach (var mesh in skyBox.Faces)
@@ -103,6 +97,11 @@ namespace TGC.GroupoMs.Model.efectos
             {
                 ActivarEfecto(mesh);
             }
+            //ahora el bosque
+            //foreach (var mesh in bosqueScene.Meshes)
+            //{
+            //    ActivarEfecto(mesh);
+            //}
         }
 
         private void ActivarEfecto(TgcMesh mesh)

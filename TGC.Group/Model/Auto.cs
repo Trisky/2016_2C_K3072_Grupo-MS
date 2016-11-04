@@ -58,7 +58,8 @@ namespace TGC.GroupoMs.Model
         private Microsoft.DirectX.Direct3D.Effect efectoShaderNitroHummer;
         private Microsoft.DirectX.Direct3D.Effect efectoOriginal;
         public Velocimetro velocimetro;
-        
+        private HumoEscape humoChoque;
+
 
         //--
 
@@ -68,12 +69,13 @@ namespace TGC.GroupoMs.Model
                     float aceleracion, float desaceleracion,
                     TgcMesh mesh, GameModel model, Ruedas ruedasAdelante, Ruedas ruedasAtras, TgcMesh ruedaMainMesh, Velocimetro velocimetroIN)
         {
-            
+            DeformationConstant = 1f;
             MeshesCercanos = new List<TgcMesh>();
             var scale = 0.6f;
             scale3 = new Vector3(scale, scale, scale);
 
             CrearHumoCanioDeEscape(model);
+            humoChoque = new HumoEscape(model,true);
             AvanceMax = avanceMaximo;
             ReversaMax = -reversaMax;
             Desaceleracion = desaceleracion;
@@ -116,7 +118,7 @@ namespace TGC.GroupoMs.Model
             efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
             velocimetro = velocimetroIN;
 
-            
+            //GameModel.shadowMap = new ShadowMap(GameModel);// para shadowmapFIX
         }
 
 
@@ -248,14 +250,15 @@ namespace TGC.GroupoMs.Model
             if (RenderLuces) Luces.Update();
             if (motionBlur != null) motionBlur.Update(0f);
             if (RenderLuces) Luces.Update();
-            
-            
+
+            GameModel.FinishedLoading = true;
+            RecobrarForma();
         }
         public void BugFixAutoNoAparece()
         {
             if (fixEjecutado) return;
             DireccionRuedas = 0.1f;
-            Doblar();
+            Doblar(1f);
             DireccionRuedas = 0f;
             fixEjecutado = true;
             
@@ -266,11 +269,11 @@ namespace TGC.GroupoMs.Model
         {
             volanteo = true;
             DireccionRuedas = +lado * 0.4f;
-            Doblar();
+            Doblar(DireccionRuedas);
         }
-        private void Doblar()
+        public void Doblar(float d)
         {
-            float lado = DireccionRuedas;
+            float lado = d;
             lado = lado * Velocidad;
             angOrientacionMesh += lado * 1f * GameModel.ElapsedTime;
             //ahora ya tengo para el lado en el que voy a girar y la intensidad del giro, entonces giro el auto.
@@ -308,6 +311,7 @@ namespace TGC.GroupoMs.Model
 
             Mesh.Position = newPosicion;
             humoEscape.Update(newPosicion, Mesh.Rotation);
+            humoChoque.Update(newPosicion, Mesh.Rotation);
 
             //actualizo la posicion de la camara respecto de la del mesh
             CamaraAuto.Target = Mesh.Position;
@@ -368,6 +372,10 @@ namespace TGC.GroupoMs.Model
                 Luces.Update();
             if (motionBlur != null && finishedLoading) motionBlur.Render();
 
+
+            if (tInicioHumo < tFinHumo)
+                humoChoque.Render(false); //si es momento de choque, muestro humito
+            tInicioHumo = tInicioHumo + GameModel.ElapsedTime;
             //escenario.BoundingBox.render();
 
             //if (pintarObb)
@@ -386,16 +394,19 @@ namespace TGC.GroupoMs.Model
             if (!EsAutoJugador) return;
             efectoShaderNitroHummer.SetValue("time", GameModel.ElapsedTime);
             efectoShaderNitroHummer.SetValue("Velocidad", 4*Velocidad);
-            if (Velocidad<2.5f )
-            {
-                Mesh.Effect = efectoOriginal;
-                Mesh.Technique = TechniqueOriginal;
-            }
-            else
-            {
-                Mesh.Effect = efectoShaderNitroHummer;
-                Mesh.Technique = "RenderScene";
-            }
+            efectoShaderNitroHummer.SetValue("Deformation", DeformationConstant);
+            //if (Velocidad < 2.5f)
+            //{
+            //    Mesh.Effect = efectoOriginal;
+            //    Mesh.Technique = TechniqueOriginal;
+            //}
+            //else
+            //{
+            //    Mesh.Effect = efectoShaderNitroHummer;
+            //    Mesh.Technique = "RenderScene";
+            //}
+            Mesh.Effect = efectoShaderNitroHummer;
+            Mesh.Technique = "RenderScene";
         } 
     }
 }

@@ -71,7 +71,20 @@ namespace TGC.GroupoMs.Model
         public void CrearLuces()
         {
             Gm.LucesLst = new List<LuzFija>();
-            Gm.LucesLst.Add(new LuzFija(new Vector3(0, 0, 0), new Vector3(0, 0, 0))) ;
+            Vector3 abajo = new Vector3(0, -1, 0);
+            string shaderDir = Gm.ShadersDir;
+
+            Gm.LucesLst.Add(new LuzFija(new Vector3(0, 100, 0),abajo,3000f,shaderDir )) ;
+
+            //luces lado1
+            //float lado1a = 128.08f;
+            //float lado1b = 852.2f;
+            //float intensidad = 300f;
+            //Gm.LucesLst.Add(new LuzFija(new Vector3(-460.44f, lado1a, lado1b), abajo, intensidad, shaderDir));
+            //Gm.LucesLst.Add(new LuzFija(new Vector3(-769f, lado1a, lado1b), abajo, intensidad, shaderDir));
+            //Gm.LucesLst.Add(new LuzFija(new Vector3(-15f, lado1a, lado1b), abajo, intensidad, shaderDir));
+            //Gm.LucesLst.Add(new LuzFija(new Vector3(293f, lado1a, lado1b), abajo, intensidad, shaderDir));
+
         }
 
     }

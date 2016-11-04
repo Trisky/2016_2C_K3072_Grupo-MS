@@ -27,18 +27,32 @@ namespace TGC.GroupoMs.Model.efectos
         public float spotExponent;
         public Vector3 lightDir;
         public Vector3 CamaraPos;
+        private Effect effect;
 
-        public LuzFija(Vector3 pos, Vector3 dir)
+
+
+        public LuzFija(Vector3 pos, Vector3 dir, float intensidad,string shaderDir)
+        {
+            Init(pos, dir, intensidad, Color.White ,shaderDir);
+        }
+        public LuzFija(Vector3 pos, Vector3 dir, float intensidad, Color colorLuz, string shaderDir)
+        {
+            Init(pos, dir, intensidad, colorLuz, shaderDir);
+        }
+
+        private void Init(Vector3 pos, Vector3 dir, float intensidad, Color colorLuz, string shaderDir)
         {
             lightEnable = true;
             lightPos = pos;
             lightDir = dir;
             lightDir.Normalize();
-            lightColor = Color.White;
-            lightIntensity = 35f;
+            lightColor = colorLuz;
+            lightIntensity = intensidad;
             specularEx = 9f;
             spotAngle = 36f;
             spotExponent = 7f;
+
+            effect = TgcShaders.loadEffect(shaderDir + "MultiDiffuseLights.fx");
         }
 
         public void setCamara(TgcThirdPersonCamera cam)
@@ -46,9 +60,20 @@ namespace TGC.GroupoMs.Model.efectos
             CamaraPos = cam.Position;
         }
 
+        public void Update(Vector3 pos,Vector3 lookat)
+        {
+            pos.Y = pos.Y + 15f;
+            lightPos = pos;
+            Vector3 v = new Vector3(0, 0, 0);
+            lookat.Normalize();
+            lightDir = lookat;
+                
+        }
+
         public void setValues(TgcMesh mesh,Vector3 posicionCamara)
         {
             Effect currentShader;
+
             
             currentShader = TgcShaders.Instance.TgcMeshSpotLightShader;
             mesh.Effect = currentShader;

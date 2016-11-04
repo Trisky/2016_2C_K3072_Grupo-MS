@@ -19,6 +19,7 @@ using TGC.GroupoMs.Model.efectos;
 using TGC.GrupoMs.Model.Elementos;
 using TGC.GroupoMs.Model.ScreenOverlay;
 using TGC.Core.Collision;
+using Microsoft.DirectX.Direct3D;
 
 namespace TGC.Group.Model
 {
@@ -47,6 +48,8 @@ namespace TGC.Group.Model
         private bool BoundingBox { get; set; }
         //public TgcScene BosqueScene { get; private set; }
         public Velocimetro Velocimetro { get; set; }
+        //public ShadowMap shadowMap;
+
 
         /// <summary>
         ///     Constructor del juego.
@@ -66,21 +69,22 @@ namespace TGC.Group.Model
         ///     procesamiento que podemos pre calcular para nuestro juego.
         ///     Borrar el codigo ejemplo no utilizado.
         /// </summary>
-        
-        
+
+
         public override void Init()
         {
             FinishedLoading = false;
-            
+
             //Device de DirectX para crear primitivas.
             var d3dDevice = D3DDevice.Instance.Device;
-            
+
             GodModeOn = true; //cuando llamo a toggle lo pone en false
-            
-            
+
+
             CargarScenes();
             ToggleGodCamera();
-            
+
+
         }
 
         /// <summary>
@@ -97,10 +101,10 @@ namespace TGC.Group.Model
             Autos.Add(AutoJugador);
             gb.CrearLuces();
             //sprites en pantalla
-            
-            
+
+
         }
-        
+
 
         /// <summary>
         /// init del skybox, se lo llama en el metodo init de GameModel.cs
@@ -140,15 +144,12 @@ namespace TGC.Group.Model
         private void CargarScenes()
         {
             TgcSceneLoader loader = new TgcSceneLoader();
-            this.MapScene = loader.loadSceneFromFile(MediaDir + "Bosque\\ciudad-mod4-TgcScene.xml");
+            this.MapScene = loader.loadSceneFromFile(MediaDir + "Bosque\\ciudad-mod5-TgcScene.xml");
             cargarSkyBox();
             Niebla = new Niebla(this);
 
             AsignarPlayersConMeshes(loader);
 
-
-            //CrearBosque(loader);
-            //this.scenesLst.Add();
         }
 
         /// <summary>
@@ -156,20 +157,19 @@ namespace TGC.Group.Model
         /// </summary>
         private void ToggleGodCamera()
         {
+
             if (GodModeOn)
             {
                 GodModeOn = false;
                 Camara = AutoJugador.camaraSeguirEsteAuto(this);
-                
+
                 // apagar godmode y  volver al auto
             }
             else
             {
                 GodModeOn = true;
-                var cameraPosition = new Vector3(100,100,100);
+                var cameraPosition = new Vector3(100, 100, 100);
                 Camara = new GodCamera(cameraPosition, Input);
-                //Camara.SetCamera(cameraPosition, new Vector3 (0,0,0));
-
             }
         }
 
@@ -181,7 +181,7 @@ namespace TGC.Group.Model
         public override void Update()
         {
             PreUpdate();
-             SkyBoxUpdate();
+            SkyBoxUpdate();
             if (FinishedLoading)
                 Niebla.Update(Camara);
 
@@ -207,20 +207,8 @@ namespace TGC.Group.Model
             // Ir al menu?
             if (Input.keyPressed(Key.P))
             {
-                
-                
-                //if (MenuBox != null)
-                //{
-                //    GodModeOn = false;
-                //    Camara = AutoJugador.camaraSeguirEsteAuto(this);
-                //}
-                //else
-                //{
-                //    GodModeOn = true; //para q el auto no se mueva
-                //    MenuBox = new MenuCaja(Input);
-                //    Camara = MenuBox.CrearCamaraCaja();
+                Niebla.CargarCamara(Camara);
 
-                //}
             }
 
             //Capturar Input Mouse
@@ -234,7 +222,7 @@ namespace TGC.Group.Model
             {
                 ToggleGodCamera();
             }
-            
+            //LucesLst[0].Update(AutoJugador.Mesh.Position, AutoJugador.Mesh.Rotation);
         }
 
         private void SkyBoxUpdate()
@@ -259,104 +247,40 @@ namespace TGC.Group.Model
             if (!FinishedLoading) return;
             //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
             PreRender();
-            
-            Niebla.Aplicar();
-            //Dibuja un texto por pantalla
-            DrawText.drawText("F = bounding box.", 0, 20, Color.OrangeRed);
-            DrawText.drawText("posicion camara: " + TgcParserUtils.printVector3(Camara.Position), 0, 30, Color.OrangeRed);
-            if (GodModeOn)
-            {
-                DrawText.drawText("GodMode = ON", 0, 40, Color.OrangeRed);
-            }
-            
-            else
-            {
-                DrawText.drawText("GodMode = OFF", 0, 40, Color.White);
-                DrawText.drawText("v=", 0, 50, Color.Orange);
-                DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
-                //DrawText.drawText("ruedas=", 0, 60, Color.Green);
-                //DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 50, 60, Color.Green);
+            //PreRenderPersonalizado(); //para el shadowMapFIX
 
-                DrawText.drawText("angOrientacionMesh=", 0, 70, Color.White);
-                DrawText.drawText((AutoJugador.angOrientacionMesh * 180 / (float)Math.PI).ToString(), 160, 70, Color.White);
-
-                DrawText.drawText("MeshPosition=", 0, 80, Color.White);
-                DrawText.drawText(AutoJugador.Mesh.Position.ToString(), 100, 80, Color.White);
-
-               
-
-                DrawText.drawText("scale mesh = ", 0, 160, Color.White);
-                DrawText.drawText(AutoJugador.Mesh.Scale.ToString(), 100, 160, Color.White);
-
-                DrawText.drawText("obb center = ", 0, 220, Color.White);
-                DrawText.drawText(AutoJugador.obb.Center.ToString(), 100, 220, Color.White);
-
-                DrawText.drawText("bounding position = ", 0, 280, Color.White);
-                DrawText.drawText(AutoJugador.Mesh.BoundingBox.ToString(), 150, 280, Color.White);
-
-                //DrawText.drawText("collisionFound = ", 0, 340, Color.White);
-                //DrawText.drawText(AutoJugador.collisionFound.ToString(), 150, 340, Color.White);
-
-                DrawText.drawText("direccionRuedas = ", 0, 400, Color.White);
-                DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 150, 400, Color.White);
-            }
-
-            //Siempre antes de renderizar el modelo necesitamos actualizar la matriz de transformacion.
-            //Debemos recordar el orden en cual debemos multiplicar las matrices, en caso de tener modelos jerárquicos, tenemos control total.
-            //Box.Transform = Matrix.Scaling(Box.Scale) *
-            //                Matrix.RotationYawPitchRoll(Box.Rotation.Y, Box.Rotation.X, Box.Rotation.Z) *
-            //                Matrix.Translation(Box.Position);
-            //A modo ejemplo realizamos toda las multiplicaciones, pero aquí solo nos hacia falta la traslación.
-            //Finalmente invocamos al render de la caja
-            //Box.render();
-            //CajaScene.render();
-
-            //Cuando tenemos modelos mesh podemos utilizar un método que hace la matriz de transformación estándar.
-            //Es útil cuando tenemos transformaciones simples, pero OJO cuando tenemos transformaciones jerárquicas o complicadas.
-            // Mesh.UpdateMeshTransform();
-            //Render del mesh
-            // Mesh.render();
-
-            //Render de BoundingBox, muy útil para debug de colisiones.
-            if (BoundingBox)
-            {
-                //Box.BoundingBox.render();
-                // Mesh.BoundingBox.render();
-                AutoJugador.Mesh.BoundingBox.render();
-                MapScene.BoundingBox.render();
-            }
-
-            //rendereo el mapa.
-            
-
-            //render de cada auto.
-            
+            if (GodModeOn) DibujarDebug();
+            var posCamara = AutoJugador.CamaraAuto.Position;
             foreach (Auto a in Autos)
             {
                 foreach (LuzFija luz in LucesLst)
                 {
-                    //luz.setValues(a.Mesh, AutoJugador.CamaraAuto.Position);
+                    luz.setValues(a.Mesh, posCamara);
                 }
-                
+
                 a.Render();
             }
 
             foreach (TgcMesh mesh in MapScene.Meshes)
             {
-                //var c = TgcCollisionUtils.classifyFrustumAABB(Frustum, mesh.BoundingBox);
-                //if(c != TgcCollisionUtils.FrustumResult.OUTSIDE)
-                //{
-                var pos = AutoJugador.CamaraAuto.Position;
-                if (pos == null) pos = new Vector3(100, 100, 100);
-                foreach (LuzFija luz in LucesLst)
+                //rendereo solo lo que esta dentro del frustrum
+                var c = TgcCollisionUtils.classifyFrustumAABB(Frustum, mesh.BoundingBox);
+                if (c != TgcCollisionUtils.FrustumResult.OUTSIDE)
                 {
-                    luz.setValues(mesh, pos);
-                }
 
-                mesh.render();
-                //}
+                    if (posCamara == null) posCamara = new Vector3(100, 100, 100);
+                    //RenderMesh(mesh, false);
+                    foreach (LuzFija luz in LucesLst)
+                    {
+                        //luz.setValues(mesh, posCamara);
+                    }
+
+                    mesh.render();
+                }
             }
+            DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
             //skybox render
+            Niebla.Render();
             SkyBox.render();
 
 
@@ -368,7 +292,75 @@ namespace TGC.Group.Model
             Velocimetro.Render();
 
             //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
+            //RenderFPS();
+            //PostRenderPersonalizado(); //para shadowmapFIX pero no funciona
             PostRender();
+
+                                       
+
+        }
+
+        //private void PostRenderPersonalizado()
+        //{
+
+        //    D3DDevice.Instance.Device.EndScene(); //END2================================================================
+            
+        //    D3DDevice.Instance.Device.Present();
+        //    shadowMap.RestaurarStencil();
+        //}
+
+        //private void PreRenderPersonalizado()
+        //{
+        //    ClearTextures();
+
+        //    D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+        //    //D3DDevice.Instance.Device.BeginScene();
+
+        //    shadowMap.Render(MapScene);
+        //    //D3DDevice.Instance.Device.EndScene(); // termino el thread anterior
+        //}
+
+        private void DibujarDebug()
+        {
+
+            DrawText.drawText("GodMode = ON", 600, 40, Color.OrangeRed);
+            DrawText.drawText("F = bounding box.", 0, 20, Color.OrangeRed);
+            DrawText.drawText("posicion camara: " + TgcParserUtils.printVector3(Camara.Position), 0, 30, Color.OrangeRed);
+            DrawText.drawText("GodMode = OFF", 0, 40, Color.White);
+            DrawText.drawText("v=", 0, 50, Color.Orange);
+            DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
+            //DrawText.drawText("ruedas=", 0, 60, Color.Green);
+            //DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 50, 60, Color.Green);
+
+            DrawText.drawText("angOrientacionMesh=", 0, 70, Color.White);
+            DrawText.drawText((AutoJugador.angOrientacionMesh * 180 / (float)Math.PI).ToString(), 160, 70, Color.White);
+
+            DrawText.drawText("MeshPosition=", 0, 80, Color.White);
+            DrawText.drawText(AutoJugador.Mesh.Position.ToString(), 100, 80, Color.White);
+
+
+
+            DrawText.drawText("scale mesh = ", 0, 160, Color.White);
+            DrawText.drawText(AutoJugador.Mesh.Scale.ToString(), 100, 160, Color.White);
+
+            DrawText.drawText("obb center = ", 0, 220, Color.White);
+            DrawText.drawText(AutoJugador.obb.Center.ToString(), 100, 220, Color.White);
+
+            DrawText.drawText("bounding position = ", 0, 280, Color.White);
+            DrawText.drawText(AutoJugador.Mesh.BoundingBox.ToString(), 150, 280, Color.White);
+
+            //DrawText.drawText("collisionFound = ", 0, 340, Color.White);
+            //DrawText.drawText(AutoJugador.collisionFound.ToString(), 150, 340, Color.White);
+
+            DrawText.drawText("direccionRuedas = ", 0, 400, Color.White);
+            DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 150, 400, Color.White);
+            if (BoundingBox)
+            {
+                //Box.BoundingBox.render();
+                // Mesh.BoundingBox.render();
+                AutoJugador.Mesh.BoundingBox.render();
+                MapScene.BoundingBox.render();
+            }
         }
 
         /// <summary>
@@ -379,10 +371,29 @@ namespace TGC.Group.Model
         public override void Dispose()
         {
             //Dispose de la caja.
-           // Box.dispose();
+            // Box.dispose();
             //Dispose del mesh.
             // Mesh.dispose();
             SkyBox.dispose();
+        }
+
+        /// <summary>
+        /// renderea un mesh
+        /// </summary>
+        /// <param name="T"></param>
+        /// <param name="shadow"></param>
+        public void RenderMesh(TgcMesh T, bool shadow)
+        {
+            if (shadow)
+            {
+                T.Technique = "RenderShadow";
+            }
+            else
+            {
+                T.Technique = "RenderScene";
+            }
+
+            T.render();
         }
     }
 }
