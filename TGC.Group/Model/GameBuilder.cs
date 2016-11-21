@@ -86,6 +86,5 @@ namespace TGC.GroupoMs.Model
             //Gm.LucesLst.Add(new LuzFija(new Vector3(293f, lado1a, lado1b), abajo, intensidad, shaderDir));
 
         }
-
     }
 }

@@ -93,8 +93,10 @@
     </Compile>
     <Compile Include="Model\Arma.cs" />
     <Compile Include="Model\Auto.cs" />
+    <Compile Include="Model\AutoOponente.cs" />
     <Compile Include="Model\efectos\LuzFija.cs" />
-    <Compile Include="Model\efectos\PointLight.cs" />
+    <Compile Include="Model\efectos\PantallaDividida.cs" />
+    <Compile Include="Model\efectos\PointLight2.cs" />
     <Compile Include="Model\efectos\ShadowMap.cs" />
     <Compile Include="Model\ScreenOverlay\Utils\CustomBitmap.cs" />
     <Compile Include="Model\ScreenOverlay\Utils\CustomSprite.cs" />

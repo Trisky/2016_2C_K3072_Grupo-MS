@@ -31,6 +31,7 @@ namespace TGC.Group.Model
         public TgcSkyBox SkyBox;
         //private List<TgcScene> ScenesLst;
         public List<LuzFija> LucesLst;
+        public PointLight2 pointLuz;
 
         public bool FinishedLoading { get; set; }
 
@@ -83,7 +84,7 @@ namespace TGC.Group.Model
 
             CargarScenes();
             ToggleGodCamera();
-
+            pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
 
         }
 
@@ -245,8 +246,13 @@ namespace TGC.Group.Model
         public override void Render()
         {
             if (!FinishedLoading) return;
-            //Inicio el render de la escena, para ejemplos simples. Cuando tenemos postprocesado o shaders es mejor realizar las operaciones según nuestra conveniencia.
-            PreRender();
+            BorrarPantalla();
+            preRenderPointLight(); //render 1
+            //preRenderNiebla(); //render2, rompe con la luz por eso esta comentado
+
+            IniciarScene(); //empiezo main escena
+
+
             //PreRenderPersonalizado(); //para el shadowMapFIX
 
             if (GodModeOn) DibujarDebug();
@@ -267,58 +273,78 @@ namespace TGC.Group.Model
                 var c = TgcCollisionUtils.classifyFrustumAABB(Frustum, mesh.BoundingBox);
                 if (c != TgcCollisionUtils.FrustumResult.OUTSIDE)
                 {
-
-                    if (posCamara == null) posCamara = new Vector3(100, 100, 100);
-                    //RenderMesh(mesh, false);
-                    foreach (LuzFija luz in LucesLst)
-                    {
-                        //luz.setValues(mesh, posCamara);
-                    }
-
                     mesh.render();
                 }
             }
             DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
             //skybox render
-            Niebla.Render();
-            SkyBox.render();
-
+            
 
             //render de menubox solo cuando es necesario.
             if (GodModeOn == true && MenuBox != null)
                 MenuBox.Render();
-
             //Dibujo los sprites2d en pantalla
             Velocimetro.Render();
 
-            //Finaliza el render y presenta en pantalla, al igual que el preRender se debe para casos puntuales es mejor utilizar a mano las operaciones de EndScene y PresentScene
-            //RenderFPS();
-            //PostRenderPersonalizado(); //para shadowmapFIX pero no funciona
-            PostRender();
-
-                                       
-
+            SkyBox.render();
+            RenderAxis();
+            RenderFPS();
+            TerminarScene(); //termino main scene
+            ImprimirPantalla();
         }
 
-        //private void PostRenderPersonalizado()
-        //{
+        private void preRenderNiebla()
+        {
+            IniciarScene(); //empiezo escena
+            Niebla.Render();
+            TerminarScene(); //termino escena
+        }
 
-        //    D3DDevice.Instance.Device.EndScene(); //END2================================================================
-            
-        //    D3DDevice.Instance.Device.Present();
-        //    shadowMap.RestaurarStencil();
-        //}
+        private void preRenderPointLight()
+        {
+            //una escena para cada luz
+            IniciarScene();
+            pointLuz.render(MapScene.Meshes,
+                           AutoJugador.CamaraAuto.Position);
+            TerminarScene();
+        }
 
-        //private void PreRenderPersonalizado()
-        //{
-        //    ClearTextures();
 
-        //    D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
-        //    //D3DDevice.Instance.Device.BeginScene();
+        #region inicio,fin e impresion de scenes
 
-        //    shadowMap.Render(MapScene);
-        //    //D3DDevice.Instance.Device.EndScene(); // termino el thread anterior
-        //}
+        /// <summary>
+        /// inicia un scene
+        /// </summary>
+        private void IniciarScene()
+        {
+            D3DDevice.Instance.Device.BeginScene();
+        }
+        /// <summary>
+        /// termina un scene
+        /// </summary>
+        private void TerminarScene()
+        {
+            D3DDevice.Instance.Device.EndScene(); //termino la escena
+        }
+
+        /// <summary>
+        /// Se llama al inicio de todo para borrar lo que quedó del render anterior.
+        /// </summary>
+        private void BorrarPantalla()
+        {
+            ClearTextures();
+            D3DDevice.Instance.Device.Clear(ClearFlags.Target | ClearFlags.ZBuffer, Color.Black, 1.0f, 0);
+        }
+        /// <summary>
+        /// se llama al final de todo para imprimir en pantalla todos los scenes, falla si falta algun TerminarScene()
+        /// </summary>
+        private void ImprimirPantalla()
+        {
+            D3DDevice.Instance.Device.Present();
+        }
+        #endregion 
+
+        
 
         private void DibujarDebug()
         {
