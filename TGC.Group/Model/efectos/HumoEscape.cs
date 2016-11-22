@@ -22,10 +22,12 @@ namespace TGC.GroupoMs.Model.efectos
         private string texturaFuego;
         private string texturePath;
         private GameModel gameModel;
+        private Vector3 offsetEscape;
 
         public HumoEscape(GameModel gm)
         {
             gameModel = gm;
+            offsetEscape = new Vector3(10, 5, 32);
             Init();
             
         }
@@ -35,13 +37,17 @@ namespace TGC.GroupoMs.Model.efectos
             gameModel = gm;
             if (!a) return; //solo para cuando quiero que sea de choque
             Init();
-            emitter1.MinSizeParticle = 40f;
-            emitter1.MaxSizeParticle = 60f;
-            emitter1.ParticleTimeToLive = 4.5f;
-            emitter1.CreationFrecuency = 0.1f;
-            emitter1.Dispersion = 15;
-            emitter1.Speed = new Vector3(5, 5, 5); 
+            
 
+        }
+
+        private void setEmmiter(ParticleEmitter emitter)
+        {
+            emitter.MinSizeParticle = 0.7f;
+            emitter.MaxSizeParticle = 1.2f;
+            emitter.ParticleTimeToLive = 1f;
+            emitter.CreationFrecuency = 0.04f;
+            emitter.Speed = new Vector3(1, 5, 100);
         }
 
         public void Init()
@@ -59,36 +65,32 @@ namespace TGC.GroupoMs.Model.efectos
             emitter1.Position = new Vector3(0, 15, 0);
 
             Vector3 speed = new Vector3(5, 5, 5);
-            emitter1.MinSizeParticle = 5f;
-            emitter1.MaxSizeParticle = 7f;
-            emitter1.ParticleTimeToLive = 0.5f;
-            emitter1.CreationFrecuency = 0.1f;
-            emitter1.Dispersion = 15;
-            emitter1.Speed = speed;
+            setEmmiter(emitter1);
 
             //emmiter fuego
             selectedParticleCount = 10;
             emitter2 = new ParticleEmitter(texturePath + texturaFuego, selectedParticleCount);
             emitter2.Position = new Vector3(0, 15, 0);
 
-            emitter2.MinSizeParticle = 5f;
-            emitter2.MaxSizeParticle = 7f;
-            emitter2.ParticleTimeToLive = 0.5f;
-            emitter2.CreationFrecuency = 0.1f;
-            emitter2.Dispersion = 15;
-            emitter2.Speed = speed;
+            setEmmiter(emitter2);
 
         }
 
-        public void Update(Vector3 pos,Vector3 rotation)
+        public void Update(Vector3 pos,float rotation)
         {
-            //primero me muevo 5 unidades para atras del centro del auto.
-            rotation.Normalize();
-            Vector3 posEscape = pos  + new Vector3(0, 10, 0) ;
-            emitter1.Position = posEscape;
-            emitter2.Position = posEscape;
+            //los dos escapes van en el mismo lugar
+            emitter1.Position = calcularMatrizRotacion(pos,rotation);
+            emitter2.Position = emitter1.Position;
             
-            //emitter.ro
+        }
+
+        private Vector3 calcularMatrizRotacion(Vector3 pos, float rotation)
+        {
+            
+            
+            var matrix = Matrix.Translation(offsetEscape) * Matrix.RotationY(rotation)
+                         * Matrix.Translation(pos);
+            return new Vector3(matrix.M41, matrix.M42, matrix.M43); ;
         }
 
         //public void Update(Vector3 pos)

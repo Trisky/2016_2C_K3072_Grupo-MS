@@ -29,14 +29,16 @@
         private void InitializeComponent()
         {
             this.panel3D = new System.Windows.Forms.Panel();
-            this.button1 = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
+            this.labelLoading = new System.Windows.Forms.Label();
             this.panel3D.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel3D
             // 
+            this.panel3D.Controls.Add(this.labelLoading);
             this.panel3D.Controls.Add(this.label2);
             this.panel3D.Controls.Add(this.label1);
             this.panel3D.Controls.Add(this.button1);
@@ -47,16 +49,14 @@
             this.panel3D.Size = new System.Drawing.Size(1176, 863);
             this.panel3D.TabIndex = 0;
             // 
-            // button1
+            // label2
             // 
-            this.button1.Font = new System.Drawing.Font("Modern No. 20", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.button1.Location = new System.Drawing.Point(392, 488);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(175, 47);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "Jugar";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(388, 370);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(179, 100);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "Controles:\r\nW = acelerar\r\nS = Frenar\r\nA/D = izquierda/derecha\r\nspace = saltar\r\n";
             // 
             // label1
             // 
@@ -69,14 +69,27 @@
             this.label1.Text = "Bienvenido al juego del grupo MS\r\nPreparado para jugar?";
             this.label1.Click += new System.EventHandler(this.label1_Click);
             // 
-            // label2
+            // button1
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(388, 370);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(179, 100);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Controles:\r\nW = acelerar\r\nS = Frenar\r\nA/D = izquierda/derecha\r\nspace = saltar\r\n";
+            this.button1.Font = new System.Drawing.Font("Modern No. 20", 12F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button1.Location = new System.Drawing.Point(392, 488);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(175, 47);
+            this.button1.TabIndex = 0;
+            this.button1.Text = "Jugar";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // labelLoading
+            // 
+            this.labelLoading.AutoSize = true;
+            this.labelLoading.Font = new System.Drawing.Font("Niagara Engraved", 72F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelLoading.Location = new System.Drawing.Point(410, 207);
+            this.labelLoading.Name = "labelLoading";
+            this.labelLoading.Size = new System.Drawing.Size(329, 154);
+            this.labelLoading.TabIndex = 3;
+            this.labelLoading.Text = "Loading";
+            this.labelLoading.Click += new System.EventHandler(this.label3_Click);
             // 
             // GameForm
             // 
@@ -103,6 +116,7 @@
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label labelLoading;
     }
 }
 

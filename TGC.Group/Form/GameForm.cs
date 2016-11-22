@@ -24,6 +24,7 @@ namespace TGC.Group.Form
         public GameForm()
         {
             InitializeComponent();
+            labelLoading.Visible = false;
         }
 
         /// <summary>
@@ -192,16 +193,20 @@ namespace TGC.Group.Form
 
         private void button1_Click(object sender, EventArgs e)
         {
+            labelLoading.Visible = true;
+            disposeDebotones();
             InitGraphics();
 
             //Titulo de la ventana principal.
             Text = Modelo.Name + " - " + Modelo.Description;
-            disposeDebotones();
+            
             //Focus panel3D.
             panel3D.Focus();
 
             //Inicio el ciclo de Render.
+            labelLoading.Dispose();
             InitRenderLoop();
+            
         }
 
         private void disposeDebotones()
@@ -212,6 +217,11 @@ namespace TGC.Group.Form
         }
 
         private void label1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void label3_Click(object sender, EventArgs e)
         {
 
         }

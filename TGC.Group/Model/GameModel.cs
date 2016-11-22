@@ -20,6 +20,7 @@ using TGC.GrupoMs.Model.Elementos;
 using TGC.GroupoMs.Model.ScreenOverlay;
 using TGC.Core.Collision;
 using Microsoft.DirectX.Direct3D;
+using TGC.Core.BoundingVolumes;
 
 namespace TGC.Group.Model
 {
@@ -34,6 +35,7 @@ namespace TGC.Group.Model
         public PointLight2 pointLuz;
         private AutoOponente autoOponente;
         private bool showMenu;
+        private TgcBoundingCylinder cilindroBB;
 
         public bool FinishedLoading { get; set; }
 
@@ -86,7 +88,7 @@ namespace TGC.Group.Model
             CargarScenes();
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
-            Vector3 posicion = new Vector3(100f, 5f, -500f);
+            Vector3 posicion = new Vector3(200f, 8f, 150f); //Y=8 para q este cerca del piso
             autoOponente = new AutoOponente(this, AutoJugador, 2f, 45f, 6f, posicion);
 
         }
@@ -148,8 +150,10 @@ namespace TGC.Group.Model
         private void CargarScenes()
         {
             TgcSceneLoader loader = new TgcSceneLoader();
-            this.MapScene = loader.loadSceneFromFile(MediaDir + "Bosque\\ciudad-mod5-TgcScene.xml");
+            this.MapScene = loader.loadSceneFromFile(MediaDir + "Bosque\\ciudad-mod7-TgcScene.xml");
             cargarSkyBox();
+            var centroCilindro = new Vector3(0f, 250f,626f);
+            cilindroBB = new TgcBoundingCylinder(centroCilindro, 190f, 250f);
             Niebla = new Niebla(this);
 
             AsignarPlayersConMeshes(loader);
@@ -262,7 +266,7 @@ namespace TGC.Group.Model
 
             IniciarScene(); //empiezo main escena
 
-
+            cilindroBB.render();
             //PreRenderPersonalizado(); //para el shadowMapFIX
 
             if (GodModeOn) DibujarDebug();

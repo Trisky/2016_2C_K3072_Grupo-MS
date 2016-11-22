@@ -325,8 +325,8 @@ namespace TGC.GroupoMs.Model
             RuedasTraseras.Update4(m, Velocidad, 0);
 
             Mesh.Position = newPosicion;
-            humoEscape.Update(newPosicion, Mesh.Rotation);
-            humoChoque.Update(newPosicion, Mesh.Rotation);
+            humoEscape.Update(newPosicion, anguloFinal);
+            
 
             //actualizo la posicion de la camara respecto de la del mesh
             CamaraAuto.Target = Mesh.Position;
@@ -346,6 +346,9 @@ namespace TGC.GroupoMs.Model
         private void ProcesarColisiones()
         {
             bool collisionFound = false;
+
+            //TgcCollisionUtils.testobbTest choque cilindro
+
             foreach (var sceneMesh in ciudadScene.Meshes)
             {
                 var escenaAABB = sceneMesh.BoundingBox;
