@@ -32,6 +32,8 @@ namespace TGC.Group.Model
         //private List<TgcScene> ScenesLst;
         public List<LuzFija> LucesLst;
         public PointLight2 pointLuz;
+        private AutoOponente autoOponente;
+        private bool showMenu;
 
         public bool FinishedLoading { get; set; }
 
@@ -49,6 +51,7 @@ namespace TGC.Group.Model
         private bool BoundingBox { get; set; }
         //public TgcScene BosqueScene { get; private set; }
         public Velocimetro Velocimetro { get; set; }
+
         //public ShadowMap shadowMap;
 
 
@@ -70,8 +73,6 @@ namespace TGC.Group.Model
         ///     procesamiento que podemos pre calcular para nuestro juego.
         ///     Borrar el codigo ejemplo no utilizado.
         /// </summary>
-
-
         public override void Init()
         {
             FinishedLoading = false;
@@ -85,6 +86,8 @@ namespace TGC.Group.Model
             CargarScenes();
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
+            Vector3 posicion = new Vector3(100f, 5f, -500f);
+            autoOponente = new AutoOponente(this, AutoJugador, 2f, 45f, 6f, posicion);
 
         }
 
@@ -223,6 +226,7 @@ namespace TGC.Group.Model
             {
                 ToggleGodCamera();
             }
+            autoOponente.Update();
             //LucesLst[0].Update(AutoJugador.Mesh.Position, AutoJugador.Mesh.Rotation);
         }
 
@@ -245,8 +249,14 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Render()
         {
-            if (!FinishedLoading) return;
             BorrarPantalla();
+            if (showMenu)
+            {
+                //TODO -> mostrar menu inicial
+                return;
+            }
+            if (!FinishedLoading) return;
+            
             preRenderPointLight(); //render 1
             //preRenderNiebla(); //render2, rompe con la luz por eso esta comentado
 
@@ -286,6 +296,7 @@ namespace TGC.Group.Model
             //Dibujo los sprites2d en pantalla
             Velocimetro.Render();
 
+            autoOponente.render();
             SkyBox.render();
             RenderAxis();
             RenderFPS();
@@ -305,7 +316,8 @@ namespace TGC.Group.Model
             //una escena para cada luz
             IniciarScene();
             pointLuz.render(MapScene.Meshes,
-                           AutoJugador.CamaraAuto.Position);
+                           AutoJugador.CamaraAuto.Position,
+                           AutoJugador.TodosLosMeshes);
             TerminarScene();
         }
 

@@ -44,32 +44,39 @@ namespace TGC.GroupoMs.Model.efectos
             lightMesh.updateValues();
         }
 
-        public void render(List<TgcMesh> meshes,Vector3 camPos)
+        public void render(List<TgcMesh> mapMeshes, Vector3 camPos, List<TgcMesh> meshesAuto)
         {
-            //Update();
-            foreach (var mesh in meshes)
+            foreach (var mesh in mapMeshes)
             {
-                //1 seteo efecto
-                mesh.Effect = currentShader;
-                mesh.Technique = TgcShaders.Instance.getTgcMeshTechnique(mesh.RenderType);
-
-                //2seteo valores
-                mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor(Color.Black));
-                mesh.Effect.SetValue("materialAmbientColor", ColorValue.FromColor(Color.White));
-                mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor(Color.White));
-                mesh.Effect.SetValue("materialSpecularColor", ColorValue.FromColor(Color.White));
-                mesh.Effect.SetValue("materialSpecularExp", 9f);
-
-                //3 seteo variables
-
-                mesh.Effect.SetValue("lightColor", ColorValue.FromColor(Color.White));
-                mesh.Effect.SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(lighthPos));
-                mesh.Effect.SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(camPos));
-                mesh.Effect.SetValue("lightIntensity", 30f);
-                mesh.Effect.SetValue("lightAttenuation", 0.2f);
-
-                lightMesh.render();
+                setEffects(camPos, mesh);
+            }
+            lightMesh.render();
+            foreach (var mesh in meshesAuto)
+            {
+                setEffects(camPos, mesh);
             }
         }
+
+        private void setEffects(Vector3 camPos, TgcMesh mesh)
+        {
+            mesh.Effect = currentShader;
+            mesh.Technique = TgcShaders.Instance.getTgcMeshTechnique(mesh.RenderType);
+
+            //2seteo valores
+            mesh.Effect.SetValue("materialEmissiveColor", ColorValue.FromColor(Color.Black));
+            mesh.Effect.SetValue("materialAmbientColor", ColorValue.FromColor(Color.White));
+            mesh.Effect.SetValue("materialDiffuseColor", ColorValue.FromColor(Color.White));
+            mesh.Effect.SetValue("materialSpecularColor", ColorValue.FromColor(Color.White));
+            mesh.Effect.SetValue("materialSpecularExp", 9f);
+
+            //3 seteo variables
+
+            mesh.Effect.SetValue("lightColor", ColorValue.FromColor(Color.White));
+            mesh.Effect.SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(lighthPos));
+            mesh.Effect.SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(camPos));
+            mesh.Effect.SetValue("lightIntensity", 30f);
+            mesh.Effect.SetValue("lightAttenuation", 0.2f);
+        }
+
     }
 }

@@ -151,6 +151,9 @@ namespace TGC.GroupoMs.Model
                 return;
             }
         }
+
+
+        
         public float calcularDX()
         {
             //return velocidadInstantanea * (float)Math.Cos(angOrientacionMesh);

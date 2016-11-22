@@ -36,12 +36,16 @@ namespace TGC.GroupoMs.Model
             rueda.move(0, -25, 0);
             TgcScene hummerScene = Loader.loadSceneFromFile(MediaDir + "Hummer\\Hummer-TgcScene.xml");
             TgcMesh hummerMesh = hummerScene.Meshes[0];
-            hummerMesh.Scale = new Vector3(0.4f,0.4f,0.4f);
+            //hummerMesh.Scale = new Vector3(0.4f,0.4f,0.4f);
 
             //para las ruedas el offset es (ancho,altura,largo)
             float y = 13f;
-            Ruedas  ruedasAtras   = new Ruedas(rueda, new Vector3(40, y, 54), new Vector3(-40, y, 54), true, scaleRuedas);
-            Ruedas ruedasAdelante = new Ruedas(rueda, new Vector3(-40, y, -62), new Vector3(40, y, -62), false, scaleRuedas);
+            float x = 40;
+            float z1 = 54;
+            float z2 = 62; 
+
+            Ruedas  ruedasAtras   = new Ruedas(rueda, new Vector3(x, y, z1), new Vector3(-x, y, z1), true, scaleRuedas);
+            Ruedas ruedasAdelante = new Ruedas(rueda, new Vector3(-x, y, -z2), new Vector3(x, y, -z2), false, scaleRuedas);
 
             return new Auto("hummer", 100f, 5f, 3f, 5f, 2f,
                             hummerMesh, Gm,

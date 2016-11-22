@@ -46,6 +46,7 @@ namespace TGC.GroupoMs.Model
         public LucesAuto Luces { get; set; }
         public bool RenderLuces { get; set; }
         public string TechniqueOriginal { get; private set; }
+        public List<TgcMesh> TodosLosMeshes { get; set; }
 
 
 
@@ -59,6 +60,7 @@ namespace TGC.GroupoMs.Model
         private Microsoft.DirectX.Direct3D.Effect efectoOriginal;
         public Velocimetro velocimetro;
         private HumoEscape humoChoque;
+        
 
 
         //--
@@ -71,7 +73,7 @@ namespace TGC.GroupoMs.Model
         {
             DeformationConstant = 1f;
             MeshesCercanos = new List<TgcMesh>();
-            var scale = 0.6f;
+            var scale = 0.4f;
             scale3 = new Vector3(scale, scale, scale);
 
             CrearHumoCanioDeEscape(model);
@@ -119,6 +121,8 @@ namespace TGC.GroupoMs.Model
             velocimetro = velocimetroIN;
 
             //GameModel.shadowMap = new ShadowMap(GameModel);// para shadowmapFIX
+            
+            TodosLosMeshes = getAllMeshes();
         }
 
 
@@ -282,6 +286,17 @@ namespace TGC.GroupoMs.Model
             anguloFinal = anguloFinal - lado * 1f * GameModel.ElapsedTime;
             matrixRotacion = Matrix.RotationY(anguloFinal);
             obb.rotate(new Vector3(0, -lado * 1f * GameModel.ElapsedTime, 0));
+        }
+
+        public List<TgcMesh> getAllMeshes()
+        {
+            var lst = new List<TgcMesh>();
+            lst.Add(Mesh);
+            lst.Add(RuedasDelanteras.RuedaMeshIzq);
+            lst.Add(RuedasTraseras.RuedaMeshIzq);
+            lst.Add(RuedasDelanteras.RuedaMeshDer);
+            lst.Add(RuedasTraseras.RuedaMeshDer);
+            return lst;
         }
 
         private void MoverMesh()
