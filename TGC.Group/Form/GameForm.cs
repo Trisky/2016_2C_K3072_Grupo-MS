@@ -48,17 +48,9 @@ namespace TGC.Group.Form
 
         private void GameForm_Load(object sender, EventArgs e)
         {
+
             //Iniciar graficos.
-            InitGraphics();
-
-            //Titulo de la ventana principal.
-            Text = Modelo.Name + " - " + Modelo.Description;
-
-            //Focus panel3D.
-            panel3D.Focus();
-
-            //Inicio el ciclo de Render.
-            InitRenderLoop();
+            
         }
 
         private void GameForm_FormClosing(object sender, FormClosingEventArgs e)
@@ -196,6 +188,32 @@ namespace TGC.Group.Form
             //Liberar Device al finalizar la aplicacion
             D3DDevice.Instance.Dispose();
             TexturesPool.Instance.clearAll();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            InitGraphics();
+
+            //Titulo de la ventana principal.
+            Text = Modelo.Name + " - " + Modelo.Description;
+            disposeDebotones();
+            //Focus panel3D.
+            panel3D.Focus();
+
+            //Inicio el ciclo de Render.
+            InitRenderLoop();
+        }
+
+        private void disposeDebotones()
+        {
+            button1.Dispose();
+            label1.Dispose();
+            label2.Dispose();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
