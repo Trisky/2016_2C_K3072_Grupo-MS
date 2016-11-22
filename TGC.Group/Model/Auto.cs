@@ -60,10 +60,12 @@ namespace TGC.GroupoMs.Model
         private Microsoft.DirectX.Direct3D.Effect efectoOriginal;
         public Velocimetro velocimetro;
         private HumoEscape humoChoque;
-        
 
+        public bool suelo;
 
         //--
+
+        public Vector3 posicionFaro;
 
 
 
@@ -87,6 +89,7 @@ namespace TGC.GroupoMs.Model
             aceleracionVertical = 0f;
             Velocidad = 0f;
             Mesh = mesh;
+            Mesh.Scale = scale3;
             Aceleracion = aceleracion;
             GameModel = model;
 
@@ -105,9 +108,11 @@ namespace TGC.GroupoMs.Model
             obb.Extents = new Vector3(obb.Extents.X, obb.Extents.Y, obb.Extents.Z * -1);
             ciudadScene = model.MapScene;
 
+
             
 
             //--------luces
+            
             Luces = new LucesAuto(this, ruedasAdelante, ruedasAtras, CamaraAuto);
             RenderLuces = false;
 
@@ -123,6 +128,8 @@ namespace TGC.GroupoMs.Model
             //GameModel.shadowMap = new ShadowMap(GameModel);// para shadowmapFIX
             
             TodosLosMeshes = getAllMeshes();
+
+            
         }
 
 
@@ -265,7 +272,7 @@ namespace TGC.GroupoMs.Model
             Doblar(1f);
             DireccionRuedas = 0f;
             fixEjecutado = true;
-            
+
             //elapsedtime = GameModel.ElapsedTime;
             
         }
@@ -315,7 +322,7 @@ namespace TGC.GroupoMs.Model
                 Matrix.Translation(newPosicion);
 
             Mesh.Transform = m; //Mesh.BoundingBox.transform(m);
-
+            
             //RuedasDelanteras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
             //RuedasTraseras.Update3(Mesh.Position, matrixRotacion, angOrientacionMesh, Velocidad);
             var auxDireccion = DireccionRuedas;
@@ -343,16 +350,20 @@ namespace TGC.GroupoMs.Model
             //throw new NotImplementedException();
         }
 
+
+
         private void ProcesarColisiones()
         {
             bool collisionFound = false;
-
+            
             //TgcCollisionUtils.testobbTest choque cilindro
 
             foreach (var sceneMesh in ciudadScene.Meshes)
             {
                 var escenaAABB = sceneMesh.BoundingBox;
                 var collisionResult = TgcCollisionUtils.testObbAABB(obb, escenaAABB);
+
+                
 
                 //2 -si lo hizo, salgo del foreach.
                 if (collisionResult)
@@ -364,15 +375,27 @@ namespace TGC.GroupoMs.Model
             //3 - si chocó, pongo el bounding box en rojo (apretar F para ver el bb).
             if (collisionFound)
             {
-                obb.setRenderColor(Color.Red);
-                PosicionRollback();
+                if(Mesh.Position.Y == 5 || Mesh.Position.Y >= 15)
+                {
+                    obb.setRenderColor(Color.Red);
+                    PosicionRollback();
+                }
+                    
+                
+               
+                
 
             }
             else
             {
                 obb.setRenderColor(Color.Yellow);
             }
-            ManejarColisionCamara();
+
+            if (Mesh.Position.Y == 5)
+            {
+                ManejarColisionCamara();
+            }
+            
             velocimetro.Update(Velocidad, marchaAtras);
         }
 

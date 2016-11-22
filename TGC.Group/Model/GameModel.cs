@@ -269,7 +269,8 @@ namespace TGC.Group.Model
             cilindroBB.render();
             //PreRenderPersonalizado(); //para el shadowMapFIX
 
-            if (GodModeOn) DibujarDebug();
+            //if (GodModeOn)
+                DibujarDebug();
             var posCamara = AutoJugador.CamaraAuto.Position;
             foreach (Auto a in Autos)
             {
@@ -321,7 +322,12 @@ namespace TGC.Group.Model
             IniciarScene();
             pointLuz.render(MapScene.Meshes,
                            AutoJugador.CamaraAuto.Position,
-                           AutoJugador.TodosLosMeshes);
+                           AutoJugador.TodosLosMeshes,
+                           AutoJugador.matrixRotacion,
+                           new Vector3(-12, 
+                           AutoJugador.obb.Extents.Y, 
+                           - AutoJugador.obb.Extents.Z+1),
+                           AutoJugador.newPosicion,AutoJugador.anguloFinal);
             TerminarScene();
         }
 
@@ -396,6 +402,9 @@ namespace TGC.Group.Model
 
             DrawText.drawText("direccionRuedas = ", 0, 400, Color.White);
             DrawText.drawText(AutoJugador.DireccionRuedas.ToString(), 150, 400, Color.White);
+
+            DrawText.drawText("posicion luz ", 0, 420, Color.White);
+            DrawText.drawText(pointLuz.lighthPos.ToString(), 150, 420, Color.White);
             if (BoundingBox)
             {
                 //Box.BoundingBox.render();

@@ -17,7 +17,7 @@ namespace TGC.GroupoMs.Model.efectos
     public class PointLight2
     {
         private GameModel gameModel;
-        private Vector3 lighthPos;
+        public Vector3 lighthPos;
         private TgcBox lightMesh;
         private Effect currentShader;
 
@@ -26,13 +26,16 @@ namespace TGC.GroupoMs.Model.efectos
             gameModel = gm;
             lighthPos = Posicion;
             float t = 10f;
+            
             lightMesh = TgcBox.fromSize(lighthPos, new Vector3(t,t,t),Color.White);
+            lightMesh.AutoTransformEnable = false;
             lightMesh.updateValues();
             currentShader = TgcShaders.Instance.TgcMeshPointLightShader;
         }
 
-        public void Update()
+        /*public void Update()
         {
+            
             float dir = 1f;
             float velocidad = 1f;// * gameModel.ElapsedTime;
             float posY = lighthPos.Y;
@@ -42,10 +45,16 @@ namespace TGC.GroupoMs.Model.efectos
             
             lighthPos.Y += velocidad*dir;
             lightMesh.updateValues();
-        }
+        }*/
 
-        public void render(List<TgcMesh> mapMeshes, Vector3 camPos, List<TgcMesh> meshesAuto)
+        public void render(List<TgcMesh> mapMeshes, Vector3 camPos, List<TgcMesh> meshesAuto,Matrix mr, Vector3 Posicion, Vector3 pivote, float anguloFinal)
         {
+
+            
+            lightMesh.Transform = Matrix.Scaling(new Vector3(0.4f, 0.3f, -0.1f))* Matrix.Translation(Posicion) * mr * Matrix.Translation(pivote);
+
+            lighthPos = Posicion + pivote + new Vector3(350 * -FastMath.Sin(anguloFinal), 0, 350 * -FastMath.Cos(anguloFinal));
+            lightMesh.updateValues();
             foreach (var mesh in mapMeshes)
             {
                 setEffects(camPos, mesh);

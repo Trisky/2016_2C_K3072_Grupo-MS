@@ -85,7 +85,7 @@ namespace TGC.GroupoMs.Model
             foreach (var mesh in lstMeshes)
             {
                 Vector3 posicionCamara = camara.Position;
-                Vector3 posicionLuz = new Vector3(0, 30, 0);
+                Vector3 posicionLuz = new Vector3(0, 30 , 0);
                 mesh.Effect.SetValue("lightColor", ColorValue.FromColor((Color.White)));
                 mesh.Effect.SetValue("lightPosition", TgcParserUtils.vector3ToVector4(posicionLuz));
                 mesh.Effect.SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(posicionCamara));
