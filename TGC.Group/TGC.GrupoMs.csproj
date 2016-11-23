@@ -94,6 +94,7 @@
     <Compile Include="Model\Arma.cs" />
     <Compile Include="Model\Auto.cs" />
     <Compile Include="Model\AutoOponente.cs" />
+    <Compile Include="Model\Cronometro.cs" />
     <Compile Include="Model\efectos\LuzFija.cs" />
     <Compile Include="Model\efectos\PantallaDividida.cs" />
     <Compile Include="Model\efectos\PointLight2.cs" />

@@ -14,6 +14,7 @@ using TGC.Core.Geometry;
 using System.Drawing;
 using TGC.Core.Collision;
 using TGC.Core.Utils;
+using TGC.Core.BoundingVolumes;
 
 namespace TGC.GroupoMs.Model
 {
@@ -307,5 +308,48 @@ namespace TGC.GroupoMs.Model
             else return false;
         }
         //FIN OPTIMIZACION
+
+
+        //----------------------------------------
+        public bool intersectRayAABB(TgcRay.RayStruct ray, TgcBoundingAxisAlignBox aabb,out float tmin,
+            out Vector3 q)
+            //, out float tmin, out Vector3 q)
+        {
+            var aabbMin = TgcCollisionUtils.toArray(aabb.PMin);
+            var aabbMax = TgcCollisionUtils.toArray(aabb.PMax);
+            var p = TgcCollisionUtils.toArray(ray.origin);
+            var d = TgcCollisionUtils.toArray(ray.direction);
+
+            tmin = 0.0f; // set to -FLT_MAX to get first hit on line
+            var tmax = float.MaxValue; // set to max distance ray can travel (for segment)
+            q = Vector3.Empty;
+
+            // For all three slabs
+            for (var i = 0; i < 3; i++)
+            {
+                if (FastMath.Abs(d[i]) < float.Epsilon)
+                {
+                    // Ray is parallel to slab. No hit if origin not within slab
+                    if (p[i] < aabbMin[i] || p[i] > aabbMax[i]) return false;
+                }
+                else
+                {
+                    // Compute intersection t value of ray with near and far plane of slab
+                    var ood = 1.0f / d[i];
+                    var t1 = (aabbMin[i] - p[i]) * ood;
+                    var t2 = (aabbMax[i] - p[i]) * ood;
+                    // Make t1 be intersection with near plane, t2 with far plane
+                    if (t1 > t2) TgcCollisionUtils.swap(ref t1, ref t2);
+                    // Compute the intersection of slab intersection intervals
+                    tmin = TgcCollisionUtils.max(tmin, t1);
+                    tmax = TgcCollisionUtils.min(tmax, t2);
+                    // Exit with no collision as soon as slab intersection becomes empty
+                    if (tmin > tmax) return false;
+                }
+            }
+            // Ray intersects all 3 slabs. Return point (q) and intersection t value (tmin)
+            q = ray.origin + ray.direction * tmin;
+            return true;
+        }
     }
 }

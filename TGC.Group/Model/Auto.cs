@@ -61,7 +61,15 @@ namespace TGC.GroupoMs.Model
         public Velocimetro velocimetro;
         private HumoEscape humoChoque;
 
-        public bool suelo;
+        //public bool suelo;
+
+        public float largo;
+        public bool collisionFound;
+        public bool chocoAdelante = false;
+        public TgcArrow directionArrow;
+
+        public float ChoqueDelantero = 0;
+        public float ChoqueTrasero = 0;
 
         //--
 
@@ -106,6 +114,9 @@ namespace TGC.GroupoMs.Model
             var yMax = Mesh.BoundingBox.PMax.Y;
             obbPosY = (yMax + yMin) / 2 + yMin;
             obb.Extents = new Vector3(obb.Extents.X, obb.Extents.Y, obb.Extents.Z * -1);
+
+            largo = obb.Extents.Z;
+
             ciudadScene = model.MapScene;
 
 
@@ -354,30 +365,69 @@ namespace TGC.GroupoMs.Model
 
         private void ProcesarColisiones()
         {
-            bool collisionFound = false;
-            
+            collisionFound = false;
+            chocoAdelante = false;
             //TgcCollisionUtils.testobbTest choque cilindro
+
+            var ray = new TgcRay.RayStruct();
+            var x1 =  -largo * FastMath.Sin(anguloFinal);
+            var z1 =  -largo * FastMath.Cos(anguloFinal);
+
+            var x2 = x1 * 1.2;
+            var z2 = z1 * 1.2;
+            //var a =  Mesh.Position.TransformCoordinate(Matrix.Identity);
+
+            ray.origin = new Vector3(
+                Mesh.Position.X + x1, 
+                Mesh.Position.Y, 
+                Mesh.Position.Z + z1);
+
+            ray.direction = new Vector3(
+                newPosicion.X + (float)x2,
+                newPosicion.Y,
+                newPosicion.Z + (float)z2
+                );
+
+            directionArrow = new TgcArrow();
+            directionArrow.Thickness = 5;
+            directionArrow.HeadSize = new Vector2(10, 10);
+
+            //directionArrow.PEnd = ray.origin;
+            directionArrow.PStart = ray.origin;
+            directionArrow.PEnd = ray.direction;
+            directionArrow.updateValues();
+           
+            //-FastMath.Sin(anguloFinal), 0, 350 * -FastMath.Cos(anguloFinal)
+
+            //ray.direction = eMovementVector;
+
 
             foreach (var sceneMesh in ciudadScene.Meshes)
             {
                 var escenaAABB = sceneMesh.BoundingBox;
                 var collisionResult = TgcCollisionUtils.testObbAABB(obb, escenaAABB);
-
                 
+
 
                 //2 -si lo hizo, salgo del foreach.
                 if (collisionResult)
                 {
                     collisionFound = true;
+                    //if (intersectRayAABB(ray, escenaAABB))//, out t, out p) || t > 1.0f)
+                    float t;
+                    Vector3 p;
+                    chocoAdelante = (intersectRayAABB(ray, escenaAABB, out t, out p) || t > 1.0f);
+
                     break;
                 }
             }
             //3 - si chocó, pongo el bounding box en rojo (apretar F para ver el bb).
             if (collisionFound)
             {
-                if(Mesh.Position.Y == 5 || Mesh.Position.Y >= 15)
+                if(Mesh.Position.Y == 5 || Mesh.Position.Y >= 25)
                 {
                     obb.setRenderColor(Color.Red);
+                    efectoShaderNitroHummer.SetValue("Velocidad", 4 * Velocidad);
                     PosicionRollback();
                 }
                     
@@ -405,12 +455,13 @@ namespace TGC.GroupoMs.Model
         public void Render()
         {
             AplicarShader(); //para que cambie de color al meter nitro
+            directionArrow.render();
             Mesh.render();
             RuedasDelanteras.Render();
             RuedasTraseras.Render();
             //RuedaMainMesh.render();
-            if (RenderLuces)
-                Luces.Update();
+            /*if (RenderLuces)
+                Luces.Update();*/
             if (motionBlur != null && finishedLoading) motionBlur.Render();
 
 
@@ -422,10 +473,10 @@ namespace TGC.GroupoMs.Model
             //if (pintarObb)
             //    obb.render();
 
-            //foreach (var mesh in ciudadScene.Meshes)
-            //{
-            //    mesh.BoundingBox.render();
-            //}
+            foreach (var mesh in ciudadScene.Meshes)
+            {
+               mesh.BoundingBox.render();
+            }
             humoEscape.Render(nitroActivado);
             
     }
@@ -434,8 +485,31 @@ namespace TGC.GroupoMs.Model
         {
             if (!EsAutoJugador) return;
             efectoShaderNitroHummer.SetValue("time", GameModel.ElapsedTime);
-            efectoShaderNitroHummer.SetValue("Velocidad", 4*Velocidad);
+            //efectoShaderNitroHummer.SetValue("Velocidad", 4*Velocidad);
             efectoShaderNitroHummer.SetValue("Deformation", DeformationConstant);
+
+            efectoShaderNitroHummer.SetValue("PosX", Mesh.Position.X);
+            efectoShaderNitroHummer.SetValue("PosZ", Mesh.Position.Z);
+            efectoShaderNitroHummer.SetValue("Largo", largo);
+            var aux = 0;
+            if (chocoAdelante && Mesh.Position.Y == 5)
+            {
+                aux = 1;
+                ChoqueDelantero = 1;
+            }
+               
+            if(collisionFound && !chocoAdelante && Mesh.Position.Y == 5)
+            {
+                aux = -1;
+                ChoqueTrasero = -1;
+            }
+
+            efectoShaderNitroHummer.SetValue("ChoqueTrasero", ChoqueTrasero);
+            efectoShaderNitroHummer.SetValue("ChoqueDelantero", ChoqueDelantero);
+
+            //adelante 1 atras -1
+            //efectoShaderNitroHummer.SetValue("Choco", aux);
+
             //if (Velocidad < 2.5f)
             //{
             //    Mesh.Effect = efectoOriginal;

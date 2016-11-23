@@ -20,6 +20,7 @@ namespace TGC.GroupoMs.Model.efectos
         public Vector3 lighthPos;
         private TgcBox lightMesh;
         private Effect currentShader;
+        public float lightIntensity;
 
         public PointLight2(GameModel gm,Vector3 Posicion)
         {
@@ -47,14 +48,29 @@ namespace TGC.GroupoMs.Model.efectos
             lightMesh.updateValues();
         }*/
 
-        public void render(List<TgcMesh> mapMeshes, Vector3 camPos, List<TgcMesh> meshesAuto,Matrix mr, Vector3 Posicion, Vector3 pivote, float anguloFinal)
+        public void render(List<TgcMesh> mapMeshes, Vector3 camPos, List<TgcMesh> meshesAuto,Matrix mr, Vector3 Posicion, Vector3 pivote, float anguloFinal, bool lucesOn, Vector3 v3)
         {
+            if (lucesOn)
+            {
+                lightIntensity = 35f;
+                lightMesh.Color = Color.White;
+            }
+                
+            else
+            {
+                lightIntensity = 20f;
+                lightMesh.Color = Color.Gray;
+            }
+                
+
+
+            lightMesh.Transform = Matrix.Scaling(new Vector3(0.45f, 0.3f, -0.1f))* Matrix.Translation(Posicion) * mr * Matrix.Translation(pivote);
+
+            lighthPos = Posicion + pivote + v3;
+
+            lightMesh.updateValues();
 
             
-            lightMesh.Transform = Matrix.Scaling(new Vector3(0.4f, 0.3f, -0.1f))* Matrix.Translation(Posicion) * mr * Matrix.Translation(pivote);
-
-            lighthPos = Posicion + pivote + new Vector3(350 * -FastMath.Sin(anguloFinal), 0, 350 * -FastMath.Cos(anguloFinal));
-            lightMesh.updateValues();
             foreach (var mesh in mapMeshes)
             {
                 setEffects(camPos, mesh);
@@ -83,7 +99,7 @@ namespace TGC.GroupoMs.Model.efectos
             mesh.Effect.SetValue("lightColor", ColorValue.FromColor(Color.White));
             mesh.Effect.SetValue("lightPosition", TgcParserUtils.vector3ToFloat4Array(lighthPos));
             mesh.Effect.SetValue("eyePosition", TgcParserUtils.vector3ToFloat4Array(camPos));
-            mesh.Effect.SetValue("lightIntensity", 30f);
+            mesh.Effect.SetValue("lightIntensity", lightIntensity);
             mesh.Effect.SetValue("lightAttenuation", 0.2f);
         }
 

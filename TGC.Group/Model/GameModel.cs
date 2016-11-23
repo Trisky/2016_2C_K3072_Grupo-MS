@@ -33,9 +33,11 @@ namespace TGC.Group.Model
         //private List<TgcScene> ScenesLst;
         public List<LuzFija> LucesLst;
         public PointLight2 pointLuz;
+        public PointLight2 pointLuz2;
         private AutoOponente autoOponente;
         private bool showMenu;
         private TgcBoundingCylinder cilindroBB;
+        public bool lucesPrendidas= true;
 
         public bool FinishedLoading { get; set; }
 
@@ -53,6 +55,11 @@ namespace TGC.Group.Model
         private bool BoundingBox { get; set; }
         //public TgcScene BosqueScene { get; private set; }
         public Velocimetro Velocimetro { get; set; }
+        
+        public Cronometro crono = new Cronometro();
+        
+        
+
 
         //public ShadowMap shadowMap;
 
@@ -84,10 +91,11 @@ namespace TGC.Group.Model
 
             GodModeOn = true; //cuando llamo a toggle lo pone en false
 
-
+            
             CargarScenes();
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
+            pointLuz2 = new PointLight2(this, new Vector3(100f, 100f, 100f));
             Vector3 posicion = new Vector3(200f, 8f, 150f); //Y=8 para q este cerca del piso
             autoOponente = new AutoOponente(this, AutoJugador, 2f, 45f, 6f, posicion);
 
@@ -188,6 +196,7 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Update()
         {
+            
             PreUpdate();
             SkyBoxUpdate();
             if (FinishedLoading)
@@ -210,6 +219,7 @@ namespace TGC.Group.Model
             if (Input.keyPressed(Key.L))
             {
                 AutoJugador.RenderLuces = !AutoJugador.RenderLuces;
+                lucesPrendidas = !lucesPrendidas;
             }
 
             // Ir al menu?
@@ -258,9 +268,13 @@ namespace TGC.Group.Model
             {
                 //TODO -> mostrar menu inicial
                 return;
+                
             }
             if (!FinishedLoading) return;
-            
+
+
+
+            crono.render(ElapsedTime);
             preRenderPointLight(); //render 1
             //preRenderNiebla(); //render2, rompe con la luz por eso esta comentado
 
@@ -324,11 +338,26 @@ namespace TGC.Group.Model
                            AutoJugador.CamaraAuto.Position,
                            AutoJugador.TodosLosMeshes,
                            AutoJugador.matrixRotacion,
-                           new Vector3(-12, 
-                           AutoJugador.obb.Extents.Y, 
-                           - AutoJugador.obb.Extents.Z+1),
-                           AutoJugador.newPosicion,AutoJugador.anguloFinal);
+                           new Vector3(-12,
+                           AutoJugador.obb.Extents.Y + 1,
+                           -AutoJugador.obb.Extents.Z + 2),
+                           AutoJugador.newPosicion, AutoJugador.anguloFinal, lucesPrendidas,
+                           new Vector3(350 * -FastMath.Sin(AutoJugador.anguloFinal), 0, 350 * -FastMath.Cos(AutoJugador.anguloFinal)));
+
+            pointLuz2.render(MapScene.Meshes,
+                           AutoJugador.CamaraAuto.Position,
+                           AutoJugador.TodosLosMeshes,
+                           AutoJugador.matrixRotacion,
+                           new Vector3(12,
+                           AutoJugador.obb.Extents.Y + 1,
+                           -AutoJugador.obb.Extents.Z + 2),
+                           AutoJugador.newPosicion, AutoJugador.anguloFinal, lucesPrendidas,
+                           new Vector3(350 * -FastMath.Sin(AutoJugador.anguloFinal), 0, 350 * -FastMath.Cos(AutoJugador.anguloFinal)));
             TerminarScene();
+
+            /*IniciarScene();
+            
+            TerminarScene();*/
         }
 
 
@@ -405,6 +434,15 @@ namespace TGC.Group.Model
 
             DrawText.drawText("posicion luz ", 0, 420, Color.White);
             DrawText.drawText(pointLuz.lighthPos.ToString(), 150, 420, Color.White);
+
+            DrawText.drawText("choco adelante ", 0, 480, Color.White);
+            DrawText.drawText(AutoJugador.chocoAdelante.ToString(), 150, 480, Color.White);
+            /*
+            DrawText.drawText("time ", 0, 500, Color.White);
+            
+
+            DrawText.drawText(minString+":"+ segString, 150, 500, Color.White);*/
+
             if (BoundingBox)
             {
                 //Box.BoundingBox.render();

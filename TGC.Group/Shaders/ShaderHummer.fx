@@ -28,6 +28,15 @@ float time = 0;
 float Velocidad = 0;
 float Deformation = 1;
 
+float PosX;
+float PosZ;
+float Largo;
+float ChocoAdelante;
+float ChocoAtras;
+
+float ChoqueTrasero;
+float ChoqueDelantero;
+
 /**************************************************************************************/
 /* RenderScene */
 /**************************************************************************************/
@@ -82,13 +91,37 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 	float Z = Input.Position.z;
 	float v = 0.08*Velocidad;// *sin(time);
 	float d = Deformation;
+	float tiempo = 0;
 	//if (d < 1) d = 1;
 	//if (d > 2) d = 2;
+
 	if (v < 1) v = 1;
 	if (v > 1.2) v = 1.25;
 	Input.Position.y = Y/v;// *cos(v) - Z * sin(v);
 	Input.Position.x = X +sin(time) * 8*Velocidad;
-	Input.Position.z = Z/d;// *cos(v) + Y * sin(v);
+	//Input.Position.z = Z / d;// *cos(v) + Y * sin(v);
+
+	//tiempo = tiempo + time ;
+	
+	if (ChoqueDelantero == 1)// && Velocidad > 0)
+	{
+		if (Input.Position.z < Largo * 0.22)
+		{
+			Input.Position.z = Z - 10 * sin(Y * 300);
+
+			Input.Position.x = Input.Position.x - 10 * sin(Y * 300);
+		}
+	}
+	if (ChoqueTrasero == -1)// && Velocidad < 0)
+	{
+		if (Input.Position.z > Largo * 0.22)
+		{
+			Input.Position.z = Z - 10 * sin(Y * 200);
+
+			Input.Position.x = Input.Position.x  - 10 * sin(Y * 200);
+		}
+	}
+	
 
 
 	//Proyectar posicion
@@ -152,3 +185,4 @@ technique RenderScene
 		PixelShader = compile ps_2_0 ps_main();
 	}
 }
+
