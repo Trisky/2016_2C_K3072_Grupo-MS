@@ -47,13 +47,17 @@ namespace TGC.GroupoMs.Model.efectos
             lightMesh.updateValues();
         }*/
 
-        public void render(List<TgcMesh> mapMeshes, Vector3 camPos, List<TgcMesh> meshesAuto,Matrix mr, Vector3 Posicion, Vector3 pivote, float anguloFinal)
+        public void render(List<TgcMesh> mapMeshes, Vector3 camPos, List<TgcMesh> meshesAuto,
+                           Matrix mr, Vector3 Posicion, Vector3 pivote, float anguloFinal)
         {
+            lightMesh.Transform = Matrix.Scaling(new Vector3(0.4f, 0.3f, -0.1f))
+                                * Matrix.Translation(Posicion) 
+                                * mr 
+                                * Matrix.Translation(pivote);
 
-            
-            lightMesh.Transform = Matrix.Scaling(new Vector3(0.4f, 0.3f, -0.1f))* Matrix.Translation(Posicion) * mr * Matrix.Translation(pivote);
-
-            lighthPos = Posicion + pivote + new Vector3(350 * -FastMath.Sin(anguloFinal), 0, 350 * -FastMath.Cos(anguloFinal));
+            lighthPos = Posicion + pivote + new Vector3(350 * -FastMath.Sin(anguloFinal),
+                                                        0,
+                                                        350 * -FastMath.Cos(anguloFinal));
             lightMesh.updateValues();
             foreach (var mesh in mapMeshes)
             {

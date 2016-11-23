@@ -31,7 +31,6 @@ namespace TGC.Group.Model
     {
         public TgcSkyBox SkyBox;
         //private List<TgcScene> ScenesLst;
-        public List<LuzFija> LucesLst;
         public PointLight2 pointLuz;
         private AutoOponente autoOponente;
         private bool showMenu;
@@ -39,7 +38,7 @@ namespace TGC.Group.Model
 
         public bool FinishedLoading { get; set; }
 
-        public Niebla Niebla { get; set; }
+        //public Niebla Niebla { get; set; }
 
         public TgcMesh PlayerMesh { get; set; }
         public bool GodModeOn { get; set; }
@@ -84,13 +83,11 @@ namespace TGC.Group.Model
 
             GodModeOn = true; //cuando llamo a toggle lo pone en false
 
-
             CargarScenes();
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
             Vector3 posicion = new Vector3(200f, 8f, 150f); //Y=8 para q este cerca del piso
             autoOponente = new AutoOponente(this, AutoJugador, 2f, 45f, 6f, posicion);
-
         }
 
         /// <summary>
@@ -106,9 +103,6 @@ namespace TGC.Group.Model
             AutoJugador = gb.CrearHummer(MapScene, Velocimetro);
             Autos.Add(AutoJugador);
             gb.CrearLuces();
-            //sprites en pantalla
-
-
         }
 
 
@@ -154,10 +148,8 @@ namespace TGC.Group.Model
             cargarSkyBox();
             var centroCilindro = new Vector3(0f, 250f,626f);
             cilindroBB = new TgcBoundingCylinder(centroCilindro, 190f, 250f);
-            Niebla = new Niebla(this);
 
             AsignarPlayersConMeshes(loader);
-
         }
 
         /// <summary>
@@ -190,8 +182,6 @@ namespace TGC.Group.Model
         {
             PreUpdate();
             SkyBoxUpdate();
-            if (FinishedLoading)
-                Niebla.Update(Camara);
 
             //le mando el input al auto del jugador parar que haga lo que tenga que hacer.
             if (GodModeOn == false)
@@ -231,7 +221,6 @@ namespace TGC.Group.Model
                 ToggleGodCamera();
             }
             autoOponente.Update();
-            //LucesLst[0].Update(AutoJugador.Mesh.Position, AutoJugador.Mesh.Rotation);
         }
 
         private void SkyBoxUpdate()
@@ -253,35 +242,14 @@ namespace TGC.Group.Model
         /// </summary>
         public override void Render()
         {
-            BorrarPantalla();
-            if (showMenu)
-            {
-                //TODO -> mostrar menu inicial
-                return;
-            }
-            if (!FinishedLoading) return;
-            
-            preRenderPointLight(); //render 1
-            //preRenderNiebla(); //render2, rompe con la luz por eso esta comentado
-
+            BorrarPantalla();            
             IniciarScene(); //empiezo main escena
-
-            cilindroBB.render();
-            //PreRenderPersonalizado(); //para el shadowMapFIX
 
             //if (GodModeOn)
                 DibujarDebug();
-            var posCamara = AutoJugador.CamaraAuto.Position;
-            foreach (Auto a in Autos)
-            {
-                foreach (LuzFija luz in LucesLst)
-                {
-                    luz.setValues(a.Mesh, posCamara);
-                }
 
-                a.Render();
-            }
-
+            AutoJugador.Render();
+            autoOponente.render();
             foreach (TgcMesh mesh in MapScene.Meshes)
             {
                 //rendereo solo lo que esta dentro del frustrum
@@ -291,35 +259,33 @@ namespace TGC.Group.Model
                     mesh.render();
                 }
             }
-            DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
-            //skybox render
-            
 
-            //render de menubox solo cuando es necesario.
-            if (GodModeOn == true && MenuBox != null)
-                MenuBox.Render();
+            DrawText.drawText(AutoJugador.Velocidad.ToString(), 20, 50, Color.Orange);
+            
             //Dibujo los sprites2d en pantalla
             Velocimetro.Render();
-
-            autoOponente.render();
+            
+            
             SkyBox.render();
             RenderAxis();
             RenderFPS();
+            
+            preRenderPointLight(); //scene para la point light
             TerminarScene(); //termino main scene
-            ImprimirPantalla();
+            ImprimirPantalla(); //imprimo en pantalla (al final)
         }
 
-        private void preRenderNiebla()
-        {
-            IniciarScene(); //empiezo escena
-            Niebla.Render();
-            TerminarScene(); //termino escena
-        }
+        //private void preRenderNiebla()
+        //{
+        //    IniciarScene(); //empiezo escena
+        //    //Niebla.Render();
+        //    TerminarScene(); //termino escena
+        //}
 
         private void preRenderPointLight()
         {
             //una escena para cada luz
-            IniciarScene();
+            //IniciarScene();
             pointLuz.render(MapScene.Meshes,
                            AutoJugador.CamaraAuto.Position,
                            AutoJugador.TodosLosMeshes,
@@ -328,7 +294,7 @@ namespace TGC.Group.Model
                            AutoJugador.obb.Extents.Y, 
                            - AutoJugador.obb.Extents.Z+1),
                            AutoJugador.newPosicion,AutoJugador.anguloFinal);
-            TerminarScene();
+            //aTerminarScene();
         }
 
 
