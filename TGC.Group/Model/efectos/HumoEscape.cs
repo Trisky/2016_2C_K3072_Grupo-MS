@@ -27,9 +27,8 @@ namespace TGC.GroupoMs.Model.efectos
         public HumoEscape(GameModel gm)
         {
             gameModel = gm;
-            offsetEscape = new Vector3(10, 5, 32);
+            offsetEscape = new Vector3(10, 5, 42);
             Init();
-            
         }
 
         public HumoEscape(GameModel gm,bool a)
@@ -37,8 +36,6 @@ namespace TGC.GroupoMs.Model.efectos
             gameModel = gm;
             if (!a) return; //solo para cuando quiero que sea de choque
             Init();
-            
-
         }
 
         private void setEmmiter(ParticleEmitter emitter)
@@ -92,18 +89,6 @@ namespace TGC.GroupoMs.Model.efectos
                          * Matrix.Translation(pos);
             return new Vector3(matrix.M41, matrix.M42, matrix.M43); ;
         }
-
-        //public void Update(Vector3 pos)
-
-        //public void MoverHumoCanioEscapeA(Vector3 newPosicion, Vector3 rotation)
-        //{
-
-        //    //primero me muevo 5 unidades para atras del centro del auto.
-        //    
-        //    posicionCajita = posicionCajita + new Vector3(0, 15, 0);
-        //    humoBox.move(posicionCajita);
-        //    //humoBox.Rotation = -rotation;
-        //}
 
         public void Render(bool conNitro)
         {

@@ -108,8 +108,6 @@ namespace TGC.GroupoMs.Model
         {
             Vector3 v = Mesh.Position;
             CamaraAuto = new TgcThirdPersonCamera(v, 150, 300f);
-            //motionBlur = new MotionBlur(CamaraAuto, model);
-            GameModel.Niebla.CargarCamara(CamaraAuto);
             return CamaraAuto;
         }
 
@@ -134,7 +132,6 @@ namespace TGC.GroupoMs.Model
 
         public void ProcesarInercia()
         {
-
             if ((Velocidad < 0.01f && Velocidad > 0f) || (Velocidad > -0.01f && Velocidad < 0f)) //si velocidad esta entre +-0.01f
             {
                 Velocidad = 0f;
