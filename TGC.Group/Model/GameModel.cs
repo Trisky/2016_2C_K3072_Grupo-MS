@@ -306,15 +306,15 @@ namespace TGC.Group.Model
             //if (GodModeOn)
                 DibujarDebug();
             var posCamara = AutoJugador.CamaraAuto.Position;
-            foreach (Auto a in Autos)
-            {
-                foreach (LuzFija luz in LucesLst)
-                {
-                    luz.setValues(a.Mesh, posCamara);
-                }
+            //foreach (Auto a in Autos)
+            //{
+            //    foreach (LuzFija luz in LucesLst)
+            //    {
+            //        luz.setValues(a.Mesh, posCamara);
+            //    }
 
-                a.Render();
-            }
+            //    a.Render();
+            //}
 
             foreach (TgcMesh mesh in MapScene.Meshes)
             {
@@ -339,6 +339,7 @@ namespace TGC.Group.Model
             SkyBox.render();
             RenderAxis();
             RenderFPS();
+            AutoJugador.Render();
             TerminarScene(); //termino main scene
             ImprimirPantalla();
         }
