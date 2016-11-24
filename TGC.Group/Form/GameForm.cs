@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using TGC.Core.Direct3D;
@@ -18,7 +19,7 @@ namespace TGC.Group.Form
     /// </summary>
     public partial class GameForm : System.Windows.Forms.Form
     {
-        private bool hayQueReiniciar;
+        private bool hayQueReiniciar = false;
 
         /// <summary>
         ///     Constructor de la ventana.
@@ -26,7 +27,7 @@ namespace TGC.Group.Form
         public GameForm()
         {
             InitializeComponent();
-            hayQueReiniciar = false;
+            lblGanaPierde.Visible = false;
 
         }
 
@@ -52,8 +53,6 @@ namespace TGC.Group.Form
 
         private void GameForm_Load(object sender, EventArgs e)
         {
-
-            //Iniciar graficos.
             
         }
 
@@ -89,10 +88,10 @@ namespace TGC.Group.Form
 
             //Cargar shaders del framework
             TgcShaders.Instance.loadCommonShaders(currentDirectory + Game.Default.ShadersDirectory);
-
+            float tiempo = Convert.ToSingle(numericUpDown1.Value);
             //Juego a ejecutar, si quisiéramos tener diferentes modelos aquí podemos cambiar la instancia e invocar a otra clase.
             Modelo = new GameModel(currentDirectory + Game.Default.MediaDirectory,
-                currentDirectory + Game.Default.ShadersDirectory);
+                currentDirectory + Game.Default.ShadersDirectory,tiempo,this);
 
             //Cargar juego.
             ExecuteModel();
@@ -196,18 +195,20 @@ namespace TGC.Group.Form
 
         private void button1_Click(object sender, EventArgs e)
         {
+            panel3D.Visible = true;
             if (hayQueReiniciar)
             {
-                this.ShutDown();
+                ShutDown();
                 InitGraphics();
                 hayQueReiniciar = false;
             }
-            disposeDebotones();
+            toggleVerBotones();
+            if(Modelo == null)
             InitGraphics();
 
             //Titulo de la ventana principal.
             Text = Modelo.Name + " - " + Modelo.Description;
-            
+            lblGanaPierde.Visible = false;
             //Focus panel3D.
             panel3D.Focus();
 
@@ -217,10 +218,12 @@ namespace TGC.Group.Form
             
         }
 
-        private void disposeDebotones()
+        private void toggleVerBotones()
         {
-            button1.Dispose();
-            pictureBox1.Dispose();
+            button1.Visible = !button1.Visible;
+            pictureBox1.Visible= !pictureBox1.Visible;
+            labelElijeTIempo.Visible = !labelElijeTIempo.Visible;
+            numericUpDown1.Visible = !numericUpDown1.Visible;
 
         }
 
@@ -237,12 +240,19 @@ namespace TGC.Group.Form
         {
             ApplicationRunning = false;
             lblGanaPierde.Visible = true;
+            //panel3D.Visible = false;
             if (ganaste)
                 lblGanaPierde.Text = "Ganaste!";
             else
                 lblGanaPierde.Text = "Perdiste!";
-
+            //toggleVerBotones();
+            lblGanaPierde.Visible = true;
+            hayQueReiniciar = true;
         }
 
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

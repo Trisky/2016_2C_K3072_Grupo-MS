@@ -21,6 +21,7 @@ using TGC.GroupoMs.Model.ScreenOverlay;
 using TGC.Core.Collision;
 using Microsoft.DirectX.Direct3D;
 using TGC.Core.BoundingVolumes;
+using TGC.Group.Form;
 
 namespace TGC.Group.Model
 {
@@ -55,10 +56,19 @@ namespace TGC.Group.Model
         private bool BoundingBox { get; set; }
         //public TgcScene BosqueScene { get; private set; }
         public Velocimetro Velocimetro { get; set; }
-        
-        public Cronometro crono = new Cronometro();
-        
-        
+
+        public Cronometro crono;
+        private float tiempoJuego;
+        private GameForm gameForm;
+        private Sonidos sonidos;
+
+        public void TerminarJuego(bool ganaste)
+        {
+            gameForm.TerminarJuego(ganaste);
+            //Dispose();
+        }
+
+
 
 
         //public ShadowMap shadowMap;
@@ -69,12 +79,16 @@ namespace TGC.Group.Model
         /// </summary>
         /// <param name="mediaDir">Ruta donde esta la carpeta con los assets</param>
         /// <param name="shadersDir">Ruta donde esta la carpeta con los shaders</param>
-        public GameModel(string mediaDir, string shadersDir) : base(mediaDir, shadersDir)
+        public GameModel(string mediaDir, string shadersDir,float tiempoJuegoo, GameForm gameForm) : base(mediaDir, shadersDir)
         {
+            this.gameForm = gameForm;
             Category = Game.Default.Category;
             Name = Game.Default.Name;
             Description = Game.Default.Description;
+            tiempoJuego = tiempoJuegoo;
         }
+
+       
 
         /// <summary>
         ///     Se llama una sola vez, al principio cuando se ejecuta el ejemplo.
@@ -85,13 +99,13 @@ namespace TGC.Group.Model
         public override void Init()
         {
             FinishedLoading = false;
-
+            crono = new Cronometro(tiempoJuego,this);
             //Device de DirectX para crear primitivas.
             var d3dDevice = D3DDevice.Instance.Device;
 
             GodModeOn = true; //cuando llamo a toggle lo pone en false
 
-            
+            sonidos = new Sonidos(MediaDir);
             CargarScenes();
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));

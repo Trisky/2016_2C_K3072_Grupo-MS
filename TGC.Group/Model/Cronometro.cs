@@ -7,14 +7,23 @@ using TGC.Core.Text;
 using System.Drawing;
 using TGC.Core.Utils;
 using TGC.Core.Direct3D;
+using TGC.Group.Model;
 
 namespace TGC.GroupoMs.Model
 {
     public class Cronometro
     {
         public TgcText2D text2d;
-        public float time = 0;
-        
+        private GameModel gameModel;
+        private float tiempoMax;
+        private float time = 0;
+
+        public Cronometro(float tiempo, GameModel gm)
+        {
+            gameModel = gm;
+            tiempoMax = tiempo;
+        }
+
         public void render(float elapseElapsedTime)
         {
             if (elapseElapsedTime < 200)
@@ -22,6 +31,8 @@ namespace TGC.GroupoMs.Model
 
             var seg = Math.Truncate(time % 60);
             var min = Math.Truncate(time / 60);
+
+            checkGanador(tiempoMax, min);
 
             var segString = "";
             var minString = "";
@@ -43,6 +54,15 @@ namespace TGC.GroupoMs.Model
             text2d.Size = new Size(300, 100);
             text2d.changeFont(new Font("TimesNewRoman", 25, FontStyle.Bold | FontStyle.Italic));
             text2d.render();
+        }
+
+        private void checkGanador(float tiempoMax, double minutoDoble)
+        {
+            float min = Convert.ToSingle(minutoDoble);
+            if (tiempoMax < min)
+            {
+                gameModel.TerminarJuego(true);
+            }
         }
     }
 }
