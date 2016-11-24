@@ -133,7 +133,7 @@ namespace TGC.GroupoMs.Model
             //shader pal hummer
             TechniqueOriginal = Mesh.Technique;
             efectoOriginal = Mesh.Effect;
-            efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
+           // efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
             velocimetro = velocimetroIN;
 
             //GameModel.shadowMap = new ShadowMap(GameModel);// para shadowmapFIX
@@ -427,7 +427,7 @@ namespace TGC.GroupoMs.Model
                 if(Mesh.Position.Y == 5 || Mesh.Position.Y >= 25)
                 {
                     obb.setRenderColor(Color.Red);
-                    efectoShaderNitroHummer.SetValue("Velocidad", 4 * Velocidad);
+                    //efectoShaderNitroHummer.SetValue("Velocidad", 4 * Velocidad);
                     PosicionRollback();
                 }
                     
@@ -484,13 +484,13 @@ namespace TGC.GroupoMs.Model
         private void AplicarShader()
         {
             if (!EsAutoJugador) return;
-            efectoShaderNitroHummer.SetValue("time", GameModel.ElapsedTime);
-            //efectoShaderNitroHummer.SetValue("Velocidad", 4*Velocidad);
-            efectoShaderNitroHummer.SetValue("Deformation", DeformationConstant);
+            //efectoShaderNitroHummer.SetValue("time", GameModel.ElapsedTime);
+            ////efectoShaderNitroHummer.SetValue("Velocidad", 4*Velocidad);
+            //efectoShaderNitroHummer.SetValue("Deformation", DeformationConstant);
 
-            efectoShaderNitroHummer.SetValue("PosX", Mesh.Position.X);
-            efectoShaderNitroHummer.SetValue("PosZ", Mesh.Position.Z);
-            efectoShaderNitroHummer.SetValue("Largo", largo);
+            //efectoShaderNitroHummer.SetValue("PosX", Mesh.Position.X);
+            //efectoShaderNitroHummer.SetValue("PosZ", Mesh.Position.Z);
+            //efectoShaderNitroHummer.SetValue("Largo", largo);
             var aux = 0;
             if (chocoAdelante && Mesh.Position.Y == 5)
             {
@@ -504,8 +504,8 @@ namespace TGC.GroupoMs.Model
                 ChoqueTrasero = -1;
             }
 
-            efectoShaderNitroHummer.SetValue("ChoqueTrasero", ChoqueTrasero);
-            efectoShaderNitroHummer.SetValue("ChoqueDelantero", ChoqueDelantero);
+            //efectoShaderNitroHummer.SetValue("ChoqueTrasero", ChoqueTrasero);
+            //efectoShaderNitroHummer.SetValue("ChoqueDelantero", ChoqueDelantero);
 
             //adelante 1 atras -1
             //efectoShaderNitroHummer.SetValue("Choco", aux);
@@ -520,8 +520,8 @@ namespace TGC.GroupoMs.Model
             //    Mesh.Effect = efectoShaderNitroHummer;
             //    Mesh.Technique = "RenderScene";
             //}
-            Mesh.Effect = efectoShaderNitroHummer;
-            Mesh.Technique = "RenderScene";
+            //Mesh.Effect = efectoShaderNitroHummer;
+            //Mesh.Technique = "RenderScene";
         } 
     }
 }

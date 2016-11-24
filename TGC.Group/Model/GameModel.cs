@@ -240,7 +240,7 @@ namespace TGC.Group.Model
             {
                 ToggleGodCamera();
             }
-            autoOponente.Update();
+            autoOponente.Update(AutoJugador.Mesh.Position);
             //LucesLst[0].Update(AutoJugador.Mesh.Position, AutoJugador.Mesh.Rotation);
         }
 
