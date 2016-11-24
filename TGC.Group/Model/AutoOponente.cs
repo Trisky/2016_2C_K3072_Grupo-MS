@@ -11,6 +11,7 @@ using TGC.Core.Collision;
 using TGC.Core.SceneLoader;
 using TGC.Group.Form;
 using TGC.Group.Model;
+using TGC.Core.Utils;
 
 namespace TGC.GroupoMs.Model
 {
@@ -25,9 +26,10 @@ namespace TGC.GroupoMs.Model
         private TgcMesh meshTarget;
         private GameModel gameModel;
 
-        public float anguloFinal = 0; //indica el giro del auto en grados
+        public float anguloFinal = 270 * (float)Math.PI / 180; //indica el giro del auto en grados
+        public float angOrientacionMesh = 0;
         private float elapsedTime;
-        private Matrix matrixRotacion;
+        private Matrix matrixRotacion = Matrix.Identity;
         private Vector3 newPosicion;
         private Vector3 Scale;
         private float FixedWaitingTime;
@@ -47,11 +49,11 @@ namespace TGC.GroupoMs.Model
             gameModel = gm;
             elapsedTime = gm.ElapsedTime;
             meshTarget = AutoPlayer.Mesh;
-            velocidad = velocidadd * 0.1f;
+            velocidad = velocidadd;
             desvioChoque = desvioChoquee;
             FixedWaitingTime = tiempoEspera; //el tiempo que espera hasta volver a girar.
             tiempoEspera = 0f; //este el contador del tiempo de espera.
-            anguloFinal = 0f;
+
 
             //creo el mesh
             TgcSceneLoader Loader = new TgcSceneLoader();
@@ -60,9 +62,11 @@ namespace TGC.GroupoMs.Model
             float scale = 0.45f;
 
             Scale = new Vector3(scale, scale, scale);
+            Mesh.Scale = Scale;
             Mesh.AutoTransformEnable = false;
-            Mesh.Transform = Matrix.Scaling(Scale) * Matrix.Translation(posicion);
-            Mesh.Position = posicion;
+
+            Mesh.Position = posicion;//posTarget;// - new Vector3(0, 0, 400);
+            Mesh.Transform = Matrix.Scaling(Scale) * Matrix.Translation(Mesh.Position);
             computarBoundingBox();
         }
 
@@ -73,7 +77,7 @@ namespace TGC.GroupoMs.Model
             var yMin = Mesh.BoundingBox.PMin.Y;
             var yMax = Mesh.BoundingBox.PMax.Y;
             obbPosY = (yMax + yMin) / 2 + yMin;
-            obb.Extents = new Vector3(obb.Extents.X, obb.Extents.Y, obb.Extents.Z * -1);
+            obb.Extents = new Vector3(obb.Extents.X, obb.Extents.Y, obb.Extents.Z);
         }
 
         public void Update(Vector3 PosicionTarget)
@@ -83,20 +87,15 @@ namespace TGC.GroupoMs.Model
             bool collisionFound = false;
 
             Mover();
-
+            tiempoEspera = tiempoEspera + elapsedTime;
 
             //1 chocar contra target?
 
             if (TgcCollisionUtils.testObbObb(obb, autoPlayer.obb))
             {
                 velocidad = 0f;
-                Doblar(45f);
-                DialogResult dialogResult = MessageBox.Show("Pediste!", "Juego Finalizdo", MessageBoxButtons.OK, MessageBoxIcon.Asterisk);
-                if (dialogResult == DialogResult.OK)
-                {
-                    Application.Run(new GameForm());
-                    gameModel.Dispose();
-                }
+                //Doblar(20f);
+                gameModel.TerminarJuego(false);
                 obb.setRenderColor(Color.Blue);
                 return;
             }
@@ -110,18 +109,18 @@ namespace TGC.GroupoMs.Model
             }
             obb.setRenderColor(Color.Yellow);
             //3 Dobla para apuntar al target?
-            //ApuntarAlTarget(PosicionTarget);
+            ApuntarAlTarget(PosicionTarget);
         }
 
 
-        float tiempoEspera;
+        public float tiempoEspera;
         private Auto autoPlayer;
 
         #region rotacion
         private void ApuntarAlTarget(Vector3 PosicionTarget)
         {
             //1- bajo el contador que se fija cuando fue la ultima vez que apunte.
-            tiempoEspera -= elapsedTime;
+            
             // 2 - si todavia no puedo doblar, return!
             if (tiempoEspera > 0f) return;
 
@@ -131,21 +130,40 @@ namespace TGC.GroupoMs.Model
             //4 checkeo la cantidad de grados a girar y quedar apuntando hacia el target
             var posicionMesh = Mesh.Position;
 
-            float a = Vector3.Dot(posicionMesh, PosicionTarget);
-            double anguloDouble = Math.Acos(Convert.ToDouble(a));
-            anguloFinal = Convert.ToSingle(anguloDouble);
+            //float ab = Vector3.Dot(posicionMesh, PosicionTarget);
+            //float a = posicionMesh.Length();
+            //float b = PosicionTarget.Length();
+
+            //double anguloDouble = Math.Acos(Convert.ToDouble(a));
+            //anguloFinal = Convert.ToSingle(anguloDouble);
 
             //ahora pongo al mesh mirando hacia el target.
-            matrixRotacion = Matrix.RotationY(anguloFinal);
-            obb.rotate(new Vector3(0, anguloFinal, 0));
+            //matrixRotacion = Matrix.RotationY(anguloFinal);
+            //obb.rotate(new Vector3(0, anguloFinal, 0));
+            // float ang = FastMath.Acos((a * b) / ab);
+
+            float X1 = Mesh.Position.X;
+            float Z1 = Mesh.Position.Z;
+
+            float X2 = meshTarget.Position.X;
+            float Z2 = meshTarget.Position.Z;
+
+            float ang = FastMath.Atan2((Z2 - Z1), (X2 - X1));
+            matrixRotacion = Matrix.RotationY((FastMath.PI * 3 / 2) - ang);
+            obb.setRotation(new Vector3(0, (FastMath.PI * 3 / 2) - ang, 0));
+            anguloFinal = ang;
+            angOrientacionMesh = ang;
+
+            //Doblar(ang);
 
         }
 
 
         private void Doblar(float v)
         {
-            anguloFinal += v * elapsedTime;
-            matrixRotacion = Matrix.RotationY(anguloFinal);
+            anguloFinal -= v * elapsedTime;
+            angOrientacionMesh = angOrientacionMesh + v * elapsedTime;
+            matrixRotacion = Matrix.RotationY(angOrientacionMesh);
             obb.rotate(new Vector3(0, v * 1f * elapsedTime, 0));
         }
 
@@ -178,11 +196,12 @@ namespace TGC.GroupoMs.Model
                                         5f,
                                         Mesh.Position.Z + calcularDZ());
             obb.Center = newPosicion + new Vector3(0, obbPosY, 0);
-            Mesh.Position = newPosicion;
+
             var m = Matrix.Scaling(Scale) *
                     matrixRotacion *
                     Matrix.Translation(newPosicion);
             Mesh.Transform = m;
+            Mesh.Position = newPosicion;
         }
 
         //public float angOrientacionMesh = 270 * (float)Math.PI / 180;
@@ -201,9 +220,15 @@ namespace TGC.GroupoMs.Model
 
         public void render()
         {
+
+            //Mesh.BoundingBox.render();
+            //obb.render();
+
+            var DrawText = new Core.Text.TgcText2D();
+            DrawText.drawText("anguloFinal ", 0, 520, Color.White);
+            DrawText.drawText((anguloFinal * 180 / (float)Math.PI).ToString(), 150, 520, Color.White);
             Mesh.render();
 
-            obb.render();
         }
     }
 }

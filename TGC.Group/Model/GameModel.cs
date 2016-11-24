@@ -110,8 +110,8 @@ namespace TGC.Group.Model
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
             pointLuz2 = new PointLight2(this, new Vector3(100f, 100f, 100f));
-            Vector3 posicion = new Vector3(200f, 8f, 150f); //Y=8 para q este cerca del piso
-            autoOponente = new AutoOponente(this, AutoJugador, 2f, 45f, 6f, posicion);
+            Vector3 posicion = new Vector3(400f, 8f, 150f); //Y=8 para q este cerca del piso
+            autoOponente = new AutoOponente(this, AutoJugador, 2f, 45f, 0.1f, posicion);
 
         }
 
@@ -451,6 +451,9 @@ namespace TGC.Group.Model
 
             DrawText.drawText("choco adelante ", 0, 480, Color.White);
             DrawText.drawText(AutoJugador.chocoAdelante.ToString(), 150, 480, Color.White);
+
+            DrawText.drawText("t= ", 230, 520, Color.White);
+            DrawText.drawText(autoOponente.tiempoEspera.ToString(), 250, 580, Color.Orange);
             /*
             DrawText.drawText("time ", 0, 500, Color.White);
             

@@ -47,7 +47,10 @@ namespace TGC.GroupoMs.Model
             Ruedas  ruedasAtras   = new Ruedas(rueda, new Vector3(x, y, z1), new Vector3(-x, y, z1), true, scaleRuedas);
             Ruedas ruedasAdelante = new Ruedas(rueda, new Vector3(-x, y, -z2), new Vector3(x, y, -z2), false, scaleRuedas);
 
-            return new Auto("hummer", 100f, 5f, 3f, 5f, 2f,
+            float avanceMax = 5f;
+            float aceleracion = 4f;
+            float desaceleracion = 2f;
+            return new Auto("hummer", 100f, avanceMax, 3f, aceleracion, desaceleracion,
                             hummerMesh, Gm,
                             ruedasAdelante, ruedasAtras, rueda, velocimetro);
         }

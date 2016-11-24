@@ -99,6 +99,7 @@
     <Compile Include="Model\efectos\PantallaDividida.cs" />
     <Compile Include="Model\efectos\PointLight2.cs" />
     <Compile Include="Model\efectos\ShadowMap.cs" />
+    <Compile Include="Model\efectos\Sonidos.cs" />
     <Compile Include="Model\ScreenOverlay\Utils\CustomBitmap.cs" />
     <Compile Include="Model\ScreenOverlay\Utils\CustomSprite.cs" />
     <Compile Include="Model\efectos\HumoEscape.cs" />
