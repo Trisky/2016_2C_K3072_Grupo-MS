@@ -110,8 +110,12 @@ namespace TGC.Group.Model
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
             pointLuz2 = new PointLight2(this, new Vector3(100f, 100f, 100f));
-            Vector3 posicion = new Vector3(400f, 8f, 150f); //Y=8 para q este cerca del piso
-            autoOponente = new AutoOponente(this, AutoJugador, 2f, 45f, 0.1f, posicion);
+            Vector3 posicion = new Vector3(800f, 8f, 250f); //Y=8 para q este cerca del piso
+
+            float velocidad = 2.3f;
+            float tiempEspera = 70f;
+            float ang = 30f;
+            autoOponente = new AutoOponente(this, AutoJugador, velocidad, ang, tiempEspera, posicion);
 
         }
 

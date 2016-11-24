@@ -87,7 +87,7 @@ namespace TGC.GroupoMs.Model
             bool collisionFound = false;
 
             Mover();
-            tiempoEspera = tiempoEspera + elapsedTime;
+            tiempoEspera += elapsedTime;
 
             //1 chocar contra target?
 
