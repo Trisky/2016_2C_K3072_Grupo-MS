@@ -61,6 +61,7 @@ namespace TGC.Group.Model
         private float tiempoJuego;
         private GameForm gameForm;
         private Sonidos sonidos;
+        private float dificultadJuego;
 
         public void TerminarJuego(bool ganaste)
         {
@@ -79,13 +80,14 @@ namespace TGC.Group.Model
         /// </summary>
         /// <param name="mediaDir">Ruta donde esta la carpeta con los assets</param>
         /// <param name="shadersDir">Ruta donde esta la carpeta con los shaders</param>
-        public GameModel(string mediaDir, string shadersDir,float tiempoJuegoo, GameForm gameForm) : base(mediaDir, shadersDir)
+        public GameModel(string mediaDir, string shadersDir,float tiempoJuegoo,float dificultad, GameForm gameForm) : base(mediaDir, shadersDir)
         {
             this.gameForm = gameForm;
             Category = Game.Default.Category;
             Name = Game.Default.Name;
             Description = Game.Default.Description;
             tiempoJuego = tiempoJuegoo;
+            dificultadJuego = dificultad;
         }
 
        
@@ -112,7 +114,7 @@ namespace TGC.Group.Model
             pointLuz2 = new PointLight2(this, new Vector3(100f, 100f, 100f));
             Vector3 posicion = new Vector3(800f, 8f, 250f); //Y=8 para q este cerca del piso
 
-            float velocidad = 2.3f;
+            float velocidad = dificultadJuego;
             float tiempEspera = 70f;
             float ang = 30f;
             autoOponente = new AutoOponente(this, AutoJugador, velocidad, ang, tiempEspera, posicion);

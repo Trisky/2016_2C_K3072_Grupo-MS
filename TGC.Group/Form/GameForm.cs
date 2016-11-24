@@ -28,7 +28,7 @@ namespace TGC.Group.Form
         {
             InitializeComponent();
             lblGanaPierde.Visible = false;
-
+            pictureBox1.Dock = DockStyle.Fill;
         }
 
         /// <summary>
@@ -89,9 +89,10 @@ namespace TGC.Group.Form
             //Cargar shaders del framework
             TgcShaders.Instance.loadCommonShaders(currentDirectory + Game.Default.ShadersDirectory);
             float tiempo = Convert.ToSingle(numericUpDown1.Value);
+            float dificultad = Convert.ToSingle(numericUpDownDificultad.Value);
             //Juego a ejecutar, si quisiéramos tener diferentes modelos aquí podemos cambiar la instancia e invocar a otra clase.
             Modelo = new GameModel(currentDirectory + Game.Default.MediaDirectory,
-                currentDirectory + Game.Default.ShadersDirectory,tiempo,this);
+                currentDirectory + Game.Default.ShadersDirectory,tiempo,dificultad,this);
 
             //Cargar juego.
             ExecuteModel();
@@ -203,7 +204,10 @@ namespace TGC.Group.Form
                 hayQueReiniciar = false;
             }
             toggleVerBotones();
-            if(Modelo == null)
+            labelDificultad.Visible = false;
+            numericUpDownDificultad.Visible = false;
+            labelTiempo.Visible = false;
+            if (Modelo == null)
             InitGraphics();
 
             //Titulo de la ventana principal.
@@ -211,6 +215,7 @@ namespace TGC.Group.Form
             lblGanaPierde.Visible = false;
             //Focus panel3D.
             panel3D.Focus();
+            
 
             //Inicio el ciclo de Render.
 
@@ -245,6 +250,13 @@ namespace TGC.Group.Form
                 lblGanaPierde.Text = "Ganaste!";
             else
                 lblGanaPierde.Text = "Perdiste!";
+            //button1.Visible = !button1.Visible;
+            pictureBox1.Visible = true;
+            pictureBox1.BringToFront();
+            pictureBox1.Dock = DockStyle.Fill;
+            lblGanaPierde.BringToFront();
+            
+            
             //toggleVerBotones();
             lblGanaPierde.Visible = true;
             hayQueReiniciar = true;

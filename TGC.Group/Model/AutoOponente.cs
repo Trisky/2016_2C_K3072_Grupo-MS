@@ -65,7 +65,7 @@ namespace TGC.GroupoMs.Model
             Mesh.Scale = Scale;
             Mesh.AutoTransformEnable = false;
 
-            Mesh.Position = posicion;//posTarget;// - new Vector3(0, 0, 400);
+            Mesh.Position = posTarget - new Vector3(0, 0, -400);
             Mesh.Transform = Matrix.Scaling(Scale) * Matrix.Translation(Mesh.Position);
             computarBoundingBox();
         }
