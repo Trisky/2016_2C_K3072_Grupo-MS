@@ -36,6 +36,8 @@ namespace TGC.GroupoMs.Model.efectos
 
         public PantallaDividida(GameModel gm)
         {
+
+
             var d3dDevice = D3DDevice.Instance.Device;
             //effect = TgcShaders.loadEffect(gm.ShadersDir + "ShadowMap.fx");
             //Cargar Shader personalizado
@@ -46,6 +48,8 @@ namespace TGC.GroupoMs.Model.efectos
             {
                 throw new Exception("Error al cargar shader. Errores: " + compilationErrors);
             }
+
+
 
             effect.Technique = "DefaultTechnique";
 

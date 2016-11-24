@@ -43,6 +43,7 @@ namespace TGC.GroupoMs.Model
 
         public Ruedas RuedasTraseras { get; set; }
         public Ruedas RuedasDelanteras { get; set; }
+        public LucesAuto Luces { get; set; }
         public bool RenderLuces { get; set; }
         public string TechniqueOriginal { get; private set; }
         public List<TgcMesh> TodosLosMeshes { get; set; }
@@ -123,6 +124,7 @@ namespace TGC.GroupoMs.Model
 
             //--------luces
             
+            Luces = new LucesAuto(this, ruedasAdelante, ruedasAtras, CamaraAuto);
             RenderLuces = false;
 
             EsAutoJugador = true;
@@ -261,12 +263,15 @@ namespace TGC.GroupoMs.Model
                 //aceleracionVertical = -1; descomentar cuando el auto choque con el suelo.
             }
 
+            //RuedasDelanteras.Update(Mesh.Position,Velocidad,DireccionRuedas);
+            //RuedasTraseras.Update(Mesh.Position, Velocidad, DireccionRuedas);
+            
             ProcesarInercia();
             MoverMesh();
 
-            //if (RenderLuces) Luces.Update();
-            //if (motionBlur != null) motionBlur.Update(0f);
-            //if (RenderLuces) Luces.Update();
+            if (RenderLuces) Luces.Update();
+            if (motionBlur != null) motionBlur.Update(0f);
+            if (RenderLuces) Luces.Update();
 
             GameModel.FinishedLoading = true;
             RecobrarForma();
@@ -278,8 +283,10 @@ namespace TGC.GroupoMs.Model
             Doblar(1f);
             DireccionRuedas = 0f;
             fixEjecutado = true;
-        }
 
+            //elapsedtime = GameModel.ElapsedTime;
+            
+        }
         private void DoblarRuedas(int lado)
         {
             volanteo = true;
@@ -355,6 +362,7 @@ namespace TGC.GroupoMs.Model
         }
 
 
+
         private void ProcesarColisiones()
         {
             collisionFound = false;
@@ -422,6 +430,11 @@ namespace TGC.GroupoMs.Model
                     efectoShaderNitroHummer.SetValue("Velocidad", 4 * Velocidad);
                     PosicionRollback();
                 }
+                    
+                
+               
+                
+
             }
             else
             {
@@ -446,13 +459,9 @@ namespace TGC.GroupoMs.Model
             Mesh.render();
             RuedasDelanteras.Render();
             RuedasTraseras.Render();
-<<<<<<< HEAD
             //RuedaMainMesh.render();
             /*if (RenderLuces)
                 Luces.Update();*/
-=======
-
->>>>>>> origin/master
             if (motionBlur != null && finishedLoading) motionBlur.Render();
 
 

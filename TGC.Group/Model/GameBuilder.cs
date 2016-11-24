@@ -74,10 +74,11 @@ namespace TGC.GroupoMs.Model
 
         public void CrearLuces()
         {
+            Gm.LucesLst = new List<LuzFija>();
             Vector3 abajo = new Vector3(0, -1, 0);
             string shaderDir = Gm.ShadersDir;
 
-            //Gm.LucesLst.Add(new LuzFija(new Vector3(0, 100, 0),abajo,3000f,shaderDir )) ;
+            Gm.LucesLst.Add(new LuzFija(new Vector3(0, 100, 0),abajo,3000f,shaderDir )) ;
 
             //luces lado1
             //float lado1a = 128.08f;
