@@ -18,12 +18,15 @@ namespace TGC.Group.Form
     /// </summary>
     public partial class GameForm : System.Windows.Forms.Form
     {
+        private bool hayQueReiniciar;
+
         /// <summary>
         ///     Constructor de la ventana.
         /// </summary>
         public GameForm()
         {
             InitializeComponent();
+            hayQueReiniciar = false;
 
         }
 
@@ -193,7 +196,12 @@ namespace TGC.Group.Form
 
         private void button1_Click(object sender, EventArgs e)
         {
-
+            if (hayQueReiniciar)
+            {
+                this.ShutDown();
+                InitGraphics();
+                hayQueReiniciar = false;
+            }
             disposeDebotones();
             InitGraphics();
 
@@ -225,5 +233,16 @@ namespace TGC.Group.Form
         {
 
         }
+        public void TerminarJuego(bool ganaste)
+        {
+            ApplicationRunning = false;
+            lblGanaPierde.Visible = true;
+            if (ganaste)
+                lblGanaPierde.Text = "Ganaste!";
+            else
+                lblGanaPierde.Text = "Perdiste!";
+
+        }
+
     }
 }

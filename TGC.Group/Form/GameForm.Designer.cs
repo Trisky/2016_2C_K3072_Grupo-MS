@@ -32,12 +32,14 @@
             this.panel3D = new System.Windows.Forms.Panel();
             this.button1 = new System.Windows.Forms.Button();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.lblGanaPierde = new System.Windows.Forms.Label();
             this.panel3D.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // panel3D
             // 
+            this.panel3D.Controls.Add(this.lblGanaPierde);
             this.panel3D.Controls.Add(this.button1);
             this.panel3D.Controls.Add(this.pictureBox1);
             this.panel3D.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -68,6 +70,17 @@
             this.pictureBox1.TabIndex = 4;
             this.pictureBox1.TabStop = false;
             // 
+            // lblGanaPierde
+            // 
+            this.lblGanaPierde.AutoSize = true;
+            this.lblGanaPierde.BackColor = System.Drawing.Color.Transparent;
+            this.lblGanaPierde.Font = new System.Drawing.Font("Algerian", 36F, ((System.Drawing.FontStyle)((System.Drawing.FontStyle.Bold | System.Drawing.FontStyle.Italic))), System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblGanaPierde.Location = new System.Drawing.Point(380, 562);
+            this.lblGanaPierde.Name = "lblGanaPierde";
+            this.lblGanaPierde.Size = new System.Drawing.Size(467, 80);
+            this.lblGanaPierde.TabIndex = 5;
+            this.lblGanaPierde.Text = "TEXTOGANA";
+            // 
             // GameForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -82,6 +95,7 @@
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.GameForm_FormClosing);
             this.Load += new System.EventHandler(this.GameForm_Load);
             this.panel3D.ResumeLayout(false);
+            this.panel3D.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
@@ -92,6 +106,7 @@
         private System.Windows.Forms.Panel panel3D;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Label lblGanaPierde;
     }
 }
 
