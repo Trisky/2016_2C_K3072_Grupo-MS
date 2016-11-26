@@ -225,8 +225,8 @@ namespace TGC.GroupoMs.Model
             //obb.render();
 
             var DrawText = new Core.Text.TgcText2D();
-            DrawText.drawText("anguloFinal ", 0, 520, Color.White);
-            DrawText.drawText((anguloFinal * 180 / (float)Math.PI).ToString(), 150, 520, Color.White);
+            //DrawText.drawText("anguloFinal ", 0, 520, Color.White);
+            //DrawText.drawText((anguloFinal * 180 / (float)Math.PI).ToString(), 150, 520, Color.White);
             Mesh.render();
 
         }

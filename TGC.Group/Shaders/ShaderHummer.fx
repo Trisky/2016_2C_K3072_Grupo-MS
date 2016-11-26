@@ -103,7 +103,7 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 
 	//tiempo = tiempo + time ;
 	
-	if (ChoqueDelantero == 1)// && Velocidad > 0)
+	if (ChoqueDelantero >0)// && Velocidad > 0)
 	{
 		if (Input.Position.z < Largo * 0.22)
 		{
@@ -112,7 +112,7 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 			Input.Position.x = Input.Position.x - 10 * sin(Y * 300);
 		}
 	}
-	if (ChoqueTrasero == -1)// && Velocidad < 0)
+	if (ChoqueTrasero<0 )// && Velocidad < 0)
 	{
 		if (Input.Position.z > Largo * 0.22)
 		{

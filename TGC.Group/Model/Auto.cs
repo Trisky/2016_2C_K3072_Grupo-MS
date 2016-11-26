@@ -133,7 +133,7 @@ namespace TGC.GroupoMs.Model
             //shader pal hummer
             TechniqueOriginal = Mesh.Technique;
             efectoOriginal = Mesh.Effect;
-           // efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
+            efectoShaderNitroHummer = TgcShaders.loadEffect(GameModel.ShadersDir + "ShaderHummer.fx");
             velocimetro = velocimetroIN;
 
             //GameModel.shadowMap = new ShadowMap(GameModel);// para shadowmapFIX
@@ -473,10 +473,10 @@ namespace TGC.GroupoMs.Model
             //if (pintarObb)
             //    obb.render();
 
-            foreach (var mesh in ciudadScene.Meshes)
-            {
-               mesh.BoundingBox.render();
-            }
+            //foreach (var mesh in ciudadScene.Meshes)
+            //{
+            //   //mesh.BoundingBox.render();
+            //}
             humoEscape.Render(nitroActivado);
             
     }
@@ -504,10 +504,10 @@ namespace TGC.GroupoMs.Model
                 ChoqueTrasero = -1;
             }
 
-            //efectoShaderNitroHummer.SetValue("ChoqueTrasero", ChoqueTrasero);
-            //efectoShaderNitroHummer.SetValue("ChoqueDelantero", ChoqueDelantero);
+            efectoShaderNitroHummer.SetValue("ChoqueTrasero", ChoqueTrasero);
+            efectoShaderNitroHummer.SetValue("ChoqueDelantero", ChoqueDelantero);
 
-            //adelante 1 atras -1
+            //adelante 1 atras - 1
             //efectoShaderNitroHummer.SetValue("Choco", aux);
 
             //if (Velocidad < 2.5f)
@@ -520,8 +520,8 @@ namespace TGC.GroupoMs.Model
             //    Mesh.Effect = efectoShaderNitroHummer;
             //    Mesh.Technique = "RenderScene";
             //}
-            //Mesh.Effect = efectoShaderNitroHummer;
-            //Mesh.Technique = "RenderScene";
+            Mesh.Effect = efectoShaderNitroHummer;
+            Mesh.Technique = "RenderScene";
         } 
     }
 }

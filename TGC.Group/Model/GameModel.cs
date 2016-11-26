@@ -112,7 +112,7 @@ namespace TGC.Group.Model
             ToggleGodCamera();
             pointLuz = new PointLight2(this, new Vector3(100f, 100f, 100f));
             pointLuz2 = new PointLight2(this, new Vector3(100f, 100f, 100f));
-            Vector3 posicion = new Vector3(800f, 8f, 250f); //Y=8 para q este cerca del piso
+            Vector3 posicion = new Vector3(800f, 20f, 250f); //Y=8 para q este cerca del piso
 
             float velocidad = dificultadJuego;
             float tiempEspera = 70f;
@@ -300,10 +300,10 @@ namespace TGC.Group.Model
 
             IniciarScene(); //empiezo main escena
 
-            cilindroBB.render();
+            //cilindroBB.render();
             //PreRenderPersonalizado(); //para el shadowMapFIX
 
-            //if (GodModeOn)
+            if (GodModeOn)
                 DibujarDebug();
             var posCamara = AutoJugador.CamaraAuto.Position;
             //foreach (Auto a in Autos)
