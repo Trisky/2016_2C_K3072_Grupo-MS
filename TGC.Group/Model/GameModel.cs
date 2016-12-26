@@ -117,7 +117,7 @@ namespace TGC.Group.Model
             float velocidad = dificultadJuego;
             float tiempEspera = 70f;
             float ang = 30f;
-            autoOponente = new AutoOponente(this, AutoJugador, velocidad, ang, tiempEspera, posicion);
+            autoOponente = new AutoOponente(this, AutoJugador, 0.1f*velocidad, ang, tiempEspera, posicion);
 
         }
 

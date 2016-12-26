@@ -148,7 +148,7 @@ namespace TGC.GroupoMs.Model.efectos
             // restuaro el render target y el stencil
             //D3DDevice.Instance.Device.DepthStencilSurface = pOldDS;
             //D3DDevice.Instance.Device.SetRenderTarget(0, pOldRT);
-            arrow.render();
+            //arrow.render();
         }
 
         

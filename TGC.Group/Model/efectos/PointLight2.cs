@@ -75,7 +75,7 @@ namespace TGC.GroupoMs.Model.efectos
             {
                 setEffects(camPos, mesh);
             }
-            lightMesh.render();
+            //lightMesh.render();
             foreach (var mesh in meshesAuto)
             {
                 setEffects(camPos, mesh);
