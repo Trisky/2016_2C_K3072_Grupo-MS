@@ -78,32 +78,24 @@ VS_OUTPUT vs_main(VS_INPUT Input)
 VS_OUTPUT vs_main2(VS_INPUT Input)
 {
 	VS_OUTPUT Output;
-
-	// Animar posicion
-	/*Input.Position.x += sin(time)*30*sign(Input.Position.x);
-	Input.Position.y += cos(time)*30*sign(Input.Position.y-20);
-	Input.Position.z += sin(time)*30*sign(Input.Position.z);*/
-	
+	Output = Input;
+	//return(Output); //sacar esto :P
 
 	// Animar posicion
 	float X = Input.Position.x;
 	float Y = Input.Position.y;
 	float Z = Input.Position.z;
-	float v = 0.08*Velocidad;// *sin(time);
+	float v = 0.08*Velocidad;
 	float d = Deformation;
 	float tiempo = 0;
-	//if (d < 1) d = 1;
-	//if (d > 2) d = 2;
 
 	if (v < 1) v = 1;
 	if (v > 1.2) v = 1.25;
 	Input.Position.y = Y/v;// *cos(v) - Z * sin(v);
 	Input.Position.x = X +sin(time) * 8*Velocidad;
-	//Input.Position.z = Z / d;// *cos(v) + Y * sin(v);
 
-	//tiempo = tiempo + time ;
-	
-	if (ChoqueDelantero >0)// && Velocidad > 0)
+
+	if (ChoqueDelantero >0)
 	{
 		if (Input.Position.z < Largo * 0.22)
 		{
@@ -112,15 +104,18 @@ VS_OUTPUT vs_main2(VS_INPUT Input)
 			Input.Position.x = Input.Position.x - 10 * sin(Y * 300);
 		}
 	}
-	if (ChoqueTrasero<0 )// && Velocidad < 0)
-	{
-		if (Input.Position.z > Largo * 0.22)
+	else {
+		if (ChoqueTrasero<0)
 		{
-			Input.Position.z = Z - 10 * sin(Y * 200);
+			if (Input.Position.z > Largo * 0.22)
+			{
+				Input.Position.z = Z - 10 * sin(Y * 200);
 
-			Input.Position.x = Input.Position.x  - 10 * sin(Y * 200);
+				Input.Position.x = Input.Position.x - 10 * sin(Y * 200);
+			}
 		}
 	}
+	
 	
 
 
@@ -146,8 +141,8 @@ float4 ps_main(float2 Texcoord: TEXCOORD0, float4 Color : COLOR0) : COLOR0
 {
 	// Obtener el texel de textura
 	// diffuseMap es el sampler, Texcoord son las coordenadas interpoladas
-	float screen_dx = 2650;
-	float2 texPantalla = 2650*Texcoord; //
+	float screen_dx = 1920;
+	float2 texPantalla = screen_dx*Texcoord; //
 	texPantalla.x = floor(texPantalla.x);
 	texPantalla.y = floor(texPantalla.y);
 
